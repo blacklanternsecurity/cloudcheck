@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "cloudcheck"
+version = "0.1.2.3"
+description = "Check whether an IP address belongs to a cloud provider"
+authors = ["TheTechromancer"]
+license = "GPL-3.0"
+readme = "README.md"
+
+[tool.poetry.scripts]
+cloudcheck = 'cloudcheck.cloudcheck:main'
+
+[tool.poetry.dependencies]
+python = "^3.7"
+requests = "^2.28.2"
+requests-cache = "^0.9.7"
+
+[tool.poetry.group.dev.dependencies]
+black = "^22.12.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
