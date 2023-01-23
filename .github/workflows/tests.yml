@@ -6,8 +6,26 @@ on:
     # At 12:42 every Saturday
     - cron:  '42 12 * * 6'
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: psf/black@stable
+        with:
+          options: "--check"
+      - name: Install Python 3
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+      - name: Install dependencies
+        run: |
+          pip install flake8
+      - name: flake8
+        run: |
+          flake8 --select F,E722 --ignore F403,F405,F541 --per-file-ignores="*/__init__.py:F401,F403"
   gen_fingerprints:
     runs-on: ubuntu-latest
+    needs: lint
     if: github.event_name == 'push' || github.event_name == 'schedule'
     steps:
       - uses: actions/checkout@v3
@@ -30,7 +48,7 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     needs: gen_fingerprints
-    if: (github.event_name == 'push' || github.event_name == 'schedule') && github.ref == 'refs/heads/master'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     steps:
       - uses: actions/checkout@v3
         with:
