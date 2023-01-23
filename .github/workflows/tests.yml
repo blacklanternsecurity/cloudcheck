@@ -23,7 +23,7 @@ jobs:
       - name: flake8
         run: |
           flake8 --select F,E722 --ignore F403,F405,F541 --per-file-ignores="*/__init__.py:F401,F403"
-  gen_fingerprints:
+  refresh_json:
     runs-on: ubuntu-latest
     needs: lint
     if: github.event_name == 'push' || github.event_name == 'schedule'
@@ -37,7 +37,7 @@ jobs:
         run: |
           pip install poetry
           poetry install
-      - name: Generate fingerprints.json
+      - name: Refresh cloud_providers.json
         run: poetry run cloudcheck refresh_json
       - name: git add cloud_providers.json
         uses: EndBug/add-and-commit@v9
@@ -47,7 +47,7 @@ jobs:
           message: "refresh cloud_providers.json"
   publish:
     runs-on: ubuntu-latest
-    needs: gen_fingerprints
+    needs: refresh_json
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     steps:
       - uses: actions/checkout@v3
