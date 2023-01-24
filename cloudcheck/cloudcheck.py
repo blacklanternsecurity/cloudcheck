@@ -31,10 +31,13 @@ class CloudProviders:
         yield from self.providers.values()
 
 
-providers = CloudProviders()
+providers = None
 
 
 def check(ip):
+    global providers
+    if providers is None:
+        providers = CloudProviders()
     return providers.check(ip)
 
 
@@ -68,7 +71,7 @@ def main():
         refresh_json()
         return
     for ip in ips:
-        provider, subnet = providers.check(ip)
+        provider, subnet = check(ip)
         if provider:
             print(f"{ip} belongs to {provider} ({subnet})")
         else:
