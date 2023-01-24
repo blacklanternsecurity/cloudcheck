@@ -14,6 +14,12 @@ class CidrRanges:
         for r in ranges:
             self.cidrs.add(ipaddress.ip_network(r))
 
+    def __iter__(self):
+        yield from self.cidrs
+
+    def __bool__(self):
+        return bool(self.cidrs)
+
     def __contains__(self, ip):
         if isinstance(ip, ipaddress._BaseNetwork):
             return ip in self.cidrs

@@ -6,13 +6,33 @@ from .providers import *
 from .helpers import ip_network_parents
 
 
+json_path = Path(__file__).parent.parent / "cloud_providers.json"
+
+
 class CloudProviders:
     def __init__(self, *args, **kwargs):
         self.providers = dict()
+        try:
+            with open(json_path) as f:
+                self.json = json.load(f)
+        except Exception:
+            self.json = {}
         provider_classes = CloudProvider.__subclasses__()
+        now = datetime.now().isoformat()
         for p in provider_classes:
             provider = p(*args, **kwargs)
             self.providers[provider.name] = provider
+            # if we successfully got CIDR ranges, then update the JSON
+            if not provider.name in self.json:
+                self.json[provider.name] = {}
+            json_ranges = self.json[provider.name].get("cidrs", [])
+            if provider.ranges.cidrs:
+                self.json[provider.name]["last_updated"] = now
+                self.json[provider.name]["cidrs"] = sorted(
+                    str(r) for r in provider.ranges
+                )
+            else:
+                provider.ranges = CidrRanges(json_ranges)
 
     def check(self, ip):
         for net in ip_network_parents(ip):
@@ -20,12 +40,6 @@ class CloudProviders:
                 if net in provider:
                     return provider.name, net
         return (None, None)
-
-    def json(self):
-        j = {}
-        for n, p in self.providers.items():
-            j[n] = [str(i) for i in p.ranges.cidrs]
-        return j
 
     def __iter__(self):
         yield from self.providers.values()
@@ -41,29 +55,12 @@ def check(ip):
     return providers.check(ip)
 
 
-json_path = Path(__file__).parent.parent / "cloud_providers.json"
-
-
 def refresh_json():
     global providers
     if providers is None:
         providers = CloudProviders()
-    now = datetime.now().isoformat()
-    try:
-        with open(json_path) as f:
-            providers_json = json.loads(f)
-    except Exception:
-        providers_json = {}
-    for provider in providers:
-        if not provider.name in providers_json:
-            providers_json[provider.name] = {}
-        if provider.ranges.cidrs:
-            providers_json[provider.name]["last_updated"] = now
-            providers_json[provider.name]["cidrs"] = sorted(
-                str(r) for r in provider.ranges.cidrs
-            )
     with open(json_path, "w") as f:
-        f.write(json.dumps(providers_json, sort_keys=True, indent=4))
+        json.dump(providers.json, f, sort_keys=True, indent=4)
 
 
 def main():
