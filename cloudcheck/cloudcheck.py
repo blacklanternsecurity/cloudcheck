@@ -45,6 +45,8 @@ json_path = Path(__file__).parent.parent / "cloud_providers.json"
 
 
 def refresh_json():
+    if providers is None:
+        providers = CloudProviders()
     now = datetime.now().isoformat()
     try:
         with open(json_path) as f:
