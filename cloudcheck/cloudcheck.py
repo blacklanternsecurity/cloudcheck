@@ -1,5 +1,6 @@
 import sys
 import json
+from threading import Lock
 from datetime import datetime
 
 from .providers import *
@@ -45,13 +46,15 @@ class CloudProviders:
         yield from self.providers.values()
 
 
+cloudprovider_lock = Lock()
 providers = None
 
 
 def check(ip):
     global providers
-    if providers is None:
-        providers = CloudProviders()
+    with cloudprovider_lock:
+        if providers is None:
+            providers = CloudProviders()
     return providers.check(ip)
 
 

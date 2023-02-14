@@ -9,6 +9,7 @@ from .cidr import CidrRanges
 
 db_path = Path.home() / ".cache" / "cloudcheck" / "requests-cache.sqlite"
 backend = SQLiteCache(db_path=db_path)
+session = CachedSession(expire_after=cache_for, backend=backend)
 
 
 class CloudProvider:
@@ -19,12 +20,11 @@ class CloudProvider:
         if cache_for is None:
             # default = cache IP lists for 7 days
             cache_for = 60 * 60 * 24 * 7
-        self.session = CachedSession(expire_after=cache_for, backend=backend)
         self.ranges = CidrRanges(self.get_ranges())
 
     def get_ranges(self):
         try:
-            response = self.session.get(self.main_url, allow_redirects=True)
+            response = session.get(self.main_url, allow_redirects=True)
             try:
                 return self.parse_response(response)
             except Exception:
