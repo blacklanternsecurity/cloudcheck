@@ -14,6 +14,7 @@ sessions = {}
 
 class CloudProvider:
     main_url = ""
+    provider_type = "cloud"
 
     def __init__(self, quiet=False, cache_for=None):
         self.quiet = quiet
@@ -49,6 +50,9 @@ class CloudProvider:
     def print(self, s):
         if not self.quiet:
             print(f"[{self.name}] {s}")
+
+    def __str__(self):
+        return self.name
 
     def __contains__(self, ip):
         return ip in self.ranges
@@ -106,4 +110,17 @@ class DigitalOcean(CloudProvider):
             fieldnames=["range", "country", "region", "city", "postcode"],
         )
         ranges = set(i["range"] for i in do_ips)
+        return ranges
+
+
+class Cloudflare(CloudProvider):
+    main_url = "https://api.cloudflare.com/client/v4/ips"
+    provider_type = "cdn"
+
+    def parse_response(self, response):
+        ranges = set()
+        response_json = response.json()
+        for ip_type in ("ipv4_cidrs", "ipv6_cidrs"):
+            for ip_range in response_json.get("result", {}).get(ip_type, []):
+                ranges.add(ip_range)
         return ranges

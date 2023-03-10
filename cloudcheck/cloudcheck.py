@@ -29,6 +29,7 @@ class CloudProviders:
             json_ranges = self.json[provider.name].get("cidrs", [])
             if provider.ranges.cidrs:
                 self.json[provider.name]["last_updated"] = now
+                self.json[provider.name]["provider_type"] = provider.provider_type
                 self.json[provider.name]["cidrs"] = sorted(
                     str(r) for r in provider.ranges
                 )
@@ -39,8 +40,8 @@ class CloudProviders:
         for net in ip_network_parents(ip):
             for provider in self.providers.values():
                 if net in provider:
-                    return provider.name, net
-        return (None, None)
+                    return provider.name, provider.provider_type, net
+        return (None, None, None)
 
     def __iter__(self):
         yield from self.providers.values()
@@ -74,9 +75,9 @@ def main():
         refresh_json()
         return
     for ip in ips:
-        provider, subnet = check(ip)
+        provider, provider_type, subnet = check(ip)
         if provider:
-            print(f"{ip} belongs to {provider} ({subnet})")
+            print(f"{ip} belongs to {provider} ({provider_type}) ({subnet})")
         else:
             print(f"{ip} is not listed as a cloud resource")
 
