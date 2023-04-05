@@ -1,5 +1,6 @@
 import io
 import csv
+import logging
 import zipfile
 import requests
 import traceback
@@ -8,6 +9,8 @@ from requests_cache import CachedSession
 from requests_cache.backends import SQLiteCache
 
 from .cidr import CidrRanges
+
+log = logging.getLogger("cloudcheck.providers")
 
 db_path = Path.home() / ".cache" / "cloudcheck" / "requests-cache.sqlite"
 backend = SQLiteCache(db_path=db_path)
@@ -22,8 +25,7 @@ class CloudProvider:
         "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.5112.79 Safari/537.36"
     }
 
-    def __init__(self, quiet=False, cache_for=None):
-        self.quiet = quiet
+    def __init__(self, cache_for=None):
         if cache_for is None:
             # default = cache IP lists for 7 days
             cache_for = 60 * 60 * 24 * 7
@@ -43,21 +45,18 @@ class CloudProvider:
             try:
                 return self.parse_response(response)
             except Exception:
-                self.print(f"Error parsing response: {traceback.format_exc()}")
-        except requests.RequestException:
-            self.print(f"Error retrieving {self.main_url}")
+                log.warning(f"Error parsing response: {traceback.format_exc()}")
+        except requests.RequestException as e:
+            log.warning(f"Error retrieving {self.main_url}: {e}")
         return []
 
     def parse_response(self, response):
         pass
 
+    @classmethod
     @property
-    def name(self):
-        return self.__class__.__name__
-
-    def print(self, s):
-        if not self.quiet:
-            print(f"[{self.name}] {s}")
+    def name(cls):
+        return cls.__name__
 
     def __str__(self):
         return self.name

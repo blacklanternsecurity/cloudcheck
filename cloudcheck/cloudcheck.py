@@ -1,10 +1,16 @@
 import sys
 import json
+import traceback
 from threading import Lock
 from datetime import datetime
+from concurrent.futures import ThreadPoolExecutor
 
 from .providers import *
 from .helpers import ip_network_parents
+
+import logging
+
+log = logging.getLogger("cloudcheck")
 
 
 json_path = Path(__file__).parent.parent / "cloud_providers.json"
@@ -19,8 +25,13 @@ class CloudProviders:
         except Exception:
             self.json = {}
         provider_classes = CloudProvider.__subclasses__()
-        now = datetime.now().isoformat()
-        for p in provider_classes:
+        self.now = datetime.now().isoformat()
+        with ThreadPoolExecutor(max_workers=len(provider_classes)) as e:
+            for p in provider_classes:
+                e.submit(self._get_provider, p, *args, **kwargs)
+
+    def _get_provider(self, p, *args, **kwargs):
+        try:
             provider = p(*args, **kwargs)
             self.providers[provider.name] = provider
             # if we successfully got CIDR ranges, then update the JSON
@@ -28,13 +39,17 @@ class CloudProviders:
                 self.json[provider.name] = {}
             json_ranges = self.json[provider.name].get("cidrs", [])
             if provider.ranges.cidrs:
-                self.json[provider.name]["last_updated"] = now
+                self.json[provider.name]["last_updated"] = self.now
                 self.json[provider.name]["provider_type"] = provider.provider_type
                 self.json[provider.name]["cidrs"] = sorted(
                     str(r) for r in provider.ranges
                 )
             else:
                 provider.ranges = CidrRanges(json_ranges)
+        except Exception as e:
+            log.warning(
+                f"Error getting provider {p.name}: {e}: {traceback.format_exc()}"
+            )
 
     def check(self, ip):
         for net in ip_network_parents(ip):
