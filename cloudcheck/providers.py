@@ -1,4 +1,6 @@
+import io
 import csv
+import zipfile
 import requests
 import traceback
 from pathlib import Path
@@ -16,6 +18,10 @@ class CloudProvider:
     main_url = ""
     provider_type = "cloud"
 
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.5112.79 Safari/537.36"
+    }
+
     def __init__(self, quiet=False, cache_for=None):
         self.quiet = quiet
         if cache_for is None:
@@ -31,7 +37,10 @@ class CloudProvider:
 
     def get_ranges(self):
         try:
-            response = self.session.get(self.main_url, allow_redirects=True)
+            print(self.main_url)
+            response = self.session.get(
+                self.main_url, allow_redirects=True, verify=False, headers=self.headers
+            )
             try:
                 return self.parse_response(response)
             except Exception:
@@ -123,4 +132,22 @@ class Cloudflare(CloudProvider):
         for ip_type in ("ipv4_cidrs", "ipv6_cidrs"):
             for ip_range in response_json.get("result", {}).get(ip_type, []):
                 ranges.add(ip_range)
+        return ranges
+
+
+class Akamai(CloudProvider):
+    main_url = "https://techdocs.akamai.com/property-manager/pdfs/akamai_ipv4_ipv6_CIDRs-txt.zip"
+    provider_type = "cdn"
+
+    def parse_response(self, response):
+        ranges = set()
+        content = getattr(response, "content", b"")
+        # Extract the contents of the zip file to memory
+        with zipfile.ZipFile(io.BytesIO(content)) as zip_file:
+            for filename in ("akamai_ipv4_CIDRs.txt", "akamai_ipv6_CIDRs.txt"):
+                with zip_file.open(filename) as f:
+                    for line in f.read().splitlines():
+                        line = line.decode(errors="ignore").strip()
+                        if line:
+                            ranges.add(line)
         return ranges

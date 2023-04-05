@@ -4,6 +4,8 @@ A simple Python utility to check whether an IP address belongs to a cloud provid
 
 `cloud_providers.json` contains up-to-date lists of CIDRs for each cloud provider (updated weekly via CI/CD).
 
+Used by [Bighuge BLS OSINT Tool (BBOT)](https://github.com/blacklanternsecurity/bbot).
+
 ## Installation
 ~~~bash
 pip install cloudcheck
@@ -35,3 +37,4 @@ print(subnet) # IPv4Network('168.62.0.0/19')
 - Oracle Cloud ([source](https://docs.cloud.oracle.com/en-us/iaas/tools/public_ip_ranges.json))
 - DigitalOcean ([source](http://digitalocean.com/geo/google.csv))
 - Cloudflare ([source](https://api.cloudflare.com/client/v4/ips))
+- Akami ([source](https://techdocs.akamai.com/property-manager/pdfs/akamai_ipv4_ipv6_CIDRs-txt.zip))
