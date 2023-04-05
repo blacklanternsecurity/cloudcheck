@@ -37,7 +37,6 @@ class CloudProvider:
 
     def get_ranges(self):
         try:
-            print(self.main_url)
             response = self.session.get(
                 self.main_url, allow_redirects=True, verify=False, headers=self.headers
             )
