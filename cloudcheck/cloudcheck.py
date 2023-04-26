@@ -3,6 +3,7 @@ import json
 import traceback
 from threading import Lock
 from datetime import datetime
+from collections import OrderedDict
 from concurrent.futures import ThreadPoolExecutor
 
 from .providers import *
@@ -29,6 +30,7 @@ class CloudProviders:
         with ThreadPoolExecutor(max_workers=len(provider_classes)) as e:
             for p in provider_classes:
                 e.submit(self._get_provider, p, *args, **kwargs)
+        self.providers = OrderedDict(sorted(self.providers.items()))
 
     def _get_provider(self, p, *args, **kwargs):
         try:
