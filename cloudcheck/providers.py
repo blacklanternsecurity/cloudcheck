@@ -163,7 +163,7 @@ class Github(CloudProvider):
             if isinstance(v, list):
                 for n in v:
                     try:
-                        net = ipaddress.ip_network(n)
+                        ipaddress.ip_network(n)
                         ranges.add(n)
                     except ValueError:
                         pass
