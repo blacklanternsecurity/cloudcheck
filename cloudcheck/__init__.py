@@ -1,5 +1,1 @@
-import urllib3
-
-urllib3.disable_warnings()
-
-from .cloudcheck import check
+from .providers import cloud_providers
