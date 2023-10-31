@@ -1,1 +1,1 @@
-from .providers import cloud_providers
+from .providers import cloud_providers  # noqa

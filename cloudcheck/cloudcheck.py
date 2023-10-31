@@ -1,8 +1,7 @@
 import sys
-import json
 import asyncio
+from datetime import datetime
 
-from .helpers import CustomJSONEncoder
 from .providers import cloud_providers
 
 
@@ -10,15 +9,19 @@ def check(ip):
     return cloud_providers.check(ip)
 
 
+async def update(cache_hrs=168, force=False):
+    time_since_last_update = datetime.now() - cloud_providers.last_updated
+    hours_since_last_update = time_since_last_update / 60 / 60
+    if force or hours_since_last_update >= cache_hrs:
+        await cloud_providers.update()
+
+
 async def _main():
     ips = sys.argv[1:]
     if not ips:
         print("usage: cloudcheck 1.2.3.4 [update | [ips...]]")
     elif len(ips) == 1 and ips[0].lower() == "update":
-        tasks = [asyncio.create_task(p.update()) for p in cloud_providers]
-        await asyncio.gather(*tasks)
-        with open(cloud_providers.json_path, "w") as f:
-            json.dump(cloud_providers.to_json(), f, sort_keys=True, indent=4, cls=CustomJSONEncoder)
+        await cloud_providers.update_from_sources()
         return
     for ip in ips:
         provider, provider_type, subnet = check(ip)
