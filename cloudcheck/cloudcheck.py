@@ -1,19 +1,8 @@
 import sys
 import asyncio
-from datetime import datetime
 
-from .providers import cloud_providers
-
-
-def check(ip):
-    return cloud_providers.check(ip)
-
-
-async def update(cache_hrs=168, force=False):
-    time_since_last_update = datetime.now() - cloud_providers.last_updated
-    hours_since_last_update = time_since_last_update / 60 / 60
-    if force or hours_since_last_update >= cache_hrs:
-        await cloud_providers.update()
+from cloudcheck import check
+from cloudcheck.providers import cloud_providers
 
 
 async def _main():
