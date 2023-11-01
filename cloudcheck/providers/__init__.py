@@ -41,7 +41,11 @@ class CloudProviders:
     def load_from_json(self):
         if self.json_path.is_file():
             with open(self.json_path) as f:
-                j = json.load(f)
+                try:
+                    j = json.load(f)
+                except Exception as e:
+                    log.warning(f"Failed to parsed JSON at {self.json_path}")
+                    return
                 for provider_name, provider_class in providers.items():
                     provider_json = j[provider_name]
                     self.providers[provider_name] = provider_class(
