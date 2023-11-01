@@ -74,7 +74,7 @@ class CloudProviders:
                 f.write(response.content)
             self.load_from_json()
         else:
-
+            log.warning(f"Failed to retrieve update from {self.json_url} (response: {response})")
 
     async def update_from_sources(self):
         tasks = [asyncio.create_task(p.update()) for p in self]
