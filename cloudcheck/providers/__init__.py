@@ -44,7 +44,7 @@ class CloudProviders:
                 try:
                     j = json.load(f)
                 except Exception as e:
-                    log.warning(f"Failed to parsed JSON at {self.json_path}")
+                    log.warning(f"Failed to parsed JSON at {self.json_path}: {e}")
                     return
                 for provider_name, provider_class in providers.items():
                     provider_json = j[provider_name]
@@ -61,13 +61,16 @@ class CloudProviders:
         for net in ip_network_parents(ip):
             for provider in self:
                 if net in provider:
+                    print(net)
+                    print(provider)
+                    print(provider.ranges)
                     return provider.name, provider.provider_type, net
         return (None, None, None)
 
     def check_host(self, host):
         for provider in self:
             domain = provider.domain_match(host)
-            if domain is not None:
+            if domain:
                 return provider.name, provider.provider_type, domain
         return (None, None, None)
 
@@ -78,7 +81,9 @@ class CloudProviders:
                 f.write(response.content)
             self.load_from_json()
         else:
-            log.warning(f"Failed to retrieve update from {self.json_url} (response: {response})")
+            log.warning(
+                f"Failed to retrieve update from {self.json_url} (response: {response})"
+            )
 
     async def update_from_sources(self):
         tasks = [asyncio.create_task(p.update()) for p in self]
