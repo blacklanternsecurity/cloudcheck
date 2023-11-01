@@ -61,9 +61,6 @@ class CloudProviders:
         for net in ip_network_parents(ip):
             for provider in self:
                 if net in provider:
-                    print(net)
-                    print(provider)
-                    print(provider.ranges)
                     return provider.name, provider.provider_type, net
         return (None, None, None)
 
