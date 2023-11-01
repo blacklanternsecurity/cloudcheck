@@ -56,7 +56,7 @@ class CloudProviders:
                 if net in provider:
                     return provider.name, provider.provider_type, net
         return (None, None, None)
-    
+
     def check_host(self, host):
         for provider in self:
             domain = provider.domain_match(host)

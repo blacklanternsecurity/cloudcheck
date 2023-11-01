@@ -50,7 +50,9 @@ class BaseCloudProvider:
         self.signatures = {}
         self.domain_regexes = {}
         for domain in self.domains:
-            self.domain_regexes[domain] = re.compile(r"^(?:[\w\-]+\.)*" + rf"{re.escape(domain)}$")
+            self.domain_regexes[domain] = re.compile(
+                r"^(?:[\w\-]+\.)*" + rf"{re.escape(domain)}$"
+            )
         for data_type, regexes in self.regexes.items():
             self.signatures[data_type] = [re.compile(r, re.I) for r in regexes]
 
