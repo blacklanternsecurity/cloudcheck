@@ -1,12 +1,15 @@
 import json
 import httpx
 import asyncio
+import logging
 import importlib
 from pathlib import Path
 from datetime import datetime
 
 from .base import BaseCloudProvider
 from ..helpers import is_ip, ip_network_parents, CustomJSONEncoder
+
+log = logging.getLogger("cloudcheck.providers")
 
 # dynamically load cloud provider modules
 providers = {}
@@ -65,10 +68,13 @@ class CloudProviders:
         return (None, None, None)
 
     async def update(self):
-        response = self.httpx_client.get(self.json_url)
-        with open(self.json_path, "w") as f:
-            f.write(response.content)
-        self.load_from_json()
+        response = await self.httpx_client.get(self.json_url)
+        if response:
+            with open(self.json_path, "w") as f:
+                f.write(response.content)
+            self.load_from_json()
+        else:
+
 
     async def update_from_sources(self):
         tasks = [asyncio.create_task(p.update()) for p in self]
