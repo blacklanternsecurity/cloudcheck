@@ -74,7 +74,7 @@ class CloudProviders:
     async def update(self):
         response = await self.httpx_client.get(self.json_url)
         if response:
-            with open(self.json_path, "w") as f:
+            with open(self.json_path, "wb") as f:
                 f.write(response.content)
             self.load_from_json()
         else:
