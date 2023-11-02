@@ -43,7 +43,7 @@ class CloudProviders:
             with open(self.json_path) as f:
                 try:
                     j = json.load(f)
-                    for k,v in list(j.items()):
+                    for k, v in list(j.items()):
                         j[k.lower()] = j.pop(k)
                 except Exception as e:
                     log.warning(f"Failed to parsed JSON at {self.json_path}: {e}")
