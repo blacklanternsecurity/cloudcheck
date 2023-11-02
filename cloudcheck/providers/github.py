@@ -5,6 +5,7 @@ from .base import BaseCloudProvider
 
 class GitHub(BaseCloudProvider):
     ips_url = "https://api.github.com/meta"
+    domains = ["github.com"]
     provider_type = "cdn"
 
     def parse_response(self, response):

@@ -5,7 +5,10 @@ from .base import BaseCloudProvider
 
 class DigitalOcean(BaseCloudProvider):
     domains = [
+        "digitalocean.com",
         "digitaloceanspaces.com",
+        "do.co",
+        "nginxconfig.io",
     ]
 
     bucket_name_regex = r"[a-z0-9][a-z0-9-]{2,62}"

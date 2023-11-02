@@ -11,6 +11,7 @@ class Google(BaseCloudProvider):
         "gcp.gvt2.com",
         "appspot.com",
         "firebaseio.com",
+        "google",
     ]
 
     bucket_name_regex = r"[a-z0-9][a-z0-9-_\.]{1,61}[a-z0-9]"
