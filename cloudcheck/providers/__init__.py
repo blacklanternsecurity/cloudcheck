@@ -24,7 +24,7 @@ for file in Path(__file__).parent.glob("*.py"):
                 and not value == BaseCloudProvider
                 and BaseCloudProvider in value.__mro__
             ):
-                provider_name = value.__name__
+                provider_name = value.__name__.lower()
                 providers[provider_name] = value
 
 
