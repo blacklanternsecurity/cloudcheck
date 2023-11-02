@@ -14,6 +14,7 @@ log = logging.getLogger("cloudcheck.providers")
 
 
 class CloudProviderJSON(BaseModel):
+    name: str = ""
     domains: List[str] = []
     cidrs: List[Union[ipaddress.IPv4Network, ipaddress.IPv6Network]] = []
     last_updated: datetime = datetime.now()
@@ -83,6 +84,7 @@ class BaseCloudProvider:
         ips_url: str = ""
         """
         return CloudProviderJSON(
+            name=self.name,
             domains=self.domains,
             cidrs=sorted([str(r) for r in self.ranges]),
             last_updated=self.last_updated,
