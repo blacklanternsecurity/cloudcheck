@@ -47,7 +47,7 @@ class CloudProviders:
                     log.warning(f"Failed to parsed JSON at {self.json_path}: {e}")
                     return
                 for provider_name, provider_class in providers.items():
-                    provider_json = j[provider_name]
+                    provider_json = j.get(provider_name, {})
                     self.providers[provider_name] = provider_class(
                         provider_json, self.httpx_client
                     )

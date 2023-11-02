@@ -42,7 +42,7 @@ class BaseCloudProvider:
         self._log = None
         p = CloudProviderJSON(**j)
         self.domains = [d.lower() for d in set(self.domains + p.domains)]
-        self.ranges = CidrRanges(j["cidrs"])
+        self.ranges = CidrRanges(p.cidrs)
         self.last_updated = p.last_updated
 
         self._bucket_name_regex = re.compile("^" + self.bucket_name_regex + "$", re.I)
