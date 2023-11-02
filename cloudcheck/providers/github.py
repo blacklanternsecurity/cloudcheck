@@ -3,7 +3,7 @@ import ipaddress
 from .base import BaseCloudProvider
 
 
-class Github(BaseCloudProvider):
+class GitHub(BaseCloudProvider):
     ips_url = "https://api.github.com/meta"
     provider_type = "cdn"
 
