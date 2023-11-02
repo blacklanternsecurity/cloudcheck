@@ -80,7 +80,7 @@ class CloudProviders:
             response = await self.httpx_client.get(self.json_url)
         except Exception as e:
             error = e
-        if response is not None and response.status_code == 200:
+        if response is not None and response.status_code == 200 and response.content:
             with open(self.json_path, "wb") as f:
                 f.write(response.content)
             self.load_from_json()
@@ -98,6 +98,7 @@ class CloudProviders:
                 json.dump(
                     self.to_json(), f, sort_keys=True, indent=4, cls=CustomJSONEncoder
                 )
+            self.load_from_json()
 
     def to_json(self):
         return {n: p.to_json() for n, p in self.providers.items()}
