@@ -92,10 +92,12 @@ class CloudProviders:
     async def update_from_sources(self):
         tasks = [asyncio.create_task(p.update()) for p in self]
         await asyncio.gather(*tasks)
-        with open(self.json_path, "w") as f:
-            json.dump(
-                self.to_json(), f, sort_keys=True, indent=4, cls=CustomJSONEncoder
-            )
+        j = self.to_json()
+        if j:
+            with open(self.json_path, "w") as f:
+                json.dump(
+                    self.to_json(), f, sort_keys=True, indent=4, cls=CustomJSONEncoder
+                )
 
     def to_json(self):
         return {n: p.to_json() for n, p in self.providers.items()}
