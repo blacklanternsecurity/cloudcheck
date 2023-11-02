@@ -8,6 +8,7 @@ from typing import Dict, List, Union
 from pydantic import BaseModel, field_validator
 
 from ..cidr import CidrRanges
+from ..helpers import domain_parents
 
 log = logging.getLogger("cloudcheck.providers")
 
@@ -41,7 +42,9 @@ class BaseCloudProvider:
         self._httpx_client = httpx_client
         self._log = None
         p = CloudProviderJSON(**j)
-        self.domains = [d.lower() for d in set(self.domains + p.domains)]
+        self.domains = set(
+            [d.lower() for d in set(list(self.domains) + list(p.domains))]
+        )
         self.ranges = CidrRanges(p.cidrs)
         self.last_updated = p.last_updated
 
@@ -112,9 +115,9 @@ class BaseCloudProvider:
         return self._bucket_name_regex.match(bucket_name)
 
     def domain_match(self, s):
-        for d, r in self.domain_regexes.items():
-            if r.match(s):
-                return d
+        for domain_parent in domain_parents(s):
+            if domain_parent in self.domains:
+                return domain_parent
         return False
 
     def __str__(self):

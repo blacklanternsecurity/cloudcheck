@@ -7,7 +7,7 @@ from pathlib import Path
 from datetime import datetime
 
 from .base import BaseCloudProvider
-from ..helpers import is_ip, ip_network_parents, CustomJSONEncoder
+from ..helpers import is_ip, ip_network_parents, domain_parents, CustomJSONEncoder
 
 log = logging.getLogger("cloudcheck.providers")
 
@@ -65,10 +65,10 @@ class CloudProviders:
         return (None, None, None)
 
     def check_host(self, host):
-        for provider in self:
-            domain = provider.domain_match(host)
-            if domain:
-                return provider.name, provider.provider_type, domain
+        for domain_parent in domain_parents(host):
+            for provider in self:
+                if domain_parent in provider.domains:
+                    return provider.name, provider.provider_type, domain_parent
         return (None, None, None)
 
     async def update(self):

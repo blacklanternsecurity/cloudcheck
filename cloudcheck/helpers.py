@@ -36,6 +36,13 @@ def is_ip(d, version=None):
     return False
 
 
+def domain_parents(host):
+    split_host = str(host).lower().split(".")
+    split_host_len = len(split_host)
+    for i in range(split_host_len):
+        yield ".".join(split_host[split_host_len - i - 1 :])
+
+
 def ip_network_parents(ip, include_self=False):
     """
     "192.168.1.1" --> [192.168.1.0/31, 192.168.1.0/30 ... 128.0.0.0/1, 0.0.0.0/0]
