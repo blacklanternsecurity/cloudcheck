@@ -11449,7 +11449,7 @@
         "provider_type": "cloud",
         "regexes": {}
     },
-    "Github": {
+    "GitHub": {
         "bucket_name_regex": "",
         "cidrs": [
             "104.208.0.0/19",
