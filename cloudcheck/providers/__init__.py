@@ -75,14 +75,18 @@ class CloudProviders:
         return (None, None, None)
 
     async def update(self):
-        response = await self.httpx_client.get(self.json_url)
+        response, error = None, None
+        try:
+            response = await self.httpx_client.get(self.json_url)
+        except Exception as e:
+            error = e
         if response:
             with open(self.json_path, "wb") as f:
                 f.write(response.content)
             self.load_from_json()
         else:
             log.warning(
-                f"Failed to retrieve update from {self.json_url} (response: {response})"
+                f"Failed to retrieve update from {self.json_url} (response: {response}, error: {error})"
             )
 
     async def update_from_sources(self):
