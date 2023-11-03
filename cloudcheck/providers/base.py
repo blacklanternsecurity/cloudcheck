@@ -85,12 +85,13 @@ class BaseCloudProvider:
         """
         return CloudProviderJSON(
             name=self.name,
-            domains=self.domains,
+            domains=sorted(self.domains),
             cidrs=sorted([str(r) for r in self.ranges]),
             last_updated=self.last_updated,
-            regex=self.regexes,
+            regexes=self.regexes,
             provider_type=self.provider_type,
             ips_url=self.ips_url,
+            bucket_name_regex=self.bucket_name_regex,
         ).dict()
 
     @property
