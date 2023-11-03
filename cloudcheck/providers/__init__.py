@@ -101,7 +101,10 @@ class CloudProviders:
             self.load_from_json()
 
     def to_json(self):
-        return {n: p.to_json() for n, p in self.providers.items()}
+        d = {}
+        for n, p in self.providers.items():
+            d[p.name] = p.to_json()
+        return d
 
     @property
     def last_updated(self):
