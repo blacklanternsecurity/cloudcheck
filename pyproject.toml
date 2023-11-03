@@ -5,7 +5,7 @@ description = "Check whether an IP address belongs to a cloud provider"
 authors = ["TheTechromancer"]
 license = "GPL-3.0"
 readme = "README.md"
-include = ["cloudcheck/cloud_providers.json"]
+include = ["cloud_providers.json"]
 
 [tool.poetry.scripts]
 cloudcheck = 'cloudcheck.cloudcheck:main'
