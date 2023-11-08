@@ -29,7 +29,7 @@ for file in Path(__file__).parent.glob("*.py"):
 
 
 class CloudProviders:
-    json_url = "https://raw.githubusercontent.com/blacklanternsecurity/cloudcheck/master/cloud_providers.json"
+    json_url = "https://raw.githubusercontent.com/blacklanternsecurity/cloudcheck/async-rework/cloud_providers.json"
     json_path = Path(__file__).parent.parent.parent / "cloud_providers.json"
 
     def __init__(self, httpx_client=None):
