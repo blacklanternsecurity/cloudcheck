@@ -54,7 +54,7 @@ jobs:
           pip install poetry
           poetry install
       - name: Update cloud_providers.json
-        run: poetry run cloudcheck update
+        run: poetry run cloudcheck forceupdate
       - name: git add cloud_providers.json
         uses: EndBug/add-and-commit@v9
         with:

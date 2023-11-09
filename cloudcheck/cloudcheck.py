@@ -8,8 +8,11 @@ from cloudcheck.providers import cloud_providers
 async def _main():
     ips = sys.argv[1:]
     if not ips:
-        print("usage: cloudcheck 1.2.3.4 [update | [ips...]]")
+        print("usage: cloudcheck 1.2.3.4 [update | forceupdate | [ips...]]")
     elif len(ips) == 1 and ips[0].lower() == "update":
+        await cloud_providers.update()
+        return
+    elif len(ips) == 1 and ips[0].lower() == "forceupdate":
         await cloud_providers.update_from_sources()
         return
     for ip in ips:
