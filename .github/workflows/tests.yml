@@ -3,8 +3,8 @@ on:
   push:
   pull_request:
   schedule:
-    # At 12:42 every Saturday
-    - cron:  '42 12 * * 6'
+    # At 00:25 every day
+    - cron:  '25 0 * * *'
 jobs:
   lint:
     runs-on: ubuntu-latest
