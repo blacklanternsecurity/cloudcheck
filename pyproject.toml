@@ -6,6 +6,12 @@ authors = ["TheTechromancer"]
 license = "GPL-3.0"
 readme = "README.md"
 include = ["cloud_providers.json"]
+repository = "https://github.com/blacklanternsecurity/cloudcheck"
+homepage = "https://github.com/blacklanternsecurity/cloudcheck"
+
+[tool.poetry.urls]
+"Discord" = "https://discord.com/invite/PZqkgxu5SA"
+"PyPi" = "https://pypi.org/project/cloudcheck/"
 
 [tool.poetry.scripts]
 cloudcheck = 'cloudcheck.cloudcheck:main'
