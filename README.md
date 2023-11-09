@@ -1,8 +1,8 @@
 # CloudCheck
 
-A simple Python utility to check whether an IP address belongs to a cloud provider.
+A simple Python utility to check whether an IP address or hostname belongs to a cloud provider.
 
-`cloud_providers.json` contains up-to-date lists of CIDRs for each cloud provider (updated weekly via CI/CD).
+`cloud_providers.json` contains lists of domains and up-to-date CIDRs for each cloud provider (updated weekly via CI/CD).
 
 Used by [Bighuge BLS OSINT Tool (BBOT)](https://github.com/blacklanternsecurity/bbot).
 
@@ -16,8 +16,8 @@ pip install cloudcheck
 $ cloudcheck 168.62.20.37
 168.62.20.37 belongs to Azure (cloud) (168.62.0.0/19)
 
-$ cloudcheck 104.16.0.1
-104.16.0.1 belongs to Cloudflare (cdn) (104.16.0.0/13)
+$ cloudcheck test.evilcorp.azurewebsites.net
+test.evilcorp.azurewebsites.net belongs to Azure (cloud) (azurewebsites.net)
 ~~~
 
 ## Usage - Python
