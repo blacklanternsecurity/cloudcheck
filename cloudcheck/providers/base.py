@@ -17,7 +17,7 @@ class CloudProviderJSON(BaseModel):
     name: str = ""
     domains: List[str] = []
     cidrs: List[Union[ipaddress.IPv4Network, ipaddress.IPv6Network]] = []
-    last_updated: datetime = datetime.now()
+    last_updated: datetime = datetime.min
     bucket_name_regex: str = ""
     regexes: Dict[str, List[str]] = {}
     provider_type: str = "cloud"
@@ -42,12 +42,13 @@ class BaseCloudProvider:
     def __init__(self, j, httpx_client=None):
         self._httpx_client = httpx_client
         self._log = None
-        p = CloudProviderJSON(**j)
-        self.domains = set(
-            [d.lower() for d in set(list(self.domains) + list(p.domains))]
-        )
-        self.ranges = CidrRanges(p.cidrs)
-        self.last_updated = p.last_updated
+        if j is not None:
+            p = CloudProviderJSON(**j)
+            self.domains = set(
+                [d.lower() for d in set(list(self.domains) + list(p.domains))]
+            )
+            self.ranges = CidrRanges(p.cidrs)
+            self.last_updated = p.last_updated
 
         self._bucket_name_regex = re.compile("^" + self.bucket_name_regex + "$", re.I)
 

@@ -53,6 +53,10 @@ class CloudProviders:
                     self.providers[provider_name] = provider_class(
                         provider_json, self.httpx_client
                     )
+        else:
+            for provider_name, provider_class in providers.items():
+                provider_name = provider_name.lower()
+                self.providers[provider_name] = provider_class(None, self.httpx_client)
 
     def check(self, host):
         if is_ip(host):
