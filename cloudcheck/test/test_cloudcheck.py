@@ -56,6 +56,8 @@ async def test_cloudcheck():
         amazon_range,
     )
 
+    assert cloud_providers.last_updated
+
 
 if __name__ == "__main__":
     asyncio.run(test_cloudcheck())
