@@ -4,7 +4,7 @@ import asyncio
 import logging
 import importlib
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from .base import BaseCloudProvider
 from ..helpers import is_ip, ip_network_parents, domain_parents, CustomJSONEncoder
@@ -33,7 +33,6 @@ class CloudProviders:
     json_path = Path(__file__).parent.parent.parent / "cloud_providers.json"
 
     def __init__(self, httpx_client=None):
-        self.now = datetime.now().isoformat()
         self.providers = {}
         self._httpx_client = httpx_client
         self.load_from_json()
@@ -74,8 +73,12 @@ class CloudProviders:
                     return provider.name, provider.provider_type, domain_parent
         return (None, None, None)
 
-    async def update(self):
+    async def update(self, days=1, force=False):
         response, error = None, None
+        delta = timedelta(days=days)
+        oldest_allowed = datetime.now() - delta
+        if self.last_updated > oldest_allowed and not force:
+            return
         try:
             response = await self.httpx_client.get(self.json_url)
         except Exception as e:
@@ -108,7 +111,10 @@ class CloudProviders:
 
     @property
     def last_updated(self):
-        return max([p.last_updated for p in self])
+        if self:
+            return max([p.last_updated for p in self])
+        else:
+            return datetime.min
 
     @property
     def httpx_client(self):
@@ -118,6 +124,9 @@ class CloudProviders:
 
     def __iter__(self):
         yield from self.providers.values()
+
+    def __bool__(self):
+        return bool(list(self))
 
 
 cloud_providers = CloudProviders()
