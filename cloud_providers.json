@@ -103,7 +103,7 @@
             "srtcdn.net"
         ],
         "ips_url": "https://techdocs.akamai.com/property-manager/pdfs/akamai_ipv4_ipv6_CIDRs-txt.zip",
-        "last_updated": "2024-01-09T00:43:26.764233",
+        "last_updated": "2024-01-09T16:46:42.619126",
         "name": "Akamai",
         "provider_type": "cdn",
         "regexes": {}
@@ -565,6 +565,8 @@
             "13.34.11.192/27",
             "13.34.11.224/27",
             "13.34.11.32/27",
+            "13.34.110.0/27",
+            "13.34.110.32/27",
             "13.34.12.192/27",
             "13.34.12.224/27",
             "13.34.12.64/27",
@@ -6373,7 +6375,7 @@
             "thinkboxsoftware.com"
         ],
         "ips_url": "https://ip-ranges.amazonaws.com/ip-ranges.json",
-        "last_updated": "2024-01-09T00:43:26.187757",
+        "last_updated": "2024-01-09T16:46:42.442905",
         "name": "Amazon",
         "provider_type": "cloud",
         "regexes": {
@@ -10069,7 +10071,7 @@
             "windowsazurestatus.cn"
         ],
         "ips_url": "https://download.microsoft.com/download/0/1/8/018E208D-54F8-44CD-AA26-CD7BC9524A8C/PublicIPs_20200824.xml",
-        "last_updated": "2024-01-09T00:43:26.002819",
+        "last_updated": "2024-01-09T16:46:42.378943",
         "name": "Azure",
         "provider_type": "cloud",
         "regexes": {
@@ -10138,7 +10140,7 @@
             "workers.dev"
         ],
         "ips_url": "https://api.cloudflare.com/client/v4/ips",
-        "last_updated": "2024-01-09T00:43:26.007140",
+        "last_updated": "2024-01-09T16:46:42.336173",
         "name": "Cloudflare",
         "provider_type": "cdn",
         "regexes": {}
@@ -11749,7 +11751,7 @@
             "nginxconfig.io"
         ],
         "ips_url": "https://digitalocean.com/geo/google.csv",
-        "last_updated": "2024-01-09T00:43:26.421164",
+        "last_updated": "2024-01-09T16:46:42.562372",
         "name": "DigitalOcean",
         "provider_type": "cloud",
         "regexes": {
@@ -16020,7 +16022,7 @@
             "github.com"
         ],
         "ips_url": "https://api.github.com/meta",
-        "last_updated": "2024-01-09T00:43:26.120573",
+        "last_updated": "2024-01-09T16:46:42.329010",
         "name": "GitHub",
         "provider_type": "cdn",
         "regexes": {}
@@ -16692,7 +16694,7 @@
             "googleapis.com"
         ],
         "ips_url": "https://www.gstatic.com/ipranges/cloud.json",
-        "last_updated": "2024-01-09T00:43:26.030817",
+        "last_updated": "2024-01-09T16:46:42.348280",
         "name": "Google",
         "provider_type": "cloud",
         "regexes": {
@@ -17375,7 +17377,7 @@
             "sun.com"
         ],
         "ips_url": "https://docs.oracle.com/en-us/iaas/tools/public_ip_ranges.json",
-        "last_updated": "2024-01-09T00:43:26.470284",
+        "last_updated": "2024-01-09T16:46:42.688665",
         "name": "Oracle",
         "provider_type": "cloud",
         "regexes": {}
