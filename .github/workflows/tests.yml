@@ -41,7 +41,7 @@ jobs:
           poetry run pytest --exitfirst --disable-warnings --log-cli-level=DEBUG
   update:
     runs-on: ubuntu-latest
-    continue-on-error: true
+    if: github.actor != 'dependabot[bot]'
     needs: test
     if: github.event_name == 'push' || github.event_name == 'schedule'
     steps:
