@@ -298,6 +298,19 @@ dev = ["pre-commit", "tox"]
 testing = ["pytest", "pytest-benchmark"]
 
 [[package]]
+name = "pyasn"
+version = "1.6.2"
+description = "Offline IP address to Autonomous System Number lookup module."
+optional = false
+python-versions = "*"
+files = [
+    {file = "pyasn-1.6.2.tar.gz", hash = "sha256:a2d55fb3ee47947609f50211ca5b0bac411a86f3c935fb92ca4b0b8ab7c668ff"},
+]
+
+[package.extras]
+test = ["pytest"]
+
+[[package]]
 name = "pycodestyle"
 version = "2.11.1"
 description = "Python style guide checker"
@@ -531,4 +544,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "49a8bdcb0b8eb07ce0d3645c9fdfd00ec43181d2f5c6d0e91e00580347c37cb0"
+content-hash = "2d9870f40166307890abb5f92488e5160982c10dd721c47dd311f1079669311d"

@@ -1,5 +1,6 @@
 import re
 import httpx
+import pyasn
 import logging
 import ipaddress
 import traceback
@@ -13,6 +14,12 @@ from ..helpers import domain_parents
 log = logging.getLogger("cloudcheck.providers")
 
 
+try:
+    asndb = pyasn.pyasn("asn.db")
+except Exception:
+    asndb = None
+
+
 class CloudProviderJSON(BaseModel):
     name: str = ""
     domains: List[str] = []
@@ -22,6 +29,7 @@ class CloudProviderJSON(BaseModel):
     regexes: Dict[str, List[str]] = {}
     provider_type: str = "cloud"
     ips_url: str = ""
+    asns: List[str] = []
 
     @field_validator("cidrs")
     @classmethod
@@ -38,6 +46,7 @@ class BaseCloudProvider:
     headers = {
         "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.5112.79 Safari/537.36"
     }
+    asns = []
 
     def __init__(self, j, httpx_client=None):
         self._httpx_client = httpx_client
@@ -63,16 +72,26 @@ class BaseCloudProvider:
 
     async def update(self):
         try:
-            response = await self.httpx_client.get(
-                self.ips_url, follow_redirects=True, headers=self.headers
-            )
-            ranges = self.parse_response(response)
-            if ranges:
-                self.ranges = CidrRanges(ranges)
-                self.last_updated = datetime.now()
+            self.last_updated = datetime.now()
+            self.ranges = CidrRanges(self.get_subnets())
+            if self.ips_url:
+                response = await self.httpx_client.get(
+                    self.ips_url, follow_redirects=True, headers=self.headers
+                )
+                ranges = self.parse_response(response)
+                if ranges:
+                    self.ranges.cidrs.update(ranges)
         except Exception as e:
             log.warning(f"Error retrieving {self.ips_url}: {e}")
             log.warning(traceback.format_exc())
+
+    def get_subnets(self):
+        subnets = set()
+        if asndb is not None:
+            for asn in self.asns:
+                for subnet in asndb.get_as_prefixes(asn):
+                    subnets.add(ipaddress.ip_network(subnet, strict=False))
+        return subnets
 
     def to_json(self):
         """
