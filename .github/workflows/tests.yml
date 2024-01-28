@@ -36,14 +36,18 @@ jobs:
         run: |
           pip install poetry
           poetry install
+      - name: Install ASN database
+        run: |
+          pip install pyasn
+          pyasn_util_download.py --latestv46
+          pyasn_util_convert.py --single rib.*.bz2 asn.db
       - name: Run tests
         run: |
           poetry run pytest --exitfirst --disable-warnings --log-cli-level=DEBUG
   update:
     runs-on: ubuntu-latest
-    if: github.actor != 'dependabot[bot]'
     needs: test
-    if: github.event_name == 'push' || github.event_name == 'schedule'
+    if: github.actor != 'dependabot[bot]' && (github.event_name == 'push' || github.event_name == 'schedule')
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python
