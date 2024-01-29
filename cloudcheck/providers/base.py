@@ -29,7 +29,7 @@ class CloudProviderJSON(BaseModel):
     regexes: Dict[str, List[str]] = {}
     provider_type: str = "cloud"
     ips_url: str = ""
-    asns: List[str] = []
+    asns: List[int] = []
 
     @field_validator("cidrs")
     @classmethod
@@ -51,12 +51,13 @@ class BaseCloudProvider:
     def __init__(self, j, httpx_client=None):
         self._httpx_client = httpx_client
         self._log = None
+        self.ranges = CidrRanges()
         if j is not None:
             p = CloudProviderJSON(**j)
             self.domains = set(
                 [d.lower() for d in set(list(self.domains) + list(p.domains))]
             )
-            self.ranges = CidrRanges(p.cidrs)
+            self.ranges.update(p.cidrs)
             self.last_updated = p.last_updated
 
         self._bucket_name_regex = re.compile("^" + self.bucket_name_regex + "$", re.I)
@@ -80,7 +81,7 @@ class BaseCloudProvider:
                 )
                 ranges = self.parse_response(response)
                 if ranges:
-                    self.ranges.cidrs.update(ranges)
+                    self.ranges.update(ranges)
         except Exception as e:
             log.warning(f"Error retrieving {self.ips_url}: {e}")
             log.warning(traceback.format_exc())
@@ -111,6 +112,7 @@ class BaseCloudProvider:
             regexes=self.regexes,
             provider_type=self.provider_type,
             ips_url=self.ips_url,
+            asns=self.asns,
             bucket_name_regex=self.bucket_name_regex,
         ).dict()
 
