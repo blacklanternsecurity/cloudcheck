@@ -58,6 +58,9 @@ async def test_cloudcheck():
 
     assert cloud_providers.last_updated
 
+    zoho = cloud_providers.providers["zoho"]
+    assert zoho.asns
+
 
 if __name__ == "__main__":
     asyncio.run(test_cloudcheck())

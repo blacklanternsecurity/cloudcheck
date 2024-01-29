@@ -9,8 +9,12 @@ class CidrRanges:
         https://github.com/yl2chen/cidranger
     """
 
-    def __init__(self, ranges):
+    def __init__(self, ranges=None):
         self.cidrs = set()
+        if ranges is not None:
+            self.update(ranges)
+
+    def update(self, ranges):
         for r in ranges:
             self.cidrs.add(ipaddress.ip_network(r, strict=False))
 
