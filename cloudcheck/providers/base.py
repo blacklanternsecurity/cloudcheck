@@ -90,8 +90,10 @@ class BaseCloudProvider:
         subnets = set()
         if asndb is not None:
             for asn in self.asns:
-                for subnet in asndb.get_as_prefixes(asn):
-                    subnets.add(ipaddress.ip_network(subnet, strict=False))
+                prefixes = asndb.get_as_prefixes(asn)
+                if prefixes:
+                    for subnet in prefixes:
+                        subnets.add(ipaddress.ip_network(subnet, strict=False))
         return subnets
 
     def to_json(self):
