@@ -2,7 +2,7 @@
 
 A simple Python utility to check whether an IP address or hostname belongs to a cloud provider.
 
-`cloud_providers.json` contains lists of domains and up-to-date CIDRs for each cloud provider (updated weekly via CI/CD).
+`cloud_providers.json` contains lists of domains and up-to-date CIDRs for each cloud provider (updated daily via CI/CD).
 
 Used by [Bighuge BLS OSINT Tool (BBOT)](https://github.com/blacklanternsecurity/bbot).
 
