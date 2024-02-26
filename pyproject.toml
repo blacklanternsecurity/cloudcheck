@@ -21,7 +21,7 @@ python = "^3.9"
 pydantic = "^2.4.2"
 httpx = "^0.26.0"
 pyasn = "^1.6.2"
-pytest = "^7.0"
+pytest = ">=7,<9"
 
 [tool.poetry.group.dev.dependencies]
 black = ">=22.12,<25.0"
