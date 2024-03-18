@@ -1,6 +1,5 @@
 import re
 import httpx
-import pyasn
 import logging
 import ipaddress
 import traceback
@@ -14,10 +13,7 @@ from ..helpers import domain_parents
 log = logging.getLogger("cloudcheck.providers")
 
 
-try:
-    asndb = pyasn.pyasn("asn.db")
-except Exception:
-    asndb = None
+asndb = None
 
 
 class CloudProviderJSON(BaseModel):
@@ -72,6 +68,16 @@ class BaseCloudProvider:
             self.signatures[data_type] = [re.compile(r, re.I) for r in regexes]
 
     async def update(self):
+        try:
+            import pyasn
+        except ModuleNotFoundError:
+            log.warning("Please install pyasn")
+            import os
+
+            os._exit(1)
+
+        global asndb
+        asndb = pyasn.pyasn("asn.db")
         try:
             self.last_updated = datetime.now()
             self.ranges = CidrRanges(self.get_subnets())

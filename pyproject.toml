@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "cloudcheck"
-version = "3.0.0.0"
+version = "3.1.0.0"
 description = "Check whether an IP address belongs to a cloud provider"
 authors = ["TheTechromancer"]
 license = "GPL-3.0"
@@ -19,14 +19,13 @@ cloudcheck = 'cloudcheck.cloudcheck:main'
 [tool.poetry.dependencies]
 python = "^3.9"
 pydantic = "^2.4.2"
-httpx = ">=0.26,<0.28"
-pyasn = "^1.6.2"
-pytest = "^7.0"
+httpx = "^0.26.0"
 
 [tool.poetry.group.dev.dependencies]
 black = ">=22.12,<25.0"
 flake8 = ">=6.1,<8.0"
 pytest-asyncio = ">=0.21.1,<0.24.0"
+pytest = "^8.1.1"
 
 [build-system]
 requires = ["poetry-core"]

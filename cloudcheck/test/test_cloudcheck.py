@@ -16,11 +16,13 @@ async def test_cloudcheck():
         "akamai",
         "cloudflare",
         "github",
+        "zoho",
+        "fastly",
     )
     for provider_name in provider_names:
         assert provider_name in cloud_providers.providers
         provider = cloud_providers.providers[provider_name]
-        assert provider.ranges or provider.domains
+        assert provider.ranges or provider.domains or provider.asns
 
     google = cloud_providers.providers["google"]
     assert google.domain_match("test.asdf.google") == "google"
