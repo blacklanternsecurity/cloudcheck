@@ -1,8 +1,8 @@
-import re
 import httpx
 import logging
 import ipaddress
 import traceback
+import regex as re
 from datetime import datetime
 from typing import Dict, List, Union
 from pydantic import BaseModel, field_validator
@@ -59,11 +59,6 @@ class BaseCloudProvider:
         self._bucket_name_regex = re.compile("^" + self.bucket_name_regex + "$", re.I)
 
         self.signatures = {}
-        self.domain_regexes = {}
-        for domain in self.domains:
-            self.domain_regexes[domain] = re.compile(
-                r"^(?:[\w\-]+\.)*" + rf"{re.escape(domain)}$"
-            )
         for data_type, regexes in self.regexes.items():
             self.signatures[data_type] = [re.compile(r, re.I) for r in regexes]
 
