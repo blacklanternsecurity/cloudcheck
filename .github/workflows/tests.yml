@@ -75,7 +75,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Dynamic version
-        run: "sed -i s/4.0.0.0/4.0.0.$(git rev-list HEAD --count)/g pyproject.toml"
+        run: "sed -i s/5.0.0.0/5.0.0.$(git rev-list HEAD --count)/g pyproject.toml"
       - uses: actions/setup-python@v4
         with:
           python-version: "3.x"

@@ -4,11 +4,11 @@ import ipaddress
 import traceback
 import regex as re
 from datetime import datetime
+from radixtarget import RadixTarget
 from typing import Dict, List, Union
 from pydantic import BaseModel, field_validator
 
-from ..cidr import CidrRanges
-from ..helpers import domain_parents
+from ..helpers import make_ip_type
 
 log = logging.getLogger("cloudcheck.providers")
 
@@ -47,13 +47,14 @@ class BaseCloudProvider:
     def __init__(self, j, httpx_client=None):
         self._httpx_client = httpx_client
         self._log = None
-        self.ranges = CidrRanges()
+        self.ranges = set()
+        self.radix = RadixTarget()
         if j is not None:
             p = CloudProviderJSON(**j)
-            self.domains = set(
+            self.update_domains(
                 [d.lower() for d in set(list(self.domains) + list(p.domains))]
             )
-            self.ranges.update(p.cidrs)
+            self.update_ranges(p.cidrs)
             self.last_updated = p.last_updated
 
         self._bucket_name_regex = re.compile("^" + self.bucket_name_regex + "$", re.I)
@@ -61,6 +62,9 @@ class BaseCloudProvider:
         self.signatures = {}
         for data_type, regexes in self.regexes.items():
             self.signatures[data_type] = [re.compile(r, re.I) for r in regexes]
+
+    def check(self, host):
+        return self.radix.search(host)
 
     async def update(self):
         try:
@@ -75,14 +79,14 @@ class BaseCloudProvider:
         asndb = pyasn.pyasn("asn.db")
         try:
             self.last_updated = datetime.now()
-            self.ranges = CidrRanges(self.get_subnets())
+            self.ranges = self.get_subnets()
             if self.ips_url:
                 response = await self.httpx_client.get(
                     self.ips_url, follow_redirects=True, headers=self.headers
                 )
                 ranges = self.parse_response(response)
                 if ranges:
-                    self.ranges.update(ranges)
+                    self.update_ranges(ranges)
         except Exception as e:
             log.warning(f"Error retrieving {self.ips_url}: {e}")
             log.warning(traceback.format_exc())
@@ -96,6 +100,16 @@ class BaseCloudProvider:
                     for subnet in prefixes:
                         subnets.add(ipaddress.ip_network(subnet, strict=False))
         return subnets
+
+    def update_ranges(self, ranges):
+        for r in ranges:
+            r = make_ip_type(r)
+            self.ranges.add(r)
+            self.radix.insert(r)
+
+    def update_domains(self, domains):
+        for d in domains:
+            self.radix.insert(d)
 
     def to_json(self):
         """
@@ -141,12 +155,6 @@ class BaseCloudProvider:
 
     def is_valid_bucket_name(self, bucket_name):
         return self._bucket_name_regex.match(bucket_name)
-
-    def domain_match(self, s):
-        for domain_parent in domain_parents(s):
-            if domain_parent in self.domains:
-                return domain_parent
-        return False
 
     def __str__(self):
         return self.name
