@@ -18,10 +18,12 @@ async def _main():
         await cloud_providers.update_from_sources()
         return
     for ip in ips:
-        provider, provider_type, subnet = check(ip)
-        if provider:
-            print(f"{ip} belongs to {provider} ({provider_type}) ({subnet})")
-        else:
+        _provider = False
+        for provider, provider_type, subnet in check(ip):
+            if provider:
+                _provider = True
+                print(f"{ip} belongs to {provider} ({provider_type}) ({subnet})")
+        if not _provider:
             print(f"{ip} is not listed as a cloud resource")
 
 

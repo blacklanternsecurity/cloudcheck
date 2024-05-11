@@ -1,3 +1,5 @@
+import os
+import sys
 import pytest
 import asyncio
 
@@ -59,6 +61,21 @@ async def test_cloudcheck():
 
     zoho = cloud_providers.providers["zoho"]
     assert zoho.asns
+
+
+@pytest.mark.asyncio
+async def test_cloudcheck_cli(monkeypatch, capsys):
+
+    from cloudcheck.cloudcheck import _main
+
+    monkeypatch.setattr(sys, "exit", lambda *args, **kwargs: True)
+    monkeypatch.setattr(os, "_exit", lambda *args, **kwargs: True)
+
+    # show version
+    monkeypatch.setattr("sys.argv", ["cloudcheck", "azure.com"])
+    await _main()
+    out, err = capsys.readouterr()
+    assert out == "azure.com belongs to Azure (cloud) (azure.com)\n"
 
 
 if __name__ == "__main__":

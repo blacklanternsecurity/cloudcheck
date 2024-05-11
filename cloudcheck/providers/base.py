@@ -131,7 +131,7 @@ class BaseCloudProvider:
             ips_url=self.ips_url,
             asns=self.asns,
             bucket_name_regex=self.bucket_name_regex,
-        ).dict()
+        ).model_dump()
 
     @property
     def httpx_client(self):

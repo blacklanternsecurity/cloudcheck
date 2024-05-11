@@ -11,6 +11,8 @@ from ..helpers import CustomJSONEncoder, make_ip_type
 
 log = logging.getLogger("cloudcheck.providers")
 
+code_path = Path(__file__).parent.parent.parent
+
 # dynamically load cloud provider modules
 providers = {}
 for file in Path(__file__).parent.glob("*.py"):
@@ -30,11 +32,13 @@ for file in Path(__file__).parent.glob("*.py"):
 
 class CloudProviders:
     json_url = "https://raw.githubusercontent.com/blacklanternsecurity/cloudcheck/master/cloud_providers.json"
-    json_path = Path(__file__).parent.parent.parent / "cloud_providers.json"
+    json_path = code_path / "cloud_providers.json"
+    cache_path = code_path / ".cloudcheck_cache"
 
     def __init__(self, httpx_client=None):
         self.providers = {}
         self._httpx_client = httpx_client
+        self.cache_key = None
         self.load_from_json()
 
     def load_from_json(self):
@@ -53,6 +57,7 @@ class CloudProviders:
                     self.providers[provider_name] = provider_class(
                         provider_json, self.httpx_client
                     )
+                self.cache_key = self.json_path.stat()
         else:
             for provider_name, provider_class in providers.items():
                 provider_name = provider_name.lower()
