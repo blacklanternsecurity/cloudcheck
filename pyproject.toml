@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "cloudcheck"
-version = "5.0.0.0"
+version = "5.0.1.0"
 description = "Check whether an IP address belongs to a cloud provider"
 authors = ["TheTechromancer"]
 license = "GPL-3.0"
