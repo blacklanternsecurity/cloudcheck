@@ -3878,9 +3878,6 @@
             "23.193.60.0/22",
             "23.193.64.0/19",
             "23.193.96.0/22",
-            "23.193.96.0/24",
-            "23.193.97.0/24",
-            "23.193.98.0/24",
             "23.194.0.0/20",
             "23.194.100.0/22",
             "23.194.104.0/22",
@@ -5441,6 +5438,7 @@
             "23.217.58.0/24",
             "23.217.59.0/24",
             "23.217.60.0/22",
+            "23.217.64.0/19",
             "23.217.8.0/24",
             "23.217.9.0/24",
             "23.217.96.0/24",
@@ -7471,6 +7469,7 @@
             "23.55.247.0/24",
             "23.55.248.0/22",
             "23.55.252.0/22",
+            "23.55.32.0/22",
             "23.55.38.0/24",
             "23.55.39.0/24",
             "23.55.40.0/22",
@@ -11680,7 +11679,7 @@
             "srtcdn.net"
         ],
         "ips_url": "https://techdocs.akamai.com/property-manager/pdfs/akamai_ipv4_ipv6_CIDRs-txt.zip",
-        "last_updated": "2024-06-09T00:39:42.088170",
+        "last_updated": "2024-06-10T00:39:19.946582",
         "name": "Akamai",
         "provider_type": "cdn",
         "regexes": {}
@@ -19425,7 +19424,7 @@
             "thinkboxsoftware.com"
         ],
         "ips_url": "https://ip-ranges.amazonaws.com/ip-ranges.json",
-        "last_updated": "2024-06-09T00:39:44.774424",
+        "last_updated": "2024-06-10T00:39:22.594660",
         "name": "Amazon",
         "provider_type": "cloud",
         "regexes": {
@@ -23122,7 +23121,7 @@
             "windowsazurestatus.cn"
         ],
         "ips_url": "https://download.microsoft.com/download/0/1/8/018E208D-54F8-44CD-AA26-CD7BC9524A8C/PublicIPs_20200824.xml",
-        "last_updated": "2024-06-09T00:39:37.721445",
+        "last_updated": "2024-06-10T00:39:15.585895",
         "name": "Azure",
         "provider_type": "cloud",
         "regexes": {
@@ -23192,7 +23191,7 @@
             "workers.dev"
         ],
         "ips_url": "https://api.cloudflare.com/client/v4/ips",
-        "last_updated": "2024-06-09T00:39:38.175214",
+        "last_updated": "2024-06-10T00:39:16.041137",
         "name": "Cloudflare",
         "provider_type": "cdn",
         "regexes": {}
@@ -24349,7 +24348,7 @@
             "nginxconfig.io"
         ],
         "ips_url": "https://digitalocean.com/geo/google.csv",
-        "last_updated": "2024-06-09T00:39:41.631682",
+        "last_updated": "2024-06-10T00:39:19.489746",
         "name": "DigitalOcean",
         "provider_type": "cloud",
         "regexes": {
@@ -24391,7 +24390,7 @@
             "zencdn.net"
         ],
         "ips_url": "https://api.fastly.com/public-ip-list",
-        "last_updated": "2024-06-09T00:39:45.687287",
+        "last_updated": "2024-06-10T00:39:23.503322",
         "name": "Fastly",
         "provider_type": "cloud",
         "regexes": {}
@@ -29001,7 +29000,7 @@
             "github.com"
         ],
         "ips_url": "https://api.github.com/meta",
-        "last_updated": "2024-06-09T00:39:37.242943",
+        "last_updated": "2024-06-10T00:39:15.107494",
         "name": "GitHub",
         "provider_type": "cdn",
         "regexes": {}
@@ -29687,7 +29686,7 @@
             "googleapis.com"
         ],
         "ips_url": "https://www.gstatic.com/ipranges/cloud.json",
-        "last_updated": "2024-06-09T00:39:45.227739",
+        "last_updated": "2024-06-10T00:39:23.045941",
         "name": "Google",
         "provider_type": "cloud",
         "regexes": {
@@ -30439,7 +30438,7 @@
             "sun.com"
         ],
         "ips_url": "https://docs.oracle.com/en-us/iaas/tools/public_ip_ranges.json",
-        "last_updated": "2024-06-09T00:39:41.177057",
+        "last_updated": "2024-06-10T00:39:19.035216",
         "name": "Oracle",
         "provider_type": "cloud",
         "regexes": {}
@@ -30513,7 +30512,7 @@
             "zohowebstatic.com"
         ],
         "ips_url": "",
-        "last_updated": "2024-06-09T00:39:38.627105",
+        "last_updated": "2024-06-10T00:39:16.496448",
         "name": "Zoho",
         "provider_type": "cloud",
         "regexes": {}
