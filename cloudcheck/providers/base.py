@@ -16,6 +16,11 @@ log = logging.getLogger("cloudcheck.providers")
 asndb = None
 
 
+base_headers = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+}
+
+
 class CloudProviderJSON(BaseModel):
     name: str = ""
     domains: List[str] = []
@@ -39,13 +44,9 @@ class BaseCloudProvider:
     regexes = {}
     provider_type = "cloud"
     ips_url = ""
-    headers = {
-        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.5112.79 Safari/537.36"
-    }
     asns = []
 
-    def __init__(self, j, httpx_client=None):
-        self._httpx_client = httpx_client
+    def __init__(self, j):
         self._log = None
         self.ranges = set()
         self.radix = RadixTarget()
@@ -81,8 +82,11 @@ class BaseCloudProvider:
             self.last_updated = datetime.now()
             self.ranges = self.get_subnets()
             if self.ips_url:
-                response = await self.httpx_client.get(
-                    self.ips_url, follow_redirects=True, headers=self.headers
+                response = await httpx.get(
+                    self.ips_url,
+                    follow_redirects=True,
+                    headers=base_headers,
+                    verify=False,
                 )
                 ranges = self.parse_response(response)
                 if ranges:
@@ -132,12 +136,6 @@ class BaseCloudProvider:
             asns=self.asns,
             bucket_name_regex=self.bucket_name_regex,
         ).model_dump()
-
-    @property
-    def httpx_client(self):
-        if self._httpx_client is None:
-            self._httpx_client = httpx.AsyncClient(verify=False)
-        return self._httpx_client
 
     def parse_response(self, response):
         pass
