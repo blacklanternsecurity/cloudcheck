@@ -41,6 +41,9 @@ async def test_cloudcheck():
 
     amazon = cloud_providers.providers["amazon"]
     assert amazon.ranges
+    zoho = cloud_providers.providers["zoho"]
+    assert zoho.ranges
+
     amazon_range = next(iter(amazon.ranges))
     assert cloud_providers.check(amazon_range.broadcast_address) == [
         (
