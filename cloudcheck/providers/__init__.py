@@ -1,9 +1,11 @@
 import json
 import httpx
+import pickle
 import asyncio
 import logging
 import importlib
 from pathlib import Path
+from contextlib import suppress
 from datetime import datetime, timedelta
 
 from .base import BaseCloudProvider
@@ -35,33 +37,55 @@ class CloudProviders:
     json_path = code_path / "cloud_providers.json"
     cache_path = code_path / ".cloudcheck_cache"
 
-    def __init__(self, httpx_client=None):
+    def __init__(self):
         self.providers = {}
-        self._httpx_client = httpx_client
         self.cache_key = None
         self.load_from_json()
 
-    def load_from_json(self):
-        if self.json_path.is_file():
-            with open(self.json_path) as f:
-                try:
-                    j = json.load(f)
-                    for k in list(j):
-                        j[k.lower()] = j.pop(k)
-                except Exception as e:
-                    log.warning(f"Failed to parsed JSON at {self.json_path}: {e}")
-                    return
+    def load_from_json(self, force=False):
+        # loading from a pickled cache is about 1 second faster than loading from JSON
+        if (not force) and self.cache_path.is_file():
+            self.load_from_cache()
+        else:
+            if self.json_path.is_file():
+                with open(self.json_path) as f:
+                    try:
+                        j = json.load(f)
+                        for k in list(j):
+                            j[k.lower()] = j.pop(k)
+                    except Exception as e:
+                        log.warning(f"Failed to parse JSON at {self.json_path}: {e}")
+                        return
+                    for provider_name, provider_class in providers.items():
+                        provider_name = provider_name.lower()
+                        provider_json = j.get(provider_name, {})
+                        self.providers[provider_name] = provider_class(provider_json)
+                    self.cache_key = self.json_path.stat()
+            else:
                 for provider_name, provider_class in providers.items():
                     provider_name = provider_name.lower()
-                    provider_json = j.get(provider_name, {})
-                    self.providers[provider_name] = provider_class(
-                        provider_json, self.httpx_client
-                    )
-                self.cache_key = self.json_path.stat()
-        else:
-            for provider_name, provider_class in providers.items():
-                provider_name = provider_name.lower()
-                self.providers[provider_name] = provider_class(None, self.httpx_client)
+                    self.providers[provider_name] = provider_class(None)
+            self.write_cache()
+
+    def load_from_cache(self):
+        with open(self.cache_path, "rb") as f:
+            try:
+                self.providers = pickle.load(f)
+            except Exception as e:
+                with suppress(Exception):
+                    self.cache_path.unlink()
+                log.warning(
+                    f"Failed to load cloudcheck cache at {self.cache_path}: {e}"
+                )
+
+    def write_cache(self):
+        with open(self.cache_path, "wb") as f:
+            try:
+                pickle.dump(self.providers, f)
+            except Exception as e:
+                log.warning(
+                    f"Failed to write cloudcheck cache to {self.cache_path}: {e}"
+                )
 
     def check(self, host):
         host = make_ip_type(host)
@@ -79,13 +103,13 @@ class CloudProviders:
         if self.last_updated > oldest_allowed and not force:
             return
         try:
-            response = await self.httpx_client.get(self.json_url)
+            response = await httpx.get(self.json_url)
         except Exception as e:
             error = e
         if response is not None and response.status_code == 200 and response.content:
             with open(self.json_path, "wb") as f:
                 f.write(response.content)
-            self.load_from_json()
+            self.load_from_json(force=True)
         else:
             log.warning(
                 f"Failed to retrieve update from {self.json_url} (response: {response}, error: {error})"
@@ -100,7 +124,7 @@ class CloudProviders:
                 json.dump(
                     self.to_json(), f, sort_keys=True, indent=4, cls=CustomJSONEncoder
                 )
-            self.load_from_json()
+            self.load_from_json(force=True)
 
     def to_json(self):
         d = {}
@@ -114,12 +138,6 @@ class CloudProviders:
             return max([p.last_updated for p in self])
         else:
             return datetime.min
-
-    @property
-    def httpx_client(self):
-        if self._httpx_client is None:
-            self._httpx_client = httpx.AsyncClient(verify=False)
-        return self._httpx_client
 
     def __iter__(self):
         yield from self.providers.values()
