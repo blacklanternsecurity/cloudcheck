@@ -82,15 +82,15 @@ class BaseCloudProvider:
             self.last_updated = datetime.now()
             self.ranges = self.get_subnets()
             if self.ips_url:
-                response = await httpx.get(
-                    self.ips_url,
-                    follow_redirects=True,
-                    headers=base_headers,
-                    verify=False,
-                )
-                ranges = self.parse_response(response)
-                if ranges:
-                    self.update_ranges(ranges)
+                async with httpx.AsyncClient(transport=httpx.AsyncHTTPTransport(verify=False)) as client:
+                    response = await client.get(
+                        self.ips_url,
+                        follow_redirects=True,
+                        headers=base_headers,
+                    )
+                    ranges = self.parse_response(response)
+                    if ranges:
+                        self.update_ranges(ranges)
         except Exception as e:
             log.warning(f"Error retrieving {self.ips_url}: {e}")
             log.warning(traceback.format_exc())
