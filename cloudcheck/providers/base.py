@@ -82,7 +82,9 @@ class BaseCloudProvider:
             self.last_updated = datetime.now()
             self.ranges = self.get_subnets()
             if self.ips_url:
-                async with httpx.AsyncClient(transport=httpx.AsyncHTTPTransport(verify=False)) as client:
+                async with httpx.AsyncClient(
+                    transport=httpx.AsyncHTTPTransport(verify=False)
+                ) as client:
                     response = await client.get(
                         self.ips_url,
                         follow_redirects=True,

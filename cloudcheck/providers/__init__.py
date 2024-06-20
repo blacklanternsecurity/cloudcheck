@@ -103,7 +103,9 @@ class CloudProviders:
         if self.last_updated > oldest_allowed and not force:
             return
         try:
-            async with httpx.AsyncClient(transport=httpx.AsyncHTTPTransport(verify=False)) as client:
+            async with httpx.AsyncClient(
+                transport=httpx.AsyncHTTPTransport(verify=False)
+            ) as client:
                 response = await client.get(self.json_url)
         except Exception as e:
             error = e
