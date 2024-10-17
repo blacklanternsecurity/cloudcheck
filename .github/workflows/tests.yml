@@ -9,12 +9,12 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: psf/black@stable
         with:
           options: "--check"
       - name: Install Python 3
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: "3.x"
       - name: Install dependencies
@@ -26,12 +26,15 @@ jobs:
   test:
     needs: lint
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
-          python-version: "3.x"
+          python-version: ${{ matrix.python-version }}
       - name: Install dependencies
         run: |
           pip install poetry
@@ -44,9 +47,9 @@ jobs:
     needs: test
     if: github.ref == 'refs/heads/master' && github.actor != 'dependabot[bot]' && (github.event_name == 'push' || github.event_name == 'schedule')
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: "3.x"
       - name: Install dependencies
@@ -71,12 +74,12 @@ jobs:
     needs: update
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Dynamic version
-        run: "sed -i s/5.0.1.0/5.0.1.$(git rev-list HEAD --count)/g pyproject.toml"
-      - uses: actions/setup-python@v4
+        run: "sed -i s/6.0.0.0/6.0.0.$(git rev-list HEAD --count)/g pyproject.toml"
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.x"
       - name: Install dependencies
