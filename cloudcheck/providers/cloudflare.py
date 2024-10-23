@@ -36,7 +36,17 @@ class Cloudflare(BaseCloudProvider):
         "videodelivery.net",
         "warp.plus",
         "workers.dev",
+        "r2.dev",
     ]
+
+    bucket_name_regex = r"[a-z0-9_][a-z0-9-\.]{1,61}[a-z0-9]"
+    regexes = {
+        "STORAGE_BUCKET": [
+            r"(" + bucket_name_regex + r")\.(r2\.dev)",
+            r"(" + bucket_name_regex + r")\.(r2\.cloudflarestorage\.com)",
+        ]
+    }
+
     provider_type = "cdn"
 
     def parse_response(self, response):
