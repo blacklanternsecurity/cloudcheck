@@ -11,6 +11,7 @@ async def test_cloudcheck():
     provider_names = (
         "amazon",
         "google",
+        "hetzner",
         "azure",
         "digitalocean",
         "oracle",
