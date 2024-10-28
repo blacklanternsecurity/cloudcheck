@@ -2480,6 +2480,7 @@
             "2.16.32.0/23",
             "2.16.34.0/24",
             "2.16.35.0/24",
+            "2.16.37.0/24",
             "2.16.38.0/23",
             "2.16.4.0/23",
             "2.16.40.0/24",
@@ -3181,12 +3182,14 @@
             "2001:4878:2063::/48",
             "2001:4878:2068::/48",
             "2001:4878:2151::/48",
+            "2001:4878:215::/48",
             "2001:4878:2164::/48",
             "2001:4878:216::/48",
             "2001:4878:2173::/48",
             "2001:4878:21e0::/44",
             "2001:4878:2204::/48",
             "2001:4878:220::/48",
+            "2001:4878:2215::/48",
             "2001:4878:2216::/48",
             "2001:4878:2220::/48",
             "2001:4878:2225::/48",
@@ -3221,6 +3224,7 @@
             "2001:4878:4173::/48",
             "2001:4878:41e0::/44",
             "2001:4878:4204::/48",
+            "2001:4878:4215::/48",
             "2001:4878:4216::/48",
             "2001:4878:4220::/48",
             "2001:4878:4225::/48",
@@ -3247,6 +3251,7 @@
             "2001:4878:8173::/48",
             "2001:4878:81e0::/44",
             "2001:4878:8204::/48",
+            "2001:4878:8215::/48",
             "2001:4878:8216::/48",
             "2001:4878:8220::/48",
             "2001:4878:8225::/48",
@@ -3265,6 +3270,7 @@
             "2001:4878:a151::/48",
             "2001:4878:a173::/48",
             "2001:4878:a204::/48",
+            "2001:4878:a215::/48",
             "2001:4878:a216::/48",
             "2001:4878:a220::/48",
             "2001:4878:a225::/48",
@@ -3297,6 +3303,7 @@
             "2001:4878:c173::/48",
             "2001:4878:c1e0::/44",
             "2001:4878:c204::/48",
+            "2001:4878:c215::/48",
             "2001:4878:c216::/48",
             "2001:4878:c220::/48",
             "2001:4878:c225::/48",
@@ -11505,7 +11512,7 @@
             "srtcdn.net"
         ],
         "ips_url": "https://techdocs.akamai.com/property-manager/pdfs/akamai_ipv4_ipv6_CIDRs-txt.zip",
-        "last_updated": "2024-10-27T00:40:07.715540",
+        "last_updated": "2024-10-28T00:40:18.170571",
         "name": "Akamai",
         "provider_type": "cdn",
         "regexes": {}
@@ -17659,7 +17666,7 @@
             "thinkboxsoftware.com"
         ],
         "ips_url": "https://ip-ranges.amazonaws.com/ip-ranges.json",
-        "last_updated": "2024-10-27T00:40:07.239136",
+        "last_updated": "2024-10-28T00:40:17.703250",
         "name": "Amazon",
         "provider_type": "cloud",
         "regexes": {
@@ -21356,7 +21363,7 @@
             "windowsazurestatus.cn"
         ],
         "ips_url": "https://download.microsoft.com/download/0/1/8/018E208D-54F8-44CD-AA26-CD7BC9524A8C/PublicIPs_20200824.xml",
-        "last_updated": "2024-10-27T00:40:05.344663",
+        "last_updated": "2024-10-28T00:40:15.831805",
         "name": "Azure",
         "provider_type": "cloud",
         "regexes": {
@@ -21427,7 +21434,7 @@
             "workers.dev"
         ],
         "ips_url": "https://api.cloudflare.com/client/v4/ips",
-        "last_updated": "2024-10-27T00:40:06.764989",
+        "last_updated": "2024-10-28T00:40:17.237921",
         "name": "Cloudflare",
         "provider_type": "cdn",
         "regexes": {
@@ -22593,7 +22600,7 @@
             "nginxconfig.io"
         ],
         "ips_url": "https://digitalocean.com/geo/google.csv",
-        "last_updated": "2024-10-27T00:40:12.883268",
+        "last_updated": "2024-10-28T00:40:23.317695",
         "name": "DigitalOcean",
         "provider_type": "cloud",
         "regexes": {
@@ -22635,7 +22642,7 @@
             "zencdn.net"
         ],
         "ips_url": "https://api.fastly.com/public-ip-list",
-        "last_updated": "2024-10-27T00:40:06.291476",
+        "last_updated": "2024-10-28T00:40:16.770193",
         "name": "Fastly",
         "provider_type": "cloud",
         "regexes": {}
@@ -27517,7 +27524,7 @@
             "github.com"
         ],
         "ips_url": "https://api.github.com/meta",
-        "last_updated": "2024-10-27T00:40:05.816960",
+        "last_updated": "2024-10-28T00:40:16.298078",
         "name": "GitHub",
         "provider_type": "cdn",
         "regexes": {}
@@ -28252,7 +28259,7 @@
             "googleapis.com"
         ],
         "ips_url": "https://www.gstatic.com/ipranges/cloud.json",
-        "last_updated": "2024-10-27T00:40:13.354010",
+        "last_updated": "2024-10-28T00:40:23.784468",
         "name": "Google",
         "provider_type": "cloud",
         "regexes": {
@@ -28731,7 +28738,7 @@
             "your-server.de"
         ],
         "ips_url": "",
-        "last_updated": "2024-10-27T00:40:10.275502",
+        "last_updated": "2024-10-28T00:40:20.721254",
         "name": "Hetzner",
         "provider_type": "cloud",
         "regexes": {
@@ -29519,7 +29526,7 @@
             "sun.com"
         ],
         "ips_url": "https://docs.oracle.com/en-us/iaas/tools/public_ip_ranges.json",
-        "last_updated": "2024-10-27T00:40:02.168169",
+        "last_updated": "2024-10-28T00:40:12.709592",
         "name": "Oracle",
         "provider_type": "cloud",
         "regexes": {}
@@ -29597,7 +29604,7 @@
             "zohowebstatic.com"
         ],
         "ips_url": "",
-        "last_updated": "2024-10-27T00:40:02.667417",
+        "last_updated": "2024-10-28T00:40:13.205201",
         "name": "Zoho",
         "provider_type": "cloud",
         "regexes": {}
