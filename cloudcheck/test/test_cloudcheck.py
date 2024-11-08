@@ -20,6 +20,7 @@ async def test_cloudcheck():
         "github",
         "zoho",
         "fastly",
+        "imperva",
     )
     for provider_name in provider_names:
         assert provider_name in cloud_providers.providers
