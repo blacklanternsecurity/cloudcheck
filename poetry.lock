@@ -490,13 +490,13 @@ testing = ["coverage (>=6.2)", "hypothesis (>=5.7.1)"]
 
 [[package]]
 name = "radixtarget"
-version = "2.0.0.48"
+version = "2.0.0.50"
 description = "Check whether an IP address belongs to a cloud provider"
 optional = false
 python-versions = "<4.0,>=3.9"
 files = [
-    {file = "radixtarget-2.0.0.48-py3-none-any.whl", hash = "sha256:7b42de779f307436f725fef45028ac335336febc6ce12214b20ba78da47c0593"},
-    {file = "radixtarget-2.0.0.48.tar.gz", hash = "sha256:54b9320611d333ed4e8cac107c2e973e8a12f9342e663a90bcd653a3e0bc8fd8"},
+    {file = "radixtarget-2.0.0.50-py3-none-any.whl", hash = "sha256:fe1670a382d1ddaebc2cba3b16607d32085987eb5d71074cc0535e19a02406b7"},
+    {file = "radixtarget-2.0.0.50.tar.gz", hash = "sha256:73519eebb0596a67d4e9347a5e4602c95c9ff9dc8be4c64e6ab0247bc69a13e8"},
 ]
 
 [[package]]
