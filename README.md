@@ -32,7 +32,8 @@ print(subnet) # IPv4Network('168.62.0.0/19')
 
 ## Supported cloud providers
 - Akamai ([source](https://techdocs.akamai.com/property-manager/pdfs/akamai_ipv4_ipv6_CIDRs-txt.zip))
-- Amazon ([source](https://ip-ranges.amazonaws.com/ip-ranges.json)) 
+- Amazon ([source](https://ip-ranges.amazonaws.com/ip-ranges.json))
+- Arvancloud ([source](https://www.arvancloud.ir/en/ips.txt))
 - Azure ([source](https://www.microsoft.com/en-us/download/confirmation.aspx?id=56519))
 - Cloudflare ([source](https://api.cloudflare.com/client/v4/ips))
 - Cloudfront ([source](https://d7uri8nf7uskq.cloudfront.net/tools/list-cloudfront-ips))
