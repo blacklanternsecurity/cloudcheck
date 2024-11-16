@@ -16,6 +16,6 @@ class Cloudfront(BaseCloudProvider):
         response_json = response.json()
         if not isinstance(response_json, dict):
             raise ValueError(f"Invalid response format: {type(response_json)}")
-        for ranges in response_json.values():
-            ranges.update(ranges)
+        for r in response_json.values():
+            ranges.update(r)
         return ranges

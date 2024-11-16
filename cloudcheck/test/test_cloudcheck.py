@@ -11,6 +11,7 @@ async def test_cloudcheck():
     provider_names = (
         "akamai",
         "amazon",
+        "arvancloud",
         "azure",
         "cloudflare",
         "cloudfront",
