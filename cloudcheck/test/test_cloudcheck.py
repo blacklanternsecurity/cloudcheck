@@ -9,18 +9,19 @@ from cloudcheck import cloud_providers
 @pytest.mark.asyncio
 async def test_cloudcheck():
     provider_names = (
+        "akamai",
         "amazon",
+        "azure",
+        "cloudflare",
+        "cloudfront",
+        "digitalocean",
+        "fastly",
+        "github",
         "google",
         "hetzner",
-        "azure",
-        "digitalocean",
-        "oracle",
-        "akamai",
-        "cloudflare",
-        "github",
-        "zoho",
-        "fastly",
         "imperva",
+        "oracle",
+        "zoho",
     )
     for provider_name in provider_names:
         assert provider_name in cloud_providers.providers

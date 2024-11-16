@@ -93,7 +93,6 @@ class BaseCloudProvider:
         global asndb
         asndb = pyasn.pyasn("asn.db")
         try:
-            self.last_updated = datetime.now()
             self.ranges = self.get_subnets()
             if self.ips_url:
                 async with httpx.AsyncClient(
@@ -107,6 +106,7 @@ class BaseCloudProvider:
                     ranges = self.parse_response(response)
                     if ranges:
                         self.update_ranges(ranges)
+                        self.last_updated = datetime.now()
         except Exception as e:
             log.warning(f"Error retrieving {self.ips_url}: {e}")
             log.warning(traceback.format_exc())
@@ -117,6 +117,7 @@ class BaseCloudProvider:
             for asn in self.asns:
                 prefixes = asndb.get_as_prefixes(asn)
                 if prefixes:
+                    self.last_updated = datetime.now()
                     for subnet in prefixes:
                         subnets.add(ipaddress.ip_network(subnet, strict=False))
         return subnets
