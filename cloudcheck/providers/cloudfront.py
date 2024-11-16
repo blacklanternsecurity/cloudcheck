@@ -1,7 +1,7 @@
 from .base import BaseCloudProvider
 
 
-class Cloudflare(BaseCloudProvider):
+class Cloudfront(BaseCloudProvider):
     ips_url = "https://d7uri8nf7uskq.cloudfront.net/tools/list-cloudfront-ips"
     # https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/LocationsOfEdgeServers.html
     domains = [
