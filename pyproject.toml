@@ -16,6 +16,10 @@ homepage = "https://github.com/blacklanternsecurity/cloudcheck"
 [tool.poetry.scripts]
 cloudcheck = 'cloudcheck.cloudcheck:main'
 
+[tool.ruff]
+line-length = 119
+lint.ignore = ["E402", "E721", "E741", "F401", "F403", "F405", "E713"]
+
 [tool.poetry.dependencies]
 python = "^3.9"
 pydantic = "^2.4.2"
@@ -24,10 +28,9 @@ regex = "^2024.4.16"
 radixtarget = "^2.0.0.32"
 
 [tool.poetry.group.dev.dependencies]
-black = ">=22.12,<25.0"
-flake8 = ">=6.1,<8.0"
 pytest-asyncio = ">=0.21.1,<0.25.0"
 pytest = "^8.1.1"
+ruff = "^0.8.1"
 
 [build-system]
 requires = ["poetry-core"]

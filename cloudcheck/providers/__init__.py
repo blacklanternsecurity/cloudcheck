@@ -23,11 +23,7 @@ for file in Path(__file__).parent.glob("*.py"):
         module_variables = importlib.import_module(import_path, "cloudcheck")
         for variable in module_variables.__dict__.keys():
             value = getattr(module_variables, variable)
-            if (
-                hasattr(value, "__mro__")
-                and not value == BaseCloudProvider
-                and BaseCloudProvider in value.__mro__
-            ):
+            if hasattr(value, "__mro__") and not value == BaseCloudProvider and BaseCloudProvider in value.__mro__:
                 provider_name = value.__name__.lower()
                 providers[provider_name] = value
 
@@ -103,9 +99,7 @@ class CloudProviders:
         if self.last_updated > oldest_allowed and not force:
             return
         try:
-            async with httpx.AsyncClient(
-                transport=httpx.AsyncHTTPTransport(verify=False)
-            ) as client:
+            async with httpx.AsyncClient(transport=httpx.AsyncHTTPTransport(verify=False)) as client:
                 response = await client.get(self.json_url)
         except Exception as e:
             error = e
@@ -114,9 +108,7 @@ class CloudProviders:
                 f.write(response.content)
             self.load_from_json(force=True)
         else:
-            log.warning(
-                f"Failed to retrieve update from {self.json_url} (response: {response}, error: {error})"
-            )
+            log.warning(f"Failed to retrieve update from {self.json_url} (response: {response}, error: {error})")
 
     async def update_from_sources(self):
         tasks = [asyncio.create_task(p.update()) for p in self]
@@ -124,9 +116,7 @@ class CloudProviders:
         j = self.to_json()
         if j:
             with open(self.json_path, "w") as f:
-                json.dump(
-                    self.to_json(), f, sort_keys=True, indent=4, cls=CustomJSONEncoder
-                )
+                json.dump(self.to_json(), f, sort_keys=True, indent=4, cls=CustomJSONEncoder)
             self.load_from_json(force=True)
 
     def to_json(self):

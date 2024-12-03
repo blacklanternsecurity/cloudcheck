@@ -144,11 +144,11 @@ class Azure(BaseCloudProvider):
         "windowsazurestatus.cn",
     ]
     bucket_name_regex = r"[a-z0-9][a-z0-9-_\.]{1,61}[a-z0-9]"
-    regexes = {
-        "STORAGE_BUCKET": [r"(" + bucket_name_regex + r")\.(blob\.core\.windows\.net)"]
-    }
+    regexes = {"STORAGE_BUCKET": [r"(" + bucket_name_regex + r")\.(blob\.core\.windows\.net)"]}
 
-    ips_url = "https://download.microsoft.com/download/0/1/8/018E208D-54F8-44CD-AA26-CD7BC9524A8C/PublicIPs_20200824.xml"
+    ips_url = (
+        "https://download.microsoft.com/download/0/1/8/018E208D-54F8-44CD-AA26-CD7BC9524A8C/PublicIPs_20200824.xml"
+    )
 
     def parse_response(self, response):
         ranges = set()
