@@ -72,7 +72,6 @@ async def test_cloudcheck():
 
 @pytest.mark.asyncio
 async def test_cloudcheck_cli(monkeypatch, capsys):
-
     from cloudcheck.cloudcheck import _main
 
     monkeypatch.setattr(sys, "exit", lambda *args, **kwargs: True)

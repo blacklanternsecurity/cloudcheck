@@ -66,9 +66,7 @@ class BaseCloudProvider:
         self.radix = Target()
         if j is not None:
             p = CloudProviderJSON(**j)
-            self.update_domains(
-                [d.lower() for d in set(list(self.domains) + list(p.domains))]
-            )
+            self.update_domains([d.lower() for d in set(list(self.domains) + list(p.domains))])
             self.update_ranges(p.cidrs)
             self.last_updated = p.last_updated
 
@@ -95,9 +93,7 @@ class BaseCloudProvider:
         try:
             self.ranges = self.get_subnets()
             if self.ips_url:
-                async with httpx.AsyncClient(
-                    transport=httpx.AsyncHTTPTransport(verify=False)
-                ) as client:
+                async with httpx.AsyncClient(transport=httpx.AsyncHTTPTransport(verify=False)) as client:
                     response = await client.get(
                         self.ips_url,
                         follow_redirects=True,
