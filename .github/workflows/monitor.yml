@@ -1,6 +1,7 @@
 name: Check Last Updated Timestamps
 
 on:
+  workflow_run:
   schedule:
     - cron: '0 0 * * 0'  # Runs every Sunday at midnight
 
