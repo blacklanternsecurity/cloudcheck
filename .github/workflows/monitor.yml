@@ -20,7 +20,7 @@ jobs:
     - name: Check last updated timestamps
       id: check
       run: |
-        python check_last_updated.py > output.log
+        python scripts/check_last_updated.py > output.log
 
     - name: Create issue if outdated
       if: steps.check.outcome == 'failure'
