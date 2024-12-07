@@ -1,6 +1,8 @@
 name: tests
 on:
   push:
+    branches:
+      - master
   pull_request:
   schedule:
     # At 00:25 every day
@@ -10,19 +12,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: psf/black@stable
-        with:
-          options: "--check"
-      - name: Install Python 3
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.x"
-      - name: Install dependencies
-        run: |
-          pip install flake8
-      - name: flake8
-        run: |
-          flake8 --select F,E722 --ignore F403,F405,F541 --per-file-ignores="*/__init__.py:F401,F403"
+      - run: |
+          pipx install ruff
+          ruff check
   test:
     needs: lint
     runs-on: ubuntu-latest
@@ -77,18 +69,57 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Dynamic version
-        run: "sed -i s/6.0.0.0/6.0.0.$(git rev-list HEAD --count)/g pyproject.toml"
-      - uses: actions/setup-python@v5
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          python-version: "3.x"
+          python-version: "3.12"
       - name: Install dependencies
         run: |
-          python3 -m pip install poetry
-          poetry install
-      - name: Build Pypi package
-        run: poetry build
-      - name: Publish Pypi package
+          python -m pip install --upgrade pip
+          pip install poetry build
+          poetry self add "poetry-dynamic-versioning[plugin]"
+      - name: Get current version from Poetry
+        id: get_version
+        run: |
+          VERSION=$(poetry version --short)
+          echo "VERSION=$VERSION" | tee -a $GITHUB_ENV
+      - name: Fetch latest tag
+        run: |
+          git fetch --tags
+          LATEST_TAG=$(git describe --tags $(git rev-list --tags --max-count=1) 2>/dev/null || echo "v0.0.0")
+          echo "LATEST_TAG=$LATEST_TAG" | tee -a $GITHUB_ENV
+      - name: Detect version change
+        run: |
+          # Retrieve and strip "v" prefix if present
+          PREVIOUS_VERSION="${{ env.LATEST_TAG }}"
+          CURRENT_VERSION="${{ env.VERSION }}"
+
+          echo "PREVIOUS_VERSION=$PREVIOUS_VERSION"
+          echo "CURRENT_VERSION=$CURRENT_VERSION"
+
+          # Extract major.minor for comparison
+          CURRENT_MAJOR_MINOR=$(echo "${CURRENT_VERSION#v}" | cut -d '.' -f 1-2)
+          PREVIOUS_MAJOR_MINOR=$(echo "${PREVIOUS_VERSION#v}" | cut -d '.' -f 1-2)
+
+          # Compare versions
+          if [ "$CURRENT_MAJOR_MINOR" == "$PREVIOUS_MAJOR_MINOR" ]; then
+            echo "VERSION_CHANGE=false" | tee -a $GITHUB_ENV
+          else
+            echo "VERSION_CHANGE=true" | tee -a $GITHUB_ENV
+          fi
+        shell: bash
+      - name: Build PyPi package
+        if: github.ref == 'refs/heads/master'
+        run: python -m build
+      - name: Publish PyPi package
+        if: github.ref == 'refs/heads/master'
         uses: pypa/gh-action-pypi-publish@release/v1.5
         with:
           password: ${{ secrets.PYPI_API_TOKEN }}
+      - name: Tag the release
+        if: github.ref == 'refs/heads/master' && env.VERSION_CHANGE == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a "${{ env.VERSION }}" -m "Release ${{ env.VERSION }}"
+          git push origin "refs/tags/${{ env.VERSION }}"

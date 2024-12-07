@@ -107,6 +107,8 @@ class CloudProviders:
             with open(self.json_path, "wb") as f:
                 f.write(response.content)
             self.load_from_json(force=True)
+            for provider in self:
+                provider.radix.defrag()
         else:
             log.warning(f"Failed to retrieve update from {self.json_url} (response: {response}, error: {error})")
 
@@ -116,7 +118,7 @@ class CloudProviders:
         j = self.to_json()
         if j:
             with open(self.json_path, "w") as f:
-                json.dump(self.to_json(), f, sort_keys=True, indent=4, cls=CustomJSONEncoder)
+                json.dump(self.to_json(), f, sort_keys=True, cls=CustomJSONEncoder)
             self.load_from_json(force=True)
 
     def to_json(self):
