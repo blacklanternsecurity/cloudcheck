@@ -118,7 +118,7 @@ class CloudProviders:
         j = self.to_json()
         if j:
             with open(self.json_path, "w") as f:
-                json.dump(self.to_json(), f, sort_keys=True, cls=CustomJSONEncoder)
+                json.dump(self.to_json(), f, sort_keys=True, indent=1, cls=CustomJSONEncoder)
             self.load_from_json(force=True)
 
     def to_json(self):
