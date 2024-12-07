@@ -31,7 +31,7 @@ async def test_cloudcheck():
 
     google = cloud_providers.providers["google"]
     assert google.check("test.asdf.google") == "google"
-    assert google.check("test.asdf.google.asdf") == None
+    assert google.check("test.asdf.google.asdf") is None
 
     assert cloud_providers.check("asdf.google") == [("Google", "cloud", "google")]
     assert cloud_providers.check("asdf.googles") == []

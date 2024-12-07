@@ -9,7 +9,7 @@ def is_ip_type(i):
 
 def make_ip_type(host):
     if not host:
-        raise ValueError(f"Invalid host")
+        raise ValueError("Invalid host")
     try:
         host = ipaddress.ip_network(host, strict=False)
     except Exception:
