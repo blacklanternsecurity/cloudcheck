@@ -1,3 +1,11 @@
+"""
+CloudCheck - Check whether an IP address belongs to a cloud provider
+"""
+
+__version__ = "7.1.0.0"
+__author__ = "TheTechromancer"
+__license__ = "GPL-3.0"
+
 from datetime import datetime
 
 from .providers import cloud_providers  # noqa
