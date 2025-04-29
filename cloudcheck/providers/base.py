@@ -64,6 +64,7 @@ class BaseCloudProvider:
         self._log = None
         self.ranges = set()
         self.radix = Target()
+        self.last_updated = datetime.min
         if j is not None:
             p = CloudProviderJSON(**j)
             self.update_domains([d.lower() for d in set(list(self.domains) + list(p.domains))])
