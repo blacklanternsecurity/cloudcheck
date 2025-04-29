@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "cloudcheck"
-version = "6.0.0.0"
+version = "7.1.0.0"
 description = "Check whether an IP address belongs to a cloud provider"
 authors = ["TheTechromancer"]
 license = "GPL-3.0"
@@ -39,4 +39,4 @@ build-backend = "poetry_dynamic_versioning.backend"
 [tool.poetry-dynamic-versioning]
 enable = true
 metadata = false
-format-jinja = 'v7.0.{{ distance }}'
+format-jinja = 'v7.1.{{ distance }}'
