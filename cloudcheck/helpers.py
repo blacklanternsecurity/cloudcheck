@@ -9,11 +9,13 @@ def is_ip_type(i):
 
 def make_ip_type(host):
     if not host:
-        raise ValueError("Invalid host")
+        raise ValueError(f'Invalid host: "{host}" ({type(host)})')
     try:
         host = ipaddress.ip_network(host, strict=False)
     except Exception:
-        host = str(host).lower()
+        if not isinstance(host, str):
+            raise ValueError(f'Invalid host: "{host}" ({type(host)})')
+        host = host.lower()
     return host
 
 
