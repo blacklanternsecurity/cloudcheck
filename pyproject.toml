@@ -24,7 +24,7 @@ lint.ignore = ["E402", "E721", "E741", "F401", "F403", "F405", "E713"]
 python = "^3.9"
 pydantic = "^2.4.2"
 httpx = ">=0.26,<0.29"
-regex = "^2024.4.16"
+regex = ">=2024.4.16,<2026.0.0"
 radixtarget = "^3.0.13"
 
 [tool.poetry.group.dev.dependencies]
