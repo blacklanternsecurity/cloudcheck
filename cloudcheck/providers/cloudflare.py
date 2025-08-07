@@ -38,6 +38,9 @@ class Cloudflare(BaseCloudProvider):
         "workers.dev",
         "r2.dev",
     ]
+    asns = [
+        13335,
+    ]
 
     bucket_name_regex = r"[a-z0-9_][a-z0-9-\.]{1,61}[a-z0-9]"
     regexes = {
