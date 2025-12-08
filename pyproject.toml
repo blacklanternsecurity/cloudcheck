@@ -1,42 +1,16 @@
-[tool.poetry]
+[project]
 name = "cloudcheck"
-version = "7.2.0.0"
-description = "Check whether an IP address belongs to a cloud provider"
-authors = ["TheTechromancer"]
-license = "GPL-3.0"
+version = "8.0.0rc1"
+description = "Detailed database of cloud providers. Instantly look up a domain or IP address"
 readme = "README.md"
-include = ["cloud_providers.json"]
-repository = "https://github.com/blacklanternsecurity/cloudcheck"
-homepage = "https://github.com/blacklanternsecurity/cloudcheck"
-
-[tool.poetry.urls]
-"Discord" = "https://discord.com/invite/PZqkgxu5SA"
-"PyPi" = "https://pypi.org/project/cloudcheck/"
+requires-python = ">=3.9"
+dependencies = ["requests (>=2.32.5,<3.0.0)"]
 
 [tool.poetry.scripts]
-cloudcheck = 'cloudcheck.cloudcheck:main'
+cloudcheck-update = 'cloudcheck.cli:main'
 
-[tool.ruff]
-line-length = 119
-lint.ignore = ["E402", "E721", "E741", "F401", "F403", "F405", "E713"]
-
-[tool.poetry.dependencies]
-python = "^3.9"
-pydantic = "^2.4.2"
-httpx = ">=0.26,<0.29"
-regex = "^2024.4.16"
-radixtarget = "^3.0.13"
-
-[tool.poetry.group.dev.dependencies]
-pytest-asyncio = ">=0.21.1,<0.27.0"
-pytest = "^8.1.1"
-ruff = ">=0.8.1,<0.12.0"
-
-[build-system]
-requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning"]
-build-backend = "poetry_dynamic_versioning.backend"
-
-[tool.poetry-dynamic-versioning]
-enable = true
-metadata = false
-format-jinja = 'v7.2.{{ distance }}'
+[dependency-groups]
+dev = [
+    "pydantic>=2.11.9",
+    "pytest>=8.4.2",
+]

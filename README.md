@@ -11,24 +11,30 @@ Used by [BBOT](https://github.com/blacklanternsecurity/bbot) and [BBOT Server](h
 pip install cloudcheck
 ~~~
 
-## Usage - CLI
-~~~bash
-$ cloudcheck 168.62.20.37
-168.62.20.37 belongs to Azure (cloud) (168.62.0.0/19)
+## Update the JSON database
 
-$ cloudcheck test.evilcorp.azurewebsites.net
-test.evilcorp.azurewebsites.net belongs to Azure (cloud) (azurewebsites.net)
-~~~
+```bash
+export BBOT_IO_API_KEY=<your-api-key>
+cloudcheck-update
+```
 
-## Usage - Python
-~~~python
-import cloudcheck
+## Adding a new cloud provider
 
-provider, provider_type, subnet = cloudcheck.check("168.62.20.37")
-print(provider) # "Azure"
-print(provider_type) # "cloud"
-print(subnet) # IPv4Network('168.62.0.0/19')
-~~~
+When adding a new cloud provider:
+
+1. Create a new file in the `cloudcheck/providers` directory and name it whatever you want, e.g. `amazon.py`.
+2. Inside that file, create a new class that inherits from `BaseProvider`.
+3. Inside that class, fill out any of the following attributes that are relevant to your provider:
+    - `v2fly_company`: The company name for v2fly domain fetching. This will dynamically fetch domains from the v2fly community repository, whose purpose is to keep track of domain ownership across different companies.
+    - `org_ids`: A list of organization IDs from ASNDB. These are always preferable to hard-coded ASNs or CIDRs, since they are updated daily from live sources. Big companies like Amazon typically have one organization ID per Regional Internet Registries (ARIN, RIPE, APNIC, LACNIC, AFRINIC), and within that organization ID, there may be multiple ASNs.
+    - `asns`: A list of ASNs, e.g. `[12345, 67890]`
+    - `cidrs`: A list of CIDRs, e.g. `["1.2.3.4/32", "5.6.7.8/32"]` (it's always preferred to use org_ids or if necessary asns over manually-specified CIDRs)
+    - `tags`: A list of tags for the provider. These are used in BBOT to tag IPs, DNS names etc. that match this provider. Examples: `cloud`, `cdn`, `waf`, etc.
+    - `regexes`: A dictionary of regexes for the provider. This are used in BBOT to extract / validate cloud resources like storage buckets. Currently valid regexes are:
+        - `STORAGE_BUCKET_NAME`: A regex for the name of a storage bucket (useful when brute-forcing bucket names, as you can discard invalid bucket names early).
+        - `STORAGE_BUCKET_HOSTNAME`: A regex for the hostname of a storage bucket
+    
+    In addition to the above attributes, if you have a custom source of CIDRsor domains, you can override the `fetch_cidrs()` or `fetch_domains()` methods (which by default return an empty list) to go fetch your custom TXT/JSON file, etc.
 
 ## Supported cloud providers
 - Akamai ([source](https://techdocs.akamai.com/property-manager/pdfs/akamai_ipv4_ipv6_CIDRs-txt.zip))
