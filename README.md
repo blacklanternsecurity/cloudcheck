@@ -15,6 +15,7 @@ pip install cloudcheck
 
 ```bash
 export BBOT_IO_API_KEY=<your-api-key>
+
 cloudcheck-update
 ```
 
