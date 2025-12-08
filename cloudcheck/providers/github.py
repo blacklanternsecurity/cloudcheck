@@ -5,9 +5,11 @@ from typing import List, Dict
 
 class GitHub(BaseProvider):
     v2fly_company: str = "github"
-    # domains = ["github.com"]
     tags: List[str] = ["cdn"]
-    org_ids: List[str] = []
+    # {"org_id": "GITHU-ARIN", "org_name": "GitHub, Inc.", "country": "US", "asns": [36459]}
+    org_ids: List[str] = [
+        "GITHU-ARIN",
+    ]
 
     _ips_url = "https://api.github.com/meta"
 
@@ -24,4 +26,3 @@ class GitHub(BaseProvider):
                     except ValueError:
                         pass
         return list(ranges)
-

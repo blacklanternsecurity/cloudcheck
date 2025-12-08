@@ -4,9 +4,11 @@ from typing import List, Dict
 
 class Fastly(BaseProvider):
     v2fly_company: str = "fastly"
-    # domains = ["fastly.com", "fastly.net", "fastlylabs.com", "fastlylb.net", "fastly-terrarium.com", "zencdn.net"]
     tags: List[str] = ["cdn"]
-    org_ids: List[str] = []
+    # {"org_id": "SKYCA-3-ARIN", "org_name": "Fastly, Inc.", "country": "US", "asns": [895,54113,394192]}
+    org_ids: List[str] = [
+        "SKYCA-3-ARIN",
+    ]
 
     _ips_url = "https://api.fastly.com/public-ip-list"
 

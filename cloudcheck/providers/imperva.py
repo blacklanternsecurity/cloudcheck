@@ -4,10 +4,12 @@ from typing import List, Dict
 
 class Imperva(BaseProvider):
     v2fly_company: str = ""
-    # domains = ["imperva.com"]
-    # asns = [62571]
-    tags: List[str] = ["cdn"]
-    org_ids: List[str] = []
+    domains = ["imperva.com"]
+    tags: List[str] = ["waf"]
+    # {"org_id": "IMPER-62-ARIN", "org_name": "IMPERVA INC", "country": "US", "asns": [62571]}
+    org_ids: List[str] = [
+        "IMPER-62-ARIN",
+    ]
 
     _ips_url = "https://my.imperva.com/api/integration/v1/ips"
 
@@ -20,4 +22,3 @@ class Imperva(BaseProvider):
         for ipv6 in data.get("ipv6Ranges", []):
             ranges.add(ipv6)
         return list(ranges)
-

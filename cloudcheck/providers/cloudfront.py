@@ -3,10 +3,7 @@ from typing import List, Dict
 
 
 class Cloudfront(BaseProvider):
-    v2fly_company: str = ""
-    # domains = ["cloudfront.com", "cloudfront.net"]
     tags: List[str] = ["cdn"]
-    org_ids: List[str] = []
 
     _ips_url = "https://d7uri8nf7uskq.cloudfront.net/tools/list-cloudfront-ips"
 

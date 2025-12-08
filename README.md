@@ -44,7 +44,7 @@ When adding a new cloud provider:
 - Azure ([source](https://www.microsoft.com/en-us/download/confirmation.aspx?id=56519))
 - Cloudflare ([source](https://api.cloudflare.com/client/v4/ips))
 - Cloudfront ([source](https://d7uri8nf7uskq.cloudfront.net/tools/list-cloudfront-ips))
-- DigitalOcean ([source](http://digitalocean.com/geo/google.csv))
+- DigitalOcean ([source](https://www.digitalocean.com/geo/google.csv))
 - Fastly ([source](https://api.fastly.com/public-ip-list))
 - Github ([source](https://api.github.com/meta))
 - Google ([source](https://www.gstatic.com/ipranges/cloud.json))

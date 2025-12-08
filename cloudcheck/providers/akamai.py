@@ -6,15 +6,15 @@ from typing import List, Dict
 
 class Akamai(BaseProvider):
     v2fly_company: str = "akamai"
-    # asns from searching "akamai" on https://hackertarget.com/as-ip-lookup/
-    # asns = [
-    #     12222, 16625, 16702, 17204, 18680, 18717, 20189, 20940, 21342, 21357,
-    #     21399, 22207, 22452, 23454, 23455, 23903, 24319, 26008, 30675, 31107,
-    #     31108, 31109, 31110, 31377, 33047, 33905, 34164, 34850, 35204, 35993,
-    #     35994, 36183, 39836, 43639, 45700, 55409, 55770, 63949, 133103, 393560,
-    # ]
-    tags: List[str] = ["cdn"]
-    org_ids: List[str] = []
+    tags: List[str] = ["cloud"]
+    # {"org_id": "AKAMAI-ARIN", "org_name": "Akamai Technologies, Inc.", "country": "US", "asns": [12222,16625,16702,17204,17334,18680,18717,20189,22207,22452,23454,23455,26008,30675,31984,32787,33047,35993,35994,36029,36183,393234,393560]}
+    # {"org_id": "ORG-AT1-RIPE", "org_name": "Akamai International B.V.", "country": "NL", "asns": [20940,21342,21357,21399,31107,31108,31109,31110,31377,33905,34164,34850,35204,39836,43639,48163,49249,49846,200005,213120]}
+    # {"org_id": "ORG-ATI1-AP-APNIC", "org_name": "Akamai Technologies, Inc.", "country": "US", "asns": [23903,24319,45757,55409,55770,63949,133103]}
+    org_ids: List[str] = [
+        "AKAMAI-ARIN",
+        "ORG-AT1-RIPE",
+        "ORG-ATI1-AP-APNIC",
+    ]
 
     _ips_url = "https://techdocs.akamai.com/property-manager/pdfs/akamai_ipv4_ipv6_CIDRs-txt.zip"
 

@@ -3,11 +3,12 @@ from typing import List, Dict
 
 
 class Arvancloud(BaseProvider):
-    v2fly_company: str = ""
-    # domains = ["arvancloud.ir"]
-    # asns = [57568, 205585, 208006, 210296]
+    domains = ["arvancloud.ir"]
     tags: List[str] = ["cdn"]
-    org_ids: List[str] = []
+    # {"org_id": "ORG-AGTL2-RIPE", "org_name": "ARVANCLOUD GLOBAL TECHNOLOGIES L.L.C", "country": "AE", "asns": [57568,208006,210296]}
+    org_ids: List[str] = [
+        "ORG-AGTL2-RIPE",
+    ]
 
     _ips_url = "https://www.arvancloud.ir/en/ips.txt"
 
