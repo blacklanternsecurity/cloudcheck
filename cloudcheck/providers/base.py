@@ -93,6 +93,7 @@ class BaseProvider(BaseModel):
         # query by org IDs
         if self.org_ids:
             _cidrs, _errors = self.fetch_org_ids()
+            print(f"Got {len(_cidrs)} org id cidrs for {self.name}'s org ids {self.org_ids}")
             if not _cidrs:
                 errors.append(
                     f"No cidrs were found for {self.name}'s org ids {self.org_ids}"
@@ -103,6 +104,7 @@ class BaseProvider(BaseModel):
         # query by direct ASNs
         if self.asns:
             _cidrs, _errors = self.fetch_asns()
+            print(f"Got {len(_cidrs)} ASN cidrs for {self.name}'s ASNs {self.asns}")
             if not _cidrs:
                 errors.append(
                     f"No ASN cidrs were found for {self.name}'s ASNs {self.asns}"
@@ -121,8 +123,11 @@ class BaseProvider(BaseModel):
             )
 
         # finally, put in any manually-specified CIDRs
+        print(f"Adding {len(self.cidrs)} manually-specified cidrs for {self.name}")
         if self.cidrs:
             cidrs.update(self.cidrs)
+        
+        print(f"Total {len(cidrs)} cidrs for {self.name}")
 
         try:
             self.cidrs = self.validate_cidrs(cidrs)
