@@ -1,5 +1,5 @@
 from .base import BaseProvider
-from typing import List, Dict
+from typing import List
 
 
 class Huawei(BaseProvider):
@@ -15,4 +15,3 @@ class Huawei(BaseProvider):
         "ORG-HT61-RIPE",
         "ORG-HTB10-RIPE",
     ]
-

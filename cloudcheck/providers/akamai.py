@@ -1,7 +1,7 @@
 import io
 import zipfile
 from .base import BaseProvider
-from typing import List, Dict
+from typing import List
 
 
 class Akamai(BaseProvider):
@@ -31,4 +31,3 @@ class Akamai(BaseProvider):
                         if line:
                             ranges.add(line)
         return list(ranges)
-

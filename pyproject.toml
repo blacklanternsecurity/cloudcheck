@@ -4,7 +4,9 @@ version = "8.0.0rc1"
 description = "Detailed database of cloud providers. Instantly look up a domain or IP address"
 readme = "README.md"
 requires-python = ">=3.9"
-dependencies = ["requests (>=2.32.5,<3.0.0)"]
+dependencies = [
+    "requests (>=2.32.5,<3.0.0)",
+]
 
 [tool.poetry.scripts]
 cloudcheck-update = 'cloudcheck.cli:main'
@@ -13,4 +15,5 @@ cloudcheck-update = 'cloudcheck.cli:main'
 dev = [
     "pydantic>=2.11.9",
     "pytest>=8.4.2",
+    "ruff>=0.14.8",
 ]

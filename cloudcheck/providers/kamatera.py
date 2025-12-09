@@ -1,5 +1,5 @@
 from .base import BaseProvider
-from typing import List, Dict
+from typing import List
 
 
 class Kamatera(BaseProvider):
@@ -15,4 +15,3 @@ class Kamatera(BaseProvider):
     domains: List[str] = [
         "kamatera.com",
     ]
-

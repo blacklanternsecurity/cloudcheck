@@ -25,7 +25,7 @@ class Cloudflare(BaseProvider):
         "STORAGE_BUCKET_HOSTNAME": [
             r"(" + _bucket_name_regex + r")\.(r2\.dev)",
             r"(" + _bucket_name_regex + r")\.(r2\.cloudflarestorage\.com)",
-        ]
+        ],
     }
 
     _ips_url = "https://api.cloudflare.com/client/v4/ips"

@@ -1,5 +1,5 @@
 from .base import BaseProvider
-from typing import List, Dict
+from typing import List
 
 
 class Arvancloud(BaseProvider):
@@ -18,4 +18,3 @@ class Arvancloud(BaseProvider):
         if getattr(response, "status_code", 0) == 200:
             ranges.update(response.text.splitlines())
         return list(ranges)
-

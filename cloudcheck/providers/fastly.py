@@ -1,5 +1,5 @@
 from .base import BaseProvider
-from typing import List, Dict
+from typing import List
 
 
 class Fastly(BaseProvider):
@@ -20,4 +20,3 @@ class Fastly(BaseProvider):
             if addresses and isinstance(addresses, list):
                 return list(set(addresses))
         return []
-

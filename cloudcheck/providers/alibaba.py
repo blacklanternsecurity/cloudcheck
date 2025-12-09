@@ -1,5 +1,5 @@
 from .base import BaseProvider
-from typing import List, Dict
+from typing import List
 
 
 class Alibaba(BaseProvider):
@@ -9,4 +9,3 @@ class Alibaba(BaseProvider):
     org_ids: List[str] = [
         "ORG-ASEP1-AP-APNIC",
     ]
-

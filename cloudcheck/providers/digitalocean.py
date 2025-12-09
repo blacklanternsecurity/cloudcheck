@@ -13,7 +13,9 @@ class DigitalOcean(BaseProvider):
     _bucket_name_regex = r"[a-z0-9][a-z0-9-]{2,62}"
     regexes: Dict[str, List[str]] = {
         "STORAGE_BUCKET_NAME": [_bucket_name_regex],
-        "STORAGE_BUCKET_HOSTNAME": [r"(" + _bucket_name_regex + r")\.([a-z]{3}[\d]{1}\.digitaloceanspaces\.com)"]
+        "STORAGE_BUCKET_HOSTNAME": [
+            r"(" + _bucket_name_regex + r")\.([a-z]{3}[\d]{1}\.digitaloceanspaces\.com)"
+        ],
     }
 
     _ips_url = "https://www.digitalocean.com/geo/google.csv"
@@ -26,4 +28,3 @@ class DigitalOcean(BaseProvider):
         )
         ranges = set(i["range"] for i in do_ips)
         return list(ranges)
-

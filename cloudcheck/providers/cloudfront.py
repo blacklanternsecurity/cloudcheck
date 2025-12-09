@@ -1,5 +1,5 @@
 from .base import BaseProvider
-from typing import List, Dict
+from typing import List
 
 
 class Cloudfront(BaseProvider):
@@ -16,4 +16,3 @@ class Cloudfront(BaseProvider):
         for r in response_json.values():
             ranges.update(r)
         return list(ranges)
-

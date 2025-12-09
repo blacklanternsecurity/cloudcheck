@@ -1,5 +1,5 @@
 from .base import BaseProvider
-from typing import List, Dict
+from typing import List
 
 
 class OVH(BaseProvider):
@@ -9,7 +9,7 @@ class OVH(BaseProvider):
         "ORG-OS3-RIPE",
     ]
     domains = [
-        "ovh", 
+        "ovh",
         "ovh.com",
         "ovhcloud.com",
     ]

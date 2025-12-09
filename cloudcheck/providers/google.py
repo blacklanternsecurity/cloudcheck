@@ -45,7 +45,7 @@ class Google(BaseProvider):
         "STORAGE_BUCKET_HOSTNAME": [
             r"(" + _firebase_bucket_name_regex + r")\.(firebaseio\.com)",
             r"(" + _bucket_name_regex + r")\.(storage\.googleapis\.com)",
-        ]
+        ],
     }
 
     _ips_url = "https://www.gstatic.com/ipranges/cloud.json"

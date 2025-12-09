@@ -1,5 +1,5 @@
 from .base import BaseProvider
-from typing import List, Dict
+from typing import List
 
 
 class Dell(BaseProvider):
@@ -9,4 +9,3 @@ class Dell(BaseProvider):
     org_ids: List[str] = [
         "DCC-25-ARIN",
     ]
-

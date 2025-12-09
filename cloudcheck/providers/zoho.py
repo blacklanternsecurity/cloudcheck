@@ -1,5 +1,5 @@
 from .base import BaseProvider
-from typing import List, Dict
+from typing import List
 
 
 class Zoho(BaseProvider):
@@ -23,4 +23,3 @@ class Zoho(BaseProvider):
         "ZCC-22-ARIN",
         "ZOHOC-ARIN",
     ]
-

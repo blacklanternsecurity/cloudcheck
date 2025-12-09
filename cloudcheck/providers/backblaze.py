@@ -1,5 +1,5 @@
 from .base import BaseProvider
-from typing import List, Dict
+from typing import List
 
 
 class Backblaze(BaseProvider):
@@ -8,8 +8,4 @@ class Backblaze(BaseProvider):
     org_ids: List[str] = [
         "BACKB-7-ARIN",
     ]
-    domains: List[str] = [
-        "backblaze.com",
-        "backblazeb2.com"
-    ]
-
+    domains: List[str] = ["backblaze.com", "backblazeb2.com"]
