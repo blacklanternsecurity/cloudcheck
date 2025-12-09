@@ -69,6 +69,10 @@ def _can_merge_networks(net1: Union[ipaddress.IPv4Network, ipaddress.IPv6Network
     if type(net1) != type(net2):
         return False
     
+    # Must not be the same network
+    if net1 == net2:
+        return False
+    
     # Must have same prefix length
     if net1.prefixlen != net2.prefixlen:
         return False
@@ -108,13 +112,26 @@ def _merge_networks(net1: Union[ipaddress.IPv4Network, ipaddress.IPv6Network],
     """
     Merge two adjacent networks into a larger network.
     """
+    if net1 == net2:
+        raise ValueError("Networks must be different")
+
+    if not net1.version == net2.version:
+        raise ValueError("Networks must be the same version")
+    
+    snet1 = net1.supernet(prefixlen_diff=1)
+    snet2 = net2.supernet(prefixlen_diff=1)
+    if not snet1 == snet2:
+        raise ValueError("Networks must be adjacent")
+
     # Find the smaller network address
     min_addr = min(net1.network_address, net2.network_address)
     
     # Create the merged network with prefix length - 1
     new_prefixlen = net1.prefixlen - 1
-    
-    return ipaddress.ip_network(f"{min_addr}/{new_prefixlen}")
+    try:
+        return ipaddress.ip_network(f"{min_addr}/{new_prefixlen}")
+    except ValueError:
+        raise ValueError(f"Failed to merge networks: {net1} (type: {type(net1)}) and {net2} (type: {type(net2)})")
 
 
 def cidrs_to_strings(cidrs: List[Union[ipaddress.IPv4Network, ipaddress.IPv6Network]]) -> List[str]:

@@ -47,7 +47,8 @@ class BaseProvider(BaseModel):
             except ValueError:
                 print(f"Invalid CIDR: from {cls.__name__}: {v}")
                 continue
-        return [str(ip) for ip in sorted(defrag_cidrs(ips))]
+        ips = [str(ip) for ip in defrag_cidrs(ips)]
+        return sorted(ips)
     
     @field_validator("domains")
     @classmethod
