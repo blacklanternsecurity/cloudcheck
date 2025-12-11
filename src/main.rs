@@ -1,5 +1,4 @@
 use cloudcheck::CloudCheck;
-use serde_json;
 
 fn main() {
     let args: Vec<String> = std::env::args().collect();

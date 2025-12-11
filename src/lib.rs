@@ -42,7 +42,7 @@ impl CloudCheck {
                 };
                 providers_map
                     .entry(normalized.clone())
-                    .or_insert_with(Vec::new)
+                    .or_default()
                     .push(cloud_provider.clone());
             }
 
@@ -53,7 +53,7 @@ impl CloudCheck {
                 };
                 providers_map
                     .entry(normalized.clone())
-                    .or_insert_with(Vec::new)
+                    .or_default()
                     .push(cloud_provider.clone());
             }
         }
