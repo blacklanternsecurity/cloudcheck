@@ -21,4 +21,3 @@ fn main() {
     let json = serde_json::to_string_pretty(&results).unwrap();
     println!("{}", json);
 }
-

@@ -66,10 +66,7 @@ impl CloudCheck {
 
     pub fn lookup(&self, target: &str) -> Vec<CloudProvider> {
         if let Some(normalized) = self.radix.get(target) {
-            self.providers
-                .get(&normalized)
-                .cloned()
-                .unwrap_or_default()
+            self.providers.get(&normalized).cloned().unwrap_or_default()
         } else {
             Vec::new()
         }
@@ -85,7 +82,11 @@ mod tests {
         let cloudcheck = CloudCheck::new().unwrap();
         let results = cloudcheck.lookup("8.8.8.8");
         let names: Vec<String> = results.iter().map(|p| p.name.clone()).collect();
-        assert!(names.contains(&"Google".to_string()), "Expected Google in results: {:?}", names);
+        assert!(
+            names.contains(&"Google".to_string()),
+            "Expected Google in results: {:?}",
+            names
+        );
     }
 
     #[test]
@@ -93,7 +94,10 @@ mod tests {
         let cloudcheck = CloudCheck::new().unwrap();
         let results = cloudcheck.lookup("asdf.amazon.com");
         let names: Vec<String> = results.iter().map(|p| p.name.clone()).collect();
-        assert!(names.contains(&"Amazon".to_string()), "Expected Amazon in results: {:?}", names);
+        assert!(
+            names.contains(&"Amazon".to_string()),
+            "Expected Amazon in results: {:?}",
+            names
+        );
     }
 }
-

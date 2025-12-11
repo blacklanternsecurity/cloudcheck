@@ -1,4 +1,4 @@
-name: Test CloudCheck
+name: Pipeline Tests
 
 on:
   push:
