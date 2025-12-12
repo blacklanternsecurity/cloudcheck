@@ -1,6 +1,6 @@
 [project]
 name = "cloudcheck"
-version = "8.0.0rc1"
+version = "8.1.0rc1"
 description = "Detailed database of cloud providers. Instantly look up a domain or IP address"
 readme = "README.md"
 requires-python = ">=3.9"
@@ -9,7 +9,7 @@ dependencies = [
 ]
 
 [tool.poetry.scripts]
-cloudcheck-update = 'cloudcheck.cli:main'
+cloudcheck-update = 'cloudcheck_update.cli:main'
 
 [dependency-groups]
 dev = [

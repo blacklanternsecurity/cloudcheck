@@ -9,8 +9,8 @@ from pathlib import Path
 # Add the current directory to Python path
 sys.path.insert(0, str(Path(__file__).parent))
 
-from cloudcheck.providers.amazon import Amazon
-from cloudcheck.helpers import defrag_cidrs, cidrs_to_strings, strings_to_cidrs
+from cloudcheck_update.providers.amazon import Amazon
+from cloudcheck_update.helpers import defrag_cidrs, cidrs_to_strings, strings_to_cidrs
 
 
 def test_v2fly_domains():
