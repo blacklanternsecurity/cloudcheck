@@ -16,6 +16,7 @@ dev = [
     "pydantic>=2.12.5",
     "pytest>=8.4.2",
     "pytest-asyncio>=0.24.0",
+    "requests>=2.32.5",
     "ruff>=0.14.8",
 ]
 
