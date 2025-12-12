@@ -1,0 +1,36 @@
+name: Python Tests
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v6
+    
+    - name: Set up Python
+      uses: actions/setup-python@v6
+      with:
+        python-version: 3.x
+    
+    - name: Set up uv
+      uses: astral-sh/setup-uv@v7
+    
+    - name: Install Rust toolchain
+      uses: actions-rust-lang/setup-rust-toolchain@v1
+
+    - name: Install dependencies
+      run: |
+        uv sync
+    
+    - name: Build Python bindings
+      run: |
+        maturin develop --release --features pyo3
+    
+    - name: Run Python tests
+      run: |
+        uv run pytest test_cloudcheck.py -v

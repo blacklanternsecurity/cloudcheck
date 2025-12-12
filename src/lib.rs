@@ -6,6 +6,9 @@ use std::sync::Arc;
 use std::time::{Duration, SystemTime};
 use tokio::sync::OnceCell;
 
+#[cfg(feature = "pyo3")]
+mod python;
+
 const CLOUDCHECK_SIGNATURE_URL: &str = "https://raw.githubusercontent.com/blacklanternsecurity/cloudcheck/refs/heads/cloudcheck-v8/cloud_providers_v2.json";
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -22,6 +25,7 @@ struct ProviderData {
     domains: Vec<String>,
 }
 
+#[derive(Clone)]
 pub struct CloudCheck {
     radix: Arc<OnceCell<RadixTarget>>,
     providers: Arc<OnceCell<HashMap<String, Vec<CloudProvider>>>>,
@@ -188,3 +192,4 @@ mod tests {
         );
     }
 }
+
