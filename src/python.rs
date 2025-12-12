@@ -1,6 +1,6 @@
+use crate::CloudCheck as RustCloudCheck;
 use pyo3::prelude::*;
 use pyo3::types::PyDict;
-use crate::CloudCheck as RustCloudCheck;
 
 #[pymodule]
 fn cloudcheck(_py: Python, m: &Bound<'_, PyModule>) -> PyResult<()> {
@@ -27,23 +27,21 @@ impl CloudCheck {
         let target = target.to_string();
         pyo3_async_runtimes::tokio::future_into_py(py, async move {
             match inner.lookup(&target).await {
-                Ok(providers) => {
-                    Python::attach(|py| -> PyResult<Vec<Py<PyAny>>> {
-                        let mut result = Vec::new();
-                        for provider in providers {
-                            let dict = PyDict::new(py);
-                            dict.set_item("name", provider.name)?;
-                            dict.set_item("tags", provider.tags)?;
-                            result.push(dict.unbind().into());
-                        }
-                        Ok(result)
-                    })
-                }
-                Err(e) => Err(PyErr::new::<pyo3::exceptions::PyRuntimeError, _>(
-                    format!("CloudCheck error: {}", e),
-                )),
+                Ok(providers) => Python::attach(|py| -> PyResult<Vec<Py<PyAny>>> {
+                    let mut result = Vec::new();
+                    for provider in providers {
+                        let dict = PyDict::new(py);
+                        dict.set_item("name", provider.name)?;
+                        dict.set_item("tags", provider.tags)?;
+                        result.push(dict.unbind().into());
+                    }
+                    Ok(result)
+                }),
+                Err(e) => Err(PyErr::new::<pyo3::exceptions::PyRuntimeError, _>(format!(
+                    "CloudCheck error: {}",
+                    e
+                ))),
             }
         })
     }
 }
-

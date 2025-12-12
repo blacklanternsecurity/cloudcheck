@@ -10,17 +10,15 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
     
     - name: Set up Python
       uses: actions/setup-python@v6
       with:
         python-version: 3.x
     
-    - name: Install uv
-      uses: astral-sh/setup-uv@v6
-      with:
-        version: "latest"
+    - name: Set up uv
+      uses: astral-sh/setup-uv@v7
     
     - name: Install dependencies
       run: |
@@ -28,4 +26,4 @@ jobs:
     
     - name: Run tests
       run: |
-        uv run pytest -v
+        uv run pytest cloudcheck_update/test_cloudcheck_update.py -v
