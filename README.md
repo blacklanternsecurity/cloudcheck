@@ -10,23 +10,90 @@
 [![Python Tests](https://github.com/blacklanternsecurity/cloudcheck/actions/workflows/python-tests.yml/badge.svg?branch=master)](https://github.com/blacklanternsecurity/cloudcheck/actions/workflows/python-tests.yml)
 [![Pipeline Tests](https://github.com/blacklanternsecurity/cloudcheck/actions/workflows/pipeline-tests.yml/badge.svg?branch=master)](https://github.com/blacklanternsecurity/cloudcheck/actions/workflows/pipeline-tests.yml)
 
-A simple Python utility to check whether an IP address or hostname belongs to a cloud provider.
+CloudCheck is a simple Rust tool to check whether an IP address or hostname belongs to a cloud provider. It includes:
 
-`cloud_providers.json` contains lists of domains and up-to-date CIDRs for each cloud provider (updated daily via CI/CD).
+- A Rust CLI
+- A Rust library
+- Python bindings
+
+## Cloud Provider Signatures
+
+The latest cloud provider signatures are available in `cloud_providers_v2.json`, which is updated daily via CI/CD. Domains associated with each cloud provider are fetched dynamically from the [v2fly community repository](https://github.com/v2fly/domain-list-community), and CIDRs are fetched from [ASNDB](https://asndb.api.bbot.io/).
 
 Used by [BBOT](https://github.com/blacklanternsecurity/bbot) and [BBOT Server](https://github.com/blacklanternsecurity/bbot-server).
 
-## Installation
-~~~bash
+## CLI Usage
+
+```bash
+# installation
+cargo install cloudcheck
+
+# usage
+cloudcheck 8.8.8.8
+# output:
+{
+  "name": "Google",
+  "tags": [
+    "cloud"
+  ]
+}
+
+cloudcheck asdf.amazon.com
+# output:
+{
+  "name": "Amazon",
+  "tags": [
+    "cloud"
+  ]
+}
+```
+
+## Python Library Usage
+
+```bash
+# installation
 pip install cloudcheck
-~~~
+```
+
+```python
+import asyncio
+from cloudcheck import CloudCheck
+
+async def main():
+    cloudcheck = CloudCheck()
+    results = await cloudcheck.lookup("8.8.8.8")
+    print(results) # [{'name': 'Google', 'tags': ['cloud']}]
+
+asyncio.run(main())
+```
+
+## Rust Library Usage
+
+```toml
+# Add to Cargo.toml
+[dependencies]
+cloudcheck = "8.0"
+tokio = { version = "1", features = ["full"] }
+```
+
+```rust
+use cloudcheck::CloudCheck;
+
+#[tokio::main]
+async fn main() {
+    let cloudcheck = CloudCheck::new();
+    let results = cloudcheck.lookup("8.8.8.8").await.unwrap();
+    println!("{:?}", results); // [CloudProvider { name: "Google", tags: ["cloud"] }]
+}
+```
 
 ## Update the JSON database
 
 ```bash
 export BBOT_IO_API_KEY=<your-api-key>
 
-cloudcheck-update
+uv sync
+uv run cloudcheck_update/cli.py
 ```
 
 ## Adding a new cloud provider
