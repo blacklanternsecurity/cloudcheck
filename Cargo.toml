@@ -1,7 +1,9 @@
 [package]
 name = "cloudcheck"
 version = "8.0.0-rc.1"
-edition = "2021"
+edition = "2024"
+description = "CloudCheck is a simple Rust tool to check whether an IP address or hostname belongs to a cloud provider."
+license = "GPL-3.0"
 
 [dependencies]
 radixtarget = "4.0"
