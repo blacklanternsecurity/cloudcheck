@@ -1,4 +1,4 @@
-from .base import BaseProvider
+from cloudcheck_update.providers.base import BaseProvider
 from typing import List
 
 
@@ -8,7 +8,7 @@ class OVH(BaseProvider):
     org_ids: List[str] = [
         "ORG-OS3-RIPE",
     ]
-    domains = [
+    domains: List[str] = [
         "ovh",
         "ovh.com",
         "ovhcloud.com",

@@ -1,9 +1,9 @@
-from .base import BaseProvider
+from cloudcheck_update.providers.base import BaseProvider
 from typing import List
 
 
 class Arvancloud(BaseProvider):
-    domains = ["arvancloud.ir"]
+    domains: List[str] = ["arvancloud.ir"]
     tags: List[str] = ["cdn"]
     # {"org_id": "ORG-AGTL2-RIPE", "org_name": "ARVANCLOUD GLOBAL TECHNOLOGIES L.L.C", "country": "AE", "asns": [57568,208006,210296]}
     org_ids: List[str] = [

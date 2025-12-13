@@ -1,5 +1,5 @@
 import sys
-from cloudcheck import update
+from cloudcheck_update import update
 
 
 def main():

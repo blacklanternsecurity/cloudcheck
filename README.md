@@ -1,5 +1,15 @@
 # CloudCheck
 
+[![Python Version](https://img.shields.io/badge/python-3.9+-blue)](https://www.python.org)
+[![PyPI](https://img.shields.io/pypi/v/cloudcheck)](https://pypi.org/project/cloudcheck/)
+[![Rust Version](https://img.shields.io/badge/rust-1.70+-orange)](https://www.rust-lang.org)
+[![Crates.io](https://img.shields.io/crates/v/cloudcheck?color=orange)](https://crates.io/crates/cloudcheck)
+[![License](https://img.shields.io/badge/license-GPLv3-blue.svg)](https://github.com/blacklanternsecurity/cloudcheck/blob/master/LICENSE)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+[![Rust Tests](https://github.com/blacklanternsecurity/cloudcheck/actions/workflows/rust-tests.yml/badge.svg?branch=master)](https://github.com/blacklanternsecurity/cloudcheck/actions/workflows/rust-tests.yml)
+[![Python Tests](https://github.com/blacklanternsecurity/cloudcheck/actions/workflows/python-tests.yml/badge.svg?branch=master)](https://github.com/blacklanternsecurity/cloudcheck/actions/workflows/python-tests.yml)
+[![Pipeline Tests](https://github.com/blacklanternsecurity/cloudcheck/actions/workflows/pipeline-tests.yml/badge.svg?branch=master)](https://github.com/blacklanternsecurity/cloudcheck/actions/workflows/pipeline-tests.yml)
+
 A simple Python utility to check whether an IP address or hostname belongs to a cloud provider.
 
 `cloud_providers.json` contains lists of domains and up-to-date CIDRs for each cloud provider (updated daily via CI/CD).
