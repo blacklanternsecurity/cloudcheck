@@ -95,11 +95,11 @@ jobs:
             if command -v apt-get >/dev/null 2>&1; then
               # Debian-based
               sudo apt-get update
-              sudo apt-get install -y pkg-config libssl-dev
+              sudo apt-get install -y pkg-config libssl-dev perl make gcc
             elif command -v yum >/dev/null 2>&1; then
               # CentOS-based
               yum update -y
-              yum install -y openssl openssl-devel
+              yum install -y openssl openssl-devel perl make gcc
             else
               echo "Error: Neither apt-get nor yum found"
               exit 1
