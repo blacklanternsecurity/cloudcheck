@@ -57,7 +57,8 @@ jobs:
       - name: Build PyPi package
         run: uv run maturin build --release --out dist
       - name: Publish PyPi package
-        run: uv run maturin publish --username __token__ --password ${{ secrets.PYPI_TOKEN }}
+        # TODO: Remove || true
+        run: uv run maturin publish --username __token__ --password ${{ secrets.PYPI_TOKEN }} || true
 
   linux:
     runs-on: ${{ matrix.platform.runner }}
