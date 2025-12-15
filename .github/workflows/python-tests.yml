@@ -91,18 +91,18 @@ jobs:
           sccache: false
           manylinux: auto
           before-script-linux: |
-            case "${{ matrix.platform.target }}" in
-              "aarch64" | "armv7" | "s390x" | "ppc64le")
-                # NOTE: pypa/manylinux docker images are Debian based
-                sudo apt-get update
-                sudo apt-get install -y pkg-config libssl-dev
-                ;;
-              "x86" | "x86_64")
-                # NOTE: rust-cross/manylinux docker images are CentOS based
-                yum update -y
-                yum install -y openssl openssl-devel
-                ;;
-            esac
+            if command -v apt-get >/dev/null 2>&1; then
+              # Debian-based
+              sudo apt-get update
+              sudo apt-get install -y pkg-config libssl-dev
+            elif command -v yum >/dev/null 2>&1; then
+              # CentOS-based
+              yum update -y
+              yum install -y openssl openssl-devel
+            else
+              echo "Error: Neither apt-get nor yum found"
+              exit 1
+            fi
       - name: Upload wheels
         uses: actions/upload-artifact@v5
         with:
@@ -136,6 +136,19 @@ jobs:
           args: --release --out dist --find-interpreter
           sccache: false
           manylinux: musllinux_1_2
+          before-script-linux: |
+            if command -v apt-get >/dev/null 2>&1; then
+              # Debian-based
+              sudo apt-get update
+              sudo apt-get install -y pkg-config libssl-dev
+            elif command -v yum >/dev/null 2>&1; then
+              # CentOS-based
+              yum update -y
+              yum install -y openssl openssl-devel
+            else
+              echo "Error: Neither apt-get nor yum found"
+              exit 1
+            fi
       - name: Upload wheels
         uses: actions/upload-artifact@v5
         with:
@@ -191,7 +204,7 @@ jobs:
         uses: PyO3/maturin-action@v1
         with:
           target: ${{ matrix.platform.target }}
-          args: --release --out dist
+          args: --release --out dist --find-interpreter
           sccache: false
       - name: Upload wheels
         uses: actions/upload-artifact@v5
