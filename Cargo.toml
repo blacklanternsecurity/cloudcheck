@@ -11,11 +11,11 @@ serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 tokio = { version = "1", features = ["full"] }
 reqwest = { version = "0.12", features = ["json"] }
-pyo3 = { version = "0.27", features = ["auto-initialize"], optional = true }
+pyo3 = { version = "0.27", optional = true }
 pyo3-async-runtimes = { version = "0.27", features = ["tokio-runtime"], optional = true }
 
 [features]
-default = ["pyo3"]
+default = []
 pyo3 = ["dep:pyo3", "dep:pyo3-async-runtimes"]
 
 [[bin]]
