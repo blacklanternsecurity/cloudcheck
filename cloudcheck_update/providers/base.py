@@ -90,18 +90,6 @@ class BaseProvider(BaseModel):
     def update_cidrs(self):
         cidrs = set()
         errors = []
-        # query by org IDs
-        if self.org_ids:
-            _cidrs, _errors = self.fetch_org_ids()
-            print(
-                f"Got {len(_cidrs)} org id cidrs for {self.name}'s org ids {self.org_ids}"
-            )
-            if not _cidrs:
-                errors.append(
-                    f"No cidrs were found for {self.name}'s org ids {self.org_ids}"
-                )
-            errors.extend(_errors)
-            cidrs.update(_cidrs)
 
         # query by direct ASNs
         if self.asns:
@@ -110,6 +98,22 @@ class BaseProvider(BaseModel):
             if not _cidrs:
                 errors.append(
                     f"No ASN cidrs were found for {self.name}'s ASNs {self.asns}"
+                )
+            errors.extend(_errors)
+            cidrs.update(_cidrs)
+
+        # query by org IDs
+        if self.org_ids:
+            _cidrs, _asns, _errors = self.fetch_org_ids()
+            _asns = _asns.copy()
+            _asns.update(self.asns)
+            self.asns = list(sorted(_asns))
+            print(
+                f"Got {len(_cidrs)} org id cidrs for {self.name}'s org ids {self.org_ids}"
+            )
+            if not _cidrs:
+                errors.append(
+                    f"No cidrs were found for {self.name}'s org ids {self.org_ids}"
                 )
             errors.extend(_errors)
             cidrs.update(_cidrs)
@@ -149,6 +153,7 @@ class BaseProvider(BaseModel):
         errors = []
         cidrs = set()
         print(f"Fetching {len(self.org_ids)} org ids for {self.name}")
+        asns = set()
         for org_id in self.org_ids:
             print(f"Fetching cidrs for {org_id} from asndb")
             try:
@@ -162,12 +167,13 @@ class BaseProvider(BaseModel):
                     f"Failed to fetch cidrs for {org_id} from asndb: {e}:\n{traceback.format_exc()}"
                 )
                 continue
-            asns = j.get("asns", [])
-            for asn in asns:
+            _asns = j.get("asns", [])
+            for asn in _asns:
+                asns.add(asn)
                 asn_cidrs, _errors = self.fetch_asn(asn)
                 errors.extend(_errors)
                 cidrs.update(asn_cidrs)
-        return cidrs, errors
+        return cidrs, asns, errors
 
     def fetch_asns(self) -> List[Union[ipaddress.IPv4Network, ipaddress.IPv6Network]]:
         """Fetch CIDRs for a given list of ASNs from ASNDB."""

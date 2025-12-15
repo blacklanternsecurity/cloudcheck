@@ -3,7 +3,6 @@ from typing import List
 
 
 class Scaleway(BaseProvider):
-    v2fly_company: str = "scaleway"
     tags: List[str] = ["cloud"]
     # {"org_id": "ORG-TT1-RIPE", "org_name": "SCALEWAY S.A.S.", "country": "FR", "asns": [12876,29447,202023]}
     # {"org_id": "SUC-48-ARIN", "org_name": "SCALEWAY US CORPORATION", "country": "US", "asns": [54265]}
