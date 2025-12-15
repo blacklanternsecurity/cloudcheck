@@ -881,13 +881,12 @@ checksum = "69cdb34c158ceb288df11e18b4bd39de994f6657d83847bdffdbd7f346754b0f"
 
 [[package]]
 name = "radixtarget"
-version = "4.0.4"
+version = "4.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "490cb2f89d30211e8adfc489391fa6125d30d89395e9ea606b13c096d20b8aa6"
+checksum = "3e843baa2443dd4782316a8d281d12f7781319a95f1458c913af502aba5c4789"
 dependencies = [
  "idna",
  "ipnet",
- "pyo3",
  "seahash",
 ]
 
