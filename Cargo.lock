@@ -62,7 +62,7 @@ checksum = "613afe47fcd5fac7ccf1db93babcb082c5994d996f20b8b159f2ad1658eb5724"
 
 [[package]]
 name = "cloudcheck"
-version = "8.1.0-rc.1"
+version = "8.1.1-rc.1"
 dependencies = [
  "pyo3",
  "pyo3-async-runtimes",
