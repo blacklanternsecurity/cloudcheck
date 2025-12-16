@@ -37,7 +37,7 @@ jobs:
     
     - name: Build Python bindings
       run: |
-        uv run maturin develop --release --features pyo3
+        uv run maturin develop --release
     
     - name: Run Python tests
       run: |
