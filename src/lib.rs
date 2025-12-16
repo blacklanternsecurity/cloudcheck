@@ -9,7 +9,7 @@ use tokio::sync::OnceCell;
 #[cfg(feature = "py")]
 mod python;
 
-const CLOUDCHECK_SIGNATURE_URL: &str = "https://raw.githubusercontent.com/blacklanternsecurity/cloudcheck/refs/heads/cloudcheck-v8/cloud_providers_v2.json";
+const CLOUDCHECK_SIGNATURE_URL: &str = "https://raw.githubusercontent.com/blacklanternsecurity/cloudcheck/refs/heads/stable/cloud_providers_v2.json";
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct CloudProvider {
@@ -104,7 +104,7 @@ impl CloudCheck {
                 let providers_data: HashMap<String, ProviderData> =
                     serde_json::from_str(&json_data)?;
 
-                let mut radix = RadixTarget::new(&[], ScopeMode::Normal);
+                let mut radix = RadixTarget::new(&[], ScopeMode::Normal)?;
                 let mut providers_map: HashMap<String, Vec<CloudProvider>> = HashMap::new();
 
                 for (_, provider) in providers_data {
@@ -116,7 +116,10 @@ impl CloudCheck {
                     for cidr in provider.cidrs {
                         let normalized = match radix.get(&cidr) {
                             Some(n) => n,
-                            None => radix.insert(&cidr).unwrap(),
+                            None => match radix.insert(&cidr)? {
+                                Some(n) => n,
+                                None => continue,
+                            },
                         };
                         providers_map
                             .entry(normalized.clone())
@@ -127,7 +130,10 @@ impl CloudCheck {
                     for domain in provider.domains {
                         let normalized = match radix.get(&domain) {
                             Some(n) => n,
-                            None => radix.insert(&domain).unwrap(),
+                            None => match radix.insert(&domain)? {
+                                Some(n) => n,
+                                None => continue,
+                            },
                         };
                         providers_map
                             .entry(normalized.clone())
