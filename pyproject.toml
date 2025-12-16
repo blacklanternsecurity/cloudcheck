@@ -1,42 +1,26 @@
-[tool.poetry]
-name = "cloudcheck"
-version = "7.2.0.0"
-description = "Check whether an IP address belongs to a cloud provider"
-authors = ["TheTechromancer"]
-license = "GPL-3.0"
-readme = "README.md"
-include = ["cloud_providers.json"]
-repository = "https://github.com/blacklanternsecurity/cloudcheck"
-homepage = "https://github.com/blacklanternsecurity/cloudcheck"
-
-[tool.poetry.urls]
-"Discord" = "https://discord.com/invite/PZqkgxu5SA"
-"PyPi" = "https://pypi.org/project/cloudcheck/"
-
-[tool.poetry.scripts]
-cloudcheck = 'cloudcheck.cloudcheck:main'
-
-[tool.ruff]
-line-length = 119
-lint.ignore = ["E402", "E721", "E741", "F401", "F403", "F405", "E713"]
-
-[tool.poetry.dependencies]
-python = "^3.9"
-pydantic = "^2.4.2"
-httpx = ">=0.26,<0.29"
-regex = "^2024.4.16"
-radixtarget = "^3.0.13"
-
-[tool.poetry.group.dev.dependencies]
-pytest-asyncio = ">=0.21.1,<0.27.0"
-pytest = "^8.1.1"
-ruff = ">=0.8.1,<0.12.0"
-
 [build-system]
-requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning"]
-build-backend = "poetry_dynamic_versioning.backend"
+requires = ["maturin>=1.0,<2.0"]
+build-backend = "maturin"
 
-[tool.poetry-dynamic-versioning]
-enable = true
-metadata = false
-format-jinja = 'v7.2.{{ distance }}'
+[project]
+name = "cloudcheck"
+version = "8.1.1"
+description = "Detailed database of cloud providers. Instantly look up a domain or IP address"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = []
+
+[dependency-groups]
+dev = [
+    "maturin>=1.10.2",
+    "pydantic>=2.12.5",
+    "pytest>=8.4.2",
+    "pytest-asyncio>=0.24.0",
+    "requests>=2.32.5",
+    "ruff>=0.14.8",
+]
+
+[tool.maturin]
+no-default-features = true
+features = ["py"]
+module-name = "cloudcheck"
