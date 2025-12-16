@@ -12,6 +12,9 @@ mod python;
 
 const CLOUDCHECK_SIGNATURE_URL: &str = "https://raw.githubusercontent.com/blacklanternsecurity/cloudcheck/refs/heads/stable/cloud_providers_v2.json";
 
+type RegexPatternsMap = HashMap<String, HashMap<String, Vec<String>>>;
+type RegexPatterns = Arc<OnceCell<RegexPatternsMap>>;
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct CloudProvider {
     pub name: String,
@@ -32,7 +35,7 @@ struct ProviderData {
 pub struct CloudCheck {
     radix: Arc<OnceCell<RadixTarget>>,
     providers: Arc<OnceCell<HashMap<String, Vec<CloudProvider>>>>,
-    regex_patterns: Arc<OnceCell<HashMap<String, HashMap<String, Vec<String>>>>>,
+    regex_patterns: RegexPatterns,
     regex_cache: Arc<Mutex<HashMap<String, Vec<Regex>>>>,
 }
 
@@ -114,8 +117,7 @@ impl CloudCheck {
 
                 let mut radix = RadixTarget::new(&[], ScopeMode::Normal)?;
                 let mut providers_map: HashMap<String, Vec<CloudProvider>> = HashMap::new();
-                let mut regex_patterns_map: HashMap<String, HashMap<String, Vec<String>>> =
-                    HashMap::new();
+                let mut regex_patterns_map: RegexPatternsMap = HashMap::new();
 
                 for (_, provider) in providers_data {
                     let cloud_provider = CloudProvider {
