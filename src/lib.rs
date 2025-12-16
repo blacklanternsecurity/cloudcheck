@@ -6,7 +6,7 @@ use std::sync::Arc;
 use std::time::{Duration, SystemTime};
 use tokio::sync::OnceCell;
 
-#[cfg(feature = "pyo3")]
+#[cfg(feature = "py")]
 mod python;
 
 const CLOUDCHECK_SIGNATURE_URL: &str = "https://raw.githubusercontent.com/blacklanternsecurity/cloudcheck/refs/heads/cloudcheck-v8/cloud_providers_v2.json";

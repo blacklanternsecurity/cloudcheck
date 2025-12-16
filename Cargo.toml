@@ -1,6 +1,6 @@
 [package]
 name = "cloudcheck"
-version = "8.1.1-rc.1"
+version = "8.1.1"
 edition = "2024"
 description = "CloudCheck is a simple Rust tool to check whether an IP address or hostname belongs to a cloud provider."
 license = "GPL-3.0"
@@ -17,7 +17,7 @@ radixtarget = "4.1"
 
 [features]
 default = []
-pyo3 = ["dep:pyo3", "dep:pyo3-async-runtimes"]
+py = ["dep:pyo3", "dep:pyo3-async-runtimes"]
 
 [[bin]]
 name = "cloudcheck"
