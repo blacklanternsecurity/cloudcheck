@@ -20,7 +20,7 @@ CloudCheck is a simple Rust tool to check whether an IP address or hostname belo
 
 ## Cloud Provider Signatures
 
-The latest cloud provider signatures are available in `cloud_providers_v2.json`, which is updated daily via CI/CD. Domains associated with each cloud provider are fetched dynamically from the [v2fly community repository](https://github.com/v2fly/domain-list-community), and CIDRs are fetched from [ASNDB](https://asndb.api.bbot.io/).
+The latest cloud provider signatures are available in [`cloud_providers_v2.json`](https://github.com/blacklanternsecurity/cloudcheck/blob/master/cloud_providers_v2.json), which is updated daily via CI/CD. Domains associated with each cloud provider are fetched dynamically from the [v2fly community repository](https://github.com/v2fly/domain-list-community), and CIDRs are fetched from [ASNDB](https://asndb.api.bbot.io/).
 
 Used by [BBOT](https://github.com/blacklanternsecurity/bbot) and [BBOT Server](https://github.com/blacklanternsecurity/bbot-server).
 
@@ -115,7 +115,7 @@ When adding a new cloud provider:
         - `STORAGE_BUCKET_NAME`: A regex for the name of a storage bucket (useful when brute-forcing bucket names, as you can discard invalid bucket names early).
         - `STORAGE_BUCKET_HOSTNAME`: A regex for the hostname of a storage bucket
     
-    In addition to the above attributes, if you have a custom source of CIDRsor domains, you can override the `fetch_cidrs()` or `fetch_domains()` methods (which by default return an empty list) to go fetch your custom TXT/JSON file, etc.
+    In addition to the above attributes, if you have a custom source of CIDRs or domains, you can override the `fetch_cidrs()` or `fetch_domains()` methods (which by default return an empty list) to go fetch your custom TXT/JSON file, etc.
 
 ## Supported cloud providers
 - Akamai ([source](https://github.com/blacklanternsecurity/cloudcheck/blob/master/cloudcheck/providers/akamai.py))

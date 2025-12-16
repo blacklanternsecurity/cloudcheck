@@ -46,7 +46,7 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     needs: test
-    if: github.event_name == 'push' && github.ref == 'refs/heads/cloudcheck-v8'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/stable'
     steps:
       - uses: actions/checkout@v6
       - name: Set up Python
