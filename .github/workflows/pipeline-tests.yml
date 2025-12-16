@@ -2,8 +2,12 @@ name: Pipeline Tests
 
 on:
   push:
-    branches: [ master ]
+    branches: [ stable ]
   pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   test:
