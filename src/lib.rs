@@ -116,9 +116,13 @@ impl CloudCheck {
                     for cidr in provider.cidrs {
                         let normalized = match radix.get(&cidr) {
                             Some(n) => n,
-                            None => match radix.insert(&cidr)? {
-                                Some(n) => n,
-                                None => continue,
+                            None => match radix.insert(&cidr) {
+                                Ok(Some(n)) => n,
+                                Ok(None) => continue,
+                                Err(e) => {
+                                    eprintln!("Error inserting CIDR '{}': {}", cidr, e);
+                                    continue;
+                                }
                             },
                         };
                         providers_map
@@ -128,11 +132,22 @@ impl CloudCheck {
                     }
 
                     for domain in provider.domains {
-                        let normalized = match radix.get(&domain) {
+                        // Clean domain: strip comments (everything after #) and trim whitespace
+                        let cleaned_domain = domain.split('#').next().unwrap_or(&domain).trim();
+
+                        if cleaned_domain.is_empty() {
+                            continue;
+                        }
+
+                        let normalized = match radix.get(cleaned_domain) {
                             Some(n) => n,
-                            None => match radix.insert(&domain)? {
-                                Some(n) => n,
-                                None => continue,
+                            None => match radix.insert(cleaned_domain) {
+                                Ok(Some(n)) => n,
+                                Ok(None) => continue,
+                                Err(e) => {
+                                    eprintln!("Error inserting domain '{}': {}", cleaned_domain, e);
+                                    continue;
+                                }
                             },
                         };
                         providers_map
