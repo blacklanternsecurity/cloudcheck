@@ -881,9 +881,9 @@ checksum = "69cdb34c158ceb288df11e18b4bd39de994f6657d83847bdffdbd7f346754b0f"
 
 [[package]]
 name = "radixtarget"
-version = "4.1.0"
+version = "4.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3e843baa2443dd4782316a8d281d12f7781319a95f1458c913af502aba5c4789"
+checksum = "80958c58de95970f17dcfef05f5f731ea82899e4f977be1b84b2f3fd18560521"
 dependencies = [
  "idna",
  "ipnet",
