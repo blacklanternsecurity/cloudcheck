@@ -4,10 +4,10 @@ import traceback
 import subprocess
 import time
 from pathlib import Path
-from typing import Dict, List, Union, Set
+from typing import Dict, List, Union
 from pydantic import BaseModel, field_validator, computed_field
 
-from ..helpers import defrag_cidrs, request
+from ..helpers import defrag_cidrs, parse_v2fly_domain_file, request
 
 
 v2fly_repo_pulled = False
@@ -215,7 +215,7 @@ class BaseProvider(BaseModel):
         repo_path, _success = self._ensure_v2fly_repo_cached()
         company_file = repo_path / "data" / self.v2fly_company
         try:
-            domains = self._parse_v2fly_domain_file(company_file)
+            domains = parse_v2fly_domain_file(company_file)
         except Exception as e:
             errors.append(
                 f"Failed to parse {self.v2fly_company} domains: {e}:\n{traceback.format_exc()}"
@@ -258,40 +258,6 @@ class BaseProvider(BaseModel):
                     f"Failed to pull v2fly repo: {e}:\n{traceback.format_exc()}"
                 )
         return repo_dir, errors
-
-    def _parse_v2fly_domain_file(self, file_path: Path) -> Set[str]:
-        """Parse a domain list file and extract domains."""
-        print(f"Parsing {file_path}")
-        domains = set()
-        if not file_path.exists():
-            print(f"File {file_path} does not exist")
-            return domains
-
-        with open(file_path, "r", encoding="utf-8") as f:
-            for line in f:
-                line = line.strip()
-                if not line or line.startswith("#"):
-                    continue
-
-                if line.startswith("include:"):
-                    include_file = line[8:]
-                    include_path = file_path.parent / include_file
-                    domains.update(self._parse_v2fly_domain_file(include_path))
-                    continue
-
-                if line.startswith("domain:"):
-                    domain = line[7:]
-                elif line.startswith("full:"):
-                    domain = line[5:]
-                elif line.startswith("keyword:") or line.startswith("regexp:"):
-                    continue
-                else:
-                    domain = line
-
-                domain = domain.split("@")[0].strip()
-                if domain:
-                    domains.add(domain.lower())
-        return domains
 
     def request(self, *args, **kwargs):
         return request(*args, **kwargs)
