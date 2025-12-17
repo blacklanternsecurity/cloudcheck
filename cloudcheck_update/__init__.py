@@ -5,7 +5,7 @@ import traceback
 from pathlib import Path
 from typing import Dict, Type
 
-from cloudcheck_update.providers.base import BaseProvider
+from cloudcheck.providers.base import BaseProvider
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -24,14 +24,14 @@ def load_provider_classes() -> Dict[str, Type[BaseProvider]]:
     if _provider_classes:
         return _provider_classes
 
-    providers_path = Path(__file__).parent / "providers"
+    providers_path = Path(__file__).parent.parent / "cloudcheck" / "providers"
 
     for file in providers_path.glob("*.py"):
         if file.stem in ("base", "__init__"):
             continue
 
         try:
-            import_path = f"cloudcheck_update.providers.{file.stem}"
+            import_path = f"cloudcheck.providers.{file.stem}"
             module = importlib.import_module(import_path)
 
             # Look for classes that inherit from BaseProvider
