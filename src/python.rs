@@ -44,26 +44,4 @@ impl CloudCheck {
             }
         })
     }
-
-    fn regex_match<'py>(
-        &self,
-        py: Python<'py>,
-        provider_name: &str,
-        regex_name: &str,
-        text: &str,
-    ) -> PyResult<Bound<'py, PyAny>> {
-        let inner = self.inner.clone();
-        let provider_name = provider_name.to_string();
-        let regex_name = regex_name.to_string();
-        let text = text.to_string();
-        pyo3_async_runtimes::tokio::future_into_py(py, async move {
-            match inner.regex_match(&provider_name, &regex_name, &text).await {
-                Ok(matched) => Ok(matched),
-                Err(e) => Err(PyErr::new::<pyo3::exceptions::PyValueError, _>(format!(
-                    "CloudCheck error: {}",
-                    e
-                ))),
-            }
-        })
-    }
 }
