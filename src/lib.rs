@@ -64,9 +64,7 @@ impl CloudCheck {
         Ok(path)
     }
 
-    async fn fetch_and_cache(
-        cache_path: &PathBuf,
-    ) -> Result<String, Error> {
+    async fn fetch_and_cache(cache_path: &PathBuf) -> Result<String, Error> {
         let url = Self::get_signature_url();
         let response = reqwest::get(&url).await?;
         let json_data = response.text().await?;
@@ -82,10 +80,7 @@ impl CloudCheck {
     /// Gets the last fetch time, checking in-memory timestamp first.
     /// If no in-memory timestamp exists (first run), falls back to checking
     /// the cache file's modification time. Returns None if file doesn't exist.
-    async fn get_last_fetch_time(
-        &self,
-        cache_path: &PathBuf,
-    ) -> Result<Option<SystemTime>, Error> {
+    async fn get_last_fetch_time(&self, cache_path: &PathBuf) -> Result<Option<SystemTime>, Error> {
         let last_fetch = self.last_fetch.lock().await;
         match *last_fetch {
             Some(time) => Ok(Some(time)),
@@ -135,9 +130,7 @@ impl CloudCheck {
     /// Parses JSON and builds the radix tree and providers map.
     /// For each provider, inserts all CIDRs and domains into the radix tree,
     /// normalizing them in the process. Maps normalized values to provider lists.
-    fn build_data_structures(
-        json_data: &str,
-    ) -> Result<(RadixTarget, ProvidersMap), Error> {
+    fn build_data_structures(json_data: &str) -> Result<(RadixTarget, ProvidersMap), Error> {
         let providers_data: HashMap<String, ProviderData> = serde_json::from_str(json_data)?;
 
         let mut radix = RadixTarget::new(&[], ScopeMode::Normal)?;
@@ -241,10 +234,7 @@ impl CloudCheck {
         Ok(())
     }
 
-    pub async fn lookup(
-        &self,
-        target: &str,
-    ) -> Result<Vec<CloudProvider>, Error> {
+    pub async fn lookup(&self, target: &str) -> Result<Vec<CloudProvider>, Error> {
         self.ensure_loaded().await?;
 
         let radix_guard = self.radix.read().await;
