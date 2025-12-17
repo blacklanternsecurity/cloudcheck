@@ -1,6 +1,6 @@
 import io
 import zipfile
-from cloudcheck_update.providers.base import BaseProvider
+from cloudcheck.providers.base import BaseProvider
 from typing import List
 
 

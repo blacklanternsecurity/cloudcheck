@@ -16,3 +16,9 @@ async def test_lookup_amazon_domain():
     results = await cloudcheck.lookup("asdf.amazon.com")
     names = [provider["name"] for provider in results]
     assert "Amazon" in names, f"Expected Amazon in results: {names}"
+
+
+def test_import_provider():
+    from cloudcheck.providers.amazon import Amazon
+
+    assert Amazon().regexes
