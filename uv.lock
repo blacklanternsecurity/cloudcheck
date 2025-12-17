@@ -140,7 +140,7 @@ wheels = [
 
 [[package]]
 name = "cloudcheck"
-version = "8.2.0"
+version = "8.4.0"
 source = { editable = "." }
 
 [package.dev-dependencies]
