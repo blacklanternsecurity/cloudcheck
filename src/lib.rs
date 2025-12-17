@@ -4,7 +4,7 @@ use std::collections::HashMap;
 use std::path::PathBuf;
 use std::sync::Arc;
 use std::time::{Duration, SystemTime};
-use tokio::sync::OnceCell;
+use tokio::sync::{Mutex, RwLock};
 
 #[cfg(feature = "py")]
 mod python;
@@ -25,10 +25,14 @@ struct ProviderData {
     domains: Vec<String>,
 }
 
+type ProvidersMap = HashMap<String, Vec<CloudProvider>>;
+type Error = Box<dyn std::error::Error + Send + Sync>;
+
 #[derive(Clone)]
 pub struct CloudCheck {
-    radix: Arc<OnceCell<RadixTarget>>,
-    providers: Arc<OnceCell<HashMap<String, Vec<CloudProvider>>>>,
+    radix: Arc<RwLock<Option<RadixTarget>>>,
+    providers: Arc<RwLock<Option<ProvidersMap>>>,
+    last_fetch: Arc<Mutex<Option<SystemTime>>>,
 }
 
 impl Default for CloudCheck {
@@ -40,8 +44,9 @@ impl Default for CloudCheck {
 impl CloudCheck {
     pub fn new() -> Self {
         CloudCheck {
-            radix: Arc::new(OnceCell::new()),
-            providers: Arc::new(OnceCell::new()),
+            radix: Arc::new(RwLock::new(None)),
+            providers: Arc::new(RwLock::new(None)),
+            last_fetch: Arc::new(Mutex::new(None)),
         }
     }
 
@@ -50,7 +55,7 @@ impl CloudCheck {
             .unwrap_or_else(|_| CLOUDCHECK_SIGNATURE_URL.to_string())
     }
 
-    fn get_cache_path() -> Result<PathBuf, Box<dyn std::error::Error + Send + Sync>> {
+    fn get_cache_path() -> Result<PathBuf, Error> {
         let home = std::env::var("HOME")?;
         let mut path = PathBuf::from(home);
         path.push(".cache");
@@ -59,9 +64,7 @@ impl CloudCheck {
         Ok(path)
     }
 
-    async fn fetch_and_cache(
-        cache_path: &PathBuf,
-    ) -> Result<String, Box<dyn std::error::Error + Send + Sync>> {
+    async fn fetch_and_cache(cache_path: &PathBuf) -> Result<String, Error> {
         let url = Self::get_signature_url();
         let response = reqwest::get(&url).await?;
         let json_data = response.text().await?;
@@ -74,108 +77,171 @@ impl CloudCheck {
         Ok(json_data)
     }
 
-    async fn ensure_loaded(&self) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
-        let radix_cell = Arc::clone(&self.radix);
-        let providers_cell = Arc::clone(&self.providers);
+    /// Gets the last fetch time, checking in-memory timestamp first.
+    /// If no in-memory timestamp exists (first run), falls back to checking
+    /// the cache file's modification time. Returns None if file doesn't exist.
+    async fn get_last_fetch_time(&self, cache_path: &PathBuf) -> Result<Option<SystemTime>, Error> {
+        let last_fetch = self.last_fetch.lock().await;
+        match *last_fetch {
+            Some(time) => Ok(Some(time)),
+            None => {
+                // No in-memory timestamp - check file modification time
+                drop(last_fetch);
+                match tokio::fs::metadata(cache_path).await {
+                    Ok(metadata) => Ok(metadata.modified().ok()),
+                    Err(_) => Ok(None),
+                }
+            }
+        }
+    }
 
-        radix_cell
-            .get_or_try_init(|| async {
-                let cache_path = Self::get_cache_path()?;
-                let cache_valid_duration = Duration::from_secs(24 * 60 * 60);
-
-                let json_data = match tokio::fs::metadata(&cache_path).await {
-                    Ok(metadata) => {
-                        let modified = metadata.modified()?;
-                        let now = SystemTime::now();
-
-                        if let Ok(elapsed) = now.duration_since(modified) {
-                            if elapsed < cache_valid_duration {
-                                tokio::fs::read_to_string(&cache_path).await?
-                            } else {
-                                Self::fetch_and_cache(&cache_path).await?
-                            }
-                        } else {
-                            Self::fetch_and_cache(&cache_path).await?
-                        }
+    /// Loads JSON data either from network (if refresh needed) or from cache file.
+    /// Returns (json_data, fetched_fresh) where fetched_fresh indicates if we
+    /// fetched from network. Sets last_fetch timestamp on first cache load to
+    /// track process runtime. Falls back to network fetch if cache read fails.
+    async fn load_json_data(
+        &self,
+        cache_path: &PathBuf,
+        needs_refresh: bool,
+    ) -> Result<(String, bool), Error> {
+        if needs_refresh {
+            let data = Self::fetch_and_cache(cache_path).await?;
+            Ok((data, true))
+        } else {
+            match tokio::fs::read_to_string(cache_path).await {
+                Ok(data) => {
+                    // First load from cache - set timestamp to track process runtime
+                    let now = SystemTime::now();
+                    let mut last_fetch = self.last_fetch.lock().await;
+                    if last_fetch.is_none() {
+                        *last_fetch = Some(now);
                     }
-                    Err(_) => Self::fetch_and_cache(&cache_path).await?,
-                };
+                    Ok((data, false))
+                }
+                Err(_) => {
+                    // Cache file was deleted between stat and read, fetch fresh
+                    let data = Self::fetch_and_cache(cache_path).await?;
+                    Ok((data, true))
+                }
+            }
+        }
+    }
 
-                let providers_data: HashMap<String, ProviderData> =
-                    serde_json::from_str(&json_data)?;
+    /// Parses JSON and builds the radix tree and providers map.
+    /// For each provider, inserts all CIDRs and domains into the radix tree,
+    /// normalizing them in the process. Maps normalized values to provider lists.
+    fn build_data_structures(json_data: &str) -> Result<(RadixTarget, ProvidersMap), Error> {
+        let providers_data: HashMap<String, ProviderData> = serde_json::from_str(json_data)?;
 
-                let mut radix = RadixTarget::new(&[], ScopeMode::Normal)?;
-                let mut providers_map: HashMap<String, Vec<CloudProvider>> = HashMap::new();
+        let mut radix = RadixTarget::new(&[], ScopeMode::Normal)?;
+        let mut providers_map: ProvidersMap = HashMap::new();
 
-                for (_, provider) in providers_data {
-                    let cloud_provider = CloudProvider {
-                        name: provider.name.clone(),
-                        tags: provider.tags.clone(),
-                    };
+        for (_, provider) in providers_data {
+            let cloud_provider = CloudProvider {
+                name: provider.name.clone(),
+                tags: provider.tags.clone(),
+            };
 
-                    for cidr in provider.cidrs {
-                        let normalized = match radix.get(&cidr) {
-                            Some(n) => n,
-                            None => match radix.insert(&cidr) {
-                                Ok(Some(n)) => n,
-                                Ok(None) => continue,
-                                Err(e) => {
-                                    eprintln!("Error inserting CIDR '{}': {}", cidr, e);
-                                    continue;
-                                }
-                            },
-                        };
-                        providers_map
-                            .entry(normalized.clone())
-                            .or_default()
-                            .push(cloud_provider.clone());
-                    }
-
-                    for domain in provider.domains {
-                        // Clean domain: strip comments (everything after #) and trim whitespace
-                        let cleaned_domain = domain.split('#').next().unwrap_or(&domain).trim();
-
-                        if cleaned_domain.is_empty() {
+            // Insert all CIDRs for this provider
+            for cidr in provider.cidrs {
+                let normalized = match radix.get(&cidr) {
+                    Some(n) => n,
+                    None => match radix.insert(&cidr) {
+                        Ok(Some(n)) => n,
+                        Ok(None) => continue,
+                        Err(e) => {
+                            eprintln!("Error inserting CIDR '{}': {}", cidr, e);
                             continue;
                         }
+                    },
+                };
+                providers_map
+                    .entry(normalized.clone())
+                    .or_default()
+                    .push(cloud_provider.clone());
+            }
 
-                        let normalized = match radix.get(cleaned_domain) {
-                            Some(n) => n,
-                            None => match radix.insert(cleaned_domain) {
-                                Ok(Some(n)) => n,
-                                Ok(None) => continue,
-                                Err(e) => {
-                                    eprintln!("Error inserting domain '{}': {}", cleaned_domain, e);
-                                    continue;
-                                }
-                            },
-                        };
-                        providers_map
-                            .entry(normalized.clone())
-                            .or_default()
-                            .push(cloud_provider.clone());
-                    }
-                }
+            // Insert all domains for this provider
+            for domain in provider.domains {
+                let normalized = match radix.get(&domain) {
+                    Some(n) => n,
+                    None => match radix.insert(&domain) {
+                        Ok(Some(n)) => n,
+                        Ok(None) => continue,
+                        Err(e) => {
+                            eprintln!("Error inserting domain '{}': {}", domain, e);
+                            continue;
+                        }
+                    },
+                };
+                providers_map
+                    .entry(normalized.clone())
+                    .or_default()
+                    .push(cloud_provider.clone());
+            }
+        }
 
-                providers_cell
-                    .set(providers_map)
-                    .map_err(|_| "Failed to set providers")?;
+        Ok((radix, providers_map))
+    }
 
-                Ok::<RadixTarget, Box<dyn std::error::Error + Send + Sync>>(radix)
-            })
-            .await?;
+    /// Ensures data is loaded and fresh. Checks if refresh is needed based on
+    /// 24-hour process runtime. Returns early if data is already loaded and fresh.
+    /// Otherwise loads data (from network or cache), builds structures, and updates
+    /// the in-memory timestamp if we fetched fresh data.
+    async fn ensure_loaded(&self) -> Result<(), Error> {
+        let cache_valid_duration = Duration::from_secs(24 * 60 * 60);
+        let now = SystemTime::now();
+        let cache_path = Self::get_cache_path()?;
+
+        // Check if we need refresh (uses in-memory timestamp, falls back to file stat)
+        let last_fetch_time = self.get_last_fetch_time(&cache_path).await?;
+        let needs_refresh = match last_fetch_time {
+            Some(fetch_time) => now
+                .duration_since(fetch_time)
+                .map(|elapsed| elapsed >= cache_valid_duration)
+                .unwrap_or(true),
+            None => true,
+        };
+
+        // Early return if data is already loaded and fresh
+        {
+            let radix_guard = self.radix.read().await;
+            if radix_guard.is_some() && !needs_refresh {
+                return Ok(());
+            }
+        }
+
+        // Load JSON data and build structures
+        let (json_data, fetched_fresh) = self.load_json_data(&cache_path, needs_refresh).await?;
+        let (radix, providers_map) = Self::build_data_structures(&json_data)?;
+
+        // Update in-memory data structures
+        {
+            let mut radix_guard = self.radix.write().await;
+            *radix_guard = Some(radix);
+        }
+        {
+            let mut providers_guard = self.providers.write().await;
+            *providers_guard = Some(providers_map);
+        }
+
+        // Update timestamp if we fetched fresh data
+        if fetched_fresh {
+            let mut last_fetch = self.last_fetch.lock().await;
+            *last_fetch = Some(now);
+        }
 
         Ok(())
     }
 
-    pub async fn lookup(
-        &self,
-        target: &str,
-    ) -> Result<Vec<CloudProvider>, Box<dyn std::error::Error + Send + Sync>> {
+    pub async fn lookup(&self, target: &str) -> Result<Vec<CloudProvider>, Error> {
         self.ensure_loaded().await?;
 
-        let radix = self.radix.get().unwrap();
-        let providers = self.providers.get().unwrap();
+        let radix_guard = self.radix.read().await;
+        let providers_guard = self.providers.read().await;
+
+        let radix = radix_guard.as_ref().unwrap();
+        let providers = providers_guard.as_ref().unwrap();
 
         if let Some(normalized) = radix.get(target) {
             Ok(providers.get(&normalized).cloned().unwrap_or_default())
