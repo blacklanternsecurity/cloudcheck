@@ -1,7 +1,8 @@
 import ipaddress
 import os
 import requests
-from typing import List, Union
+from pathlib import Path
+from typing import List, Set, Union
 
 
 def defrag_cidrs(
@@ -209,3 +210,40 @@ def request(url, include_api_key=False, browser_headers=False, **kwargs):
         headers["Authorization"] = f"Bearer {bbot_io_api_key}"
     kwargs["headers"] = headers
     return requests.get(url, **kwargs)
+
+
+def parse_v2fly_domain_file(file_path: Path) -> Set[str]:
+    """Parse a domain list file and extract domains."""
+    print(f"Parsing {file_path}")
+    domains = set()
+    if not file_path.exists():
+        print(f"File {file_path} does not exist")
+        return domains
+
+    with open(file_path, "r", encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            # Handle inline comments by splitting on # and taking the first part
+            line = line.split("#")[0].strip()
+            if not line:
+                continue
+
+            if line.startswith("include:"):
+                include_file = line[8:]
+                include_path = file_path.parent / include_file
+                domains.update(parse_v2fly_domain_file(include_path))
+                continue
+
+            if line.startswith("domain:"):
+                domain = line[7:]
+            elif line.startswith("full:"):
+                domain = line[5:]
+            elif line.startswith("keyword:") or line.startswith("regexp:"):
+                continue
+            else:
+                domain = line
+
+            domain = domain.split("@")[0].strip()
+            if domain:
+                domains.add(domain.lower())
+    return domains

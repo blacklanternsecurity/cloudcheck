@@ -1,11 +1,9 @@
-import importlib
 import json
 import logging
 import traceback
 from pathlib import Path
-from typing import Dict, Type
 
-from cloudcheck.providers.base import BaseProvider
+from cloudcheck.providers import load_provider_classes
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
