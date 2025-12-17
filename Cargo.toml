@@ -14,7 +14,6 @@ openssl = { version = "0.10", features = ["vendored"] }
 pyo3 = { version = "0.27", optional = true }
 pyo3-async-runtimes = { version = "0.27", features = ["tokio-runtime"], optional = true }
 radixtarget = "4.2"
-regex = "1.11"
 
 [features]
 default = []
