@@ -346,7 +346,6 @@ mod tests {
         );
     }
 
-    #[ignore]
     #[tokio::test]
     async fn test_lookup_windows_blob_domain() {
         let cloudcheck = CloudCheck::new();
