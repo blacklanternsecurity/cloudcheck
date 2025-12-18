@@ -2,6 +2,7 @@ use cloudcheck::CloudCheck;
 
 #[tokio::main]
 async fn main() {
+    env_logger::init();
     let args: Vec<String> = std::env::args().collect();
     if args.len() != 2 {
         eprintln!("Usage: cloudcheck <domain_or_ip>");
