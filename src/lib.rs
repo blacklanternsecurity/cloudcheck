@@ -1,3 +1,4 @@
+use log::debug;
 use radixtarget::{RadixTarget, ScopeMode};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
@@ -66,13 +67,18 @@ impl CloudCheck {
 
     async fn fetch_and_cache(cache_path: &PathBuf) -> Result<String, Error> {
         let url = Self::get_signature_url();
+        debug!("Fetching data from URL: {}", url);
         let response = reqwest::get(&url).await?;
         let json_data = response.text().await?;
+        debug!("Fetched {} bytes from network", json_data.len());
 
         if let Some(parent) = cache_path.parent() {
+            debug!("Creating cache directory: {:?}", parent);
             tokio::fs::create_dir_all(parent).await?;
         }
+        debug!("Writing cache file: {:?}", cache_path);
         tokio::fs::write(cache_path, &json_data).await?;
+        debug!("Cache file written successfully");
 
         Ok(json_data)
     }
@@ -83,13 +89,31 @@ impl CloudCheck {
     async fn get_last_fetch_time(&self, cache_path: &PathBuf) -> Result<Option<SystemTime>, Error> {
         let last_fetch = self.last_fetch.lock().await;
         match *last_fetch {
-            Some(time) => Ok(Some(time)),
+            Some(time) => {
+                debug!("Using in-memory last_fetch timestamp: {:?}", time);
+                Ok(Some(time))
+            }
             None => {
                 // No in-memory timestamp - check file modification time
                 drop(last_fetch);
+                debug!(
+                    "No in-memory timestamp, checking cache file modification time: {:?}",
+                    cache_path
+                );
                 match tokio::fs::metadata(cache_path).await {
-                    Ok(metadata) => Ok(metadata.modified().ok()),
-                    Err(_) => Ok(None),
+                    Ok(metadata) => {
+                        if let Ok(modified) = metadata.modified() {
+                            debug!("Cache file modification time: {:?}", modified);
+                            Ok(Some(modified))
+                        } else {
+                            debug!("Cache file exists but modification time unavailable");
+                            Ok(None)
+                        }
+                    }
+                    Err(_) => {
+                        debug!("Cache file does not exist: {:?}", cache_path);
+                        Ok(None)
+                    }
                 }
             }
         }
@@ -105,20 +129,32 @@ impl CloudCheck {
         needs_refresh: bool,
     ) -> Result<(String, bool), Error> {
         if needs_refresh {
+            debug!("Refresh needed, fetching from network");
             let data = Self::fetch_and_cache(cache_path).await?;
             Ok((data, true))
         } else {
+            debug!("No refresh needed, loading from cache: {:?}", cache_path);
             match tokio::fs::read_to_string(cache_path).await {
                 Ok(data) => {
+                    debug!("Successfully loaded {} bytes from cache", data.len());
                     // First load from cache - set timestamp to track process runtime
                     let now = SystemTime::now();
                     let mut last_fetch = self.last_fetch.lock().await;
                     if last_fetch.is_none() {
+                        debug!("Setting in-memory last_fetch timestamp to current time");
                         *last_fetch = Some(now);
+                    } else {
+                        debug!(
+                            "In-memory last_fetch timestamp already set, keeping existing value"
+                        );
                     }
                     Ok((data, false))
                 }
-                Err(_) => {
+                Err(e) => {
+                    debug!(
+                        "Failed to read cache file ({}), falling back to network fetch",
+                        e
+                    );
                     // Cache file was deleted between stat and read, fetch fresh
                     let data = Self::fetch_and_cache(cache_path).await?;
                     Ok((data, true))
@@ -192,43 +228,66 @@ impl CloudCheck {
         let cache_valid_duration = Duration::from_secs(24 * 60 * 60);
         let now = SystemTime::now();
         let cache_path = Self::get_cache_path()?;
+        debug!(
+            "ensure_loaded: cache_valid_duration={:?}, cache_path={:?}",
+            cache_valid_duration, cache_path
+        );
 
         // Check if we need refresh (uses in-memory timestamp, falls back to file stat)
         let last_fetch_time = self.get_last_fetch_time(&cache_path).await?;
         let needs_refresh = match last_fetch_time {
-            Some(fetch_time) => now
-                .duration_since(fetch_time)
-                .map(|elapsed| elapsed >= cache_valid_duration)
-                .unwrap_or(true),
-            None => true,
+            Some(fetch_time) => {
+                let elapsed = now.duration_since(fetch_time).ok();
+                let needs = elapsed.map(|e| e >= cache_valid_duration).unwrap_or(true);
+                if let Some(e) = elapsed {
+                    debug!("Time since last fetch: {:?}, needs_refresh={}", e, needs);
+                } else {
+                    debug!("Could not calculate duration since last fetch, needs_refresh=true");
+                }
+                needs
+            }
+            None => {
+                debug!("No last_fetch_time available, needs_refresh=true");
+                true
+            }
         };
 
         // Early return if data is already loaded and fresh
         {
             let radix_guard = self.radix.read().await;
             if radix_guard.is_some() && !needs_refresh {
+                debug!("Data already loaded and fresh, returning early");
                 return Ok(());
             }
+            debug!("Data not loaded or needs refresh, proceeding to load");
         }
 
         // Load JSON data and build structures
         let (json_data, fetched_fresh) = self.load_json_data(&cache_path, needs_refresh).await?;
+        debug!(
+            "Loaded JSON data, fetched_fresh={}, building data structures",
+            fetched_fresh
+        );
         let (radix, providers_map) = Self::build_data_structures(&json_data)?;
+        debug!("Built data structures: radix tree and providers map");
 
         // Update in-memory data structures
         {
             let mut radix_guard = self.radix.write().await;
             *radix_guard = Some(radix);
+            debug!("Updated radix tree in memory");
         }
         {
             let mut providers_guard = self.providers.write().await;
             *providers_guard = Some(providers_map);
+            debug!("Updated providers map in memory");
         }
 
         // Update timestamp if we fetched fresh data
         if fetched_fresh {
             let mut last_fetch = self.last_fetch.lock().await;
             *last_fetch = Some(now);
+            debug!("Updated in-memory last_fetch timestamp to {:?}", now);
         }
 
         Ok(())

@@ -19,9 +19,6 @@ async def test_lookup_amazon_domain():
 
 
 def test_import_provider():
-    import cloudcheck.providers as providers
-
-    print(dir(providers))
     from cloudcheck.providers import Amazon
 
     assert Amazon.regexes

@@ -6,6 +6,7 @@ from cloudcheck.providers.base import BaseProvider
 
 # Dictionary to store loaded provider classes
 _provider_classes: Dict[str, Type[BaseProvider]] = {}
+_provider_instances: Dict[str, BaseProvider] = {}
 
 
 def load_provider_classes() -> Dict[str, Type[BaseProvider]]:
@@ -45,4 +46,6 @@ def load_provider_classes() -> Dict[str, Type[BaseProvider]]:
 
 
 for provider_name, provider_class in load_provider_classes().items():
-    globals()[provider_name] = provider_class()
+    provider_instance = provider_class()
+    globals()[provider_name] = provider_instance
+    _provider_instances[provider_name] = provider_instance
