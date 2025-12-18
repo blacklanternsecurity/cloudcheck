@@ -102,7 +102,7 @@ impl CloudCheck {
                 );
                 match tokio::fs::metadata(cache_path).await {
                     Ok(metadata) => {
-                        if let Some(modified) = metadata.modified().ok() {
+                        if let Ok(modified) = metadata.modified() {
                             debug!("Cache file modification time: {:?}", modified);
                             Ok(Some(modified))
                         } else {
