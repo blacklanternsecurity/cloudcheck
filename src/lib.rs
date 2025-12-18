@@ -179,7 +179,7 @@ impl CloudCheck {
         // iterating twice ensures that on the second pass, a .get() for blob.core.windows.net will return the
         // parent domain, allowing us to nest both cloud providers under the same key of windows.net.
         for _ in 0..2 {
-            for (_, provider) in &providers_data {
+            for provider in providers_data.values() {
                 let cloud_provider = CloudProvider {
                     name: provider.name.clone(),
                     tags: provider.tags.clone(),
@@ -189,7 +189,7 @@ impl CloudCheck {
                 for cidr in &provider.cidrs {
                     let normalized = match radix.get(cidr) {
                         Some(n) => n,
-                        None => match radix.insert(&cidr) {
+                        None => match radix.insert(cidr) {
                             Ok(Some(n)) => n,
                             Ok(None) => continue,
                             Err(e) => {
@@ -208,7 +208,7 @@ impl CloudCheck {
                 for domain in &provider.domains {
                     let normalized = match radix.get(domain) {
                         Some(n) => n,
-                        None => match radix.insert(&domain) {
+                        None => match radix.insert(domain) {
                             Ok(Some(n)) => n,
                             Ok(None) => continue,
                             Err(e) => {
