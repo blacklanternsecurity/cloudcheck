@@ -169,51 +169,63 @@ impl CloudCheck {
     fn build_data_structures(json_data: &str) -> Result<(RadixTarget, ProvidersMap), Error> {
         let providers_data: HashMap<String, ProviderData> = serde_json::from_str(json_data)?;
 
-        let mut radix = RadixTarget::new(&[], ScopeMode::Normal)?;
+        let mut radix = RadixTarget::new(&[], ScopeMode::Acl)?;
         let mut providers_map: ProvidersMap = HashMap::new();
 
-        for (_, provider) in providers_data {
-            let cloud_provider = CloudProvider {
-                name: provider.name.clone(),
-                tags: provider.tags.clone(),
-            };
-
-            // Insert all CIDRs for this provider
-            for cidr in provider.cidrs {
-                let normalized = match radix.get(&cidr) {
-                    Some(n) => n,
-                    None => match radix.insert(&cidr) {
-                        Ok(Some(n)) => n,
-                        Ok(None) => continue,
-                        Err(e) => {
-                            eprintln!("Error inserting CIDR '{}': {}", cidr, e);
-                            continue;
-                        }
-                    },
+        // here, we iterate twice to ensure similar domains get grouped together regardless of insert order
+        // this exists for a specific reason. a real world example is when github has a domain of
+        // blob.core.widnows.net, and azure has a domain of windows.net. if blob.core.windows.net gets inserted first,
+        // it gets blown away when windows.net is inserted.
+        // iterating twice ensures that on the second pass, a .get() for blob.core.windows.net will return the
+        // parent domain, allowing us to nest both cloud providers under the same key of windows.net.
+        for _ in 0..2 {
+            for (_, provider) in &providers_data {
+                let cloud_provider = CloudProvider {
+                    name: provider.name.clone(),
+                    tags: provider.tags.clone(),
                 };
-                providers_map
-                    .entry(normalized.clone())
-                    .or_default()
-                    .push(cloud_provider.clone());
-            }
 
-            // Insert all domains for this provider
-            for domain in provider.domains {
-                let normalized = match radix.get(&domain) {
-                    Some(n) => n,
-                    None => match radix.insert(&domain) {
-                        Ok(Some(n)) => n,
-                        Ok(None) => continue,
-                        Err(e) => {
-                            eprintln!("Error inserting domain '{}': {}", domain, e);
-                            continue;
-                        }
-                    },
-                };
-                providers_map
-                    .entry(normalized.clone())
-                    .or_default()
-                    .push(cloud_provider.clone());
+                // Insert all CIDRs for this provider
+                for cidr in &provider.cidrs {
+                    let normalized = match radix.get(cidr) {
+                        Some(n) => n,
+                        None => match radix.insert(&cidr) {
+                            Ok(Some(n)) => n,
+                            Ok(None) => continue,
+                            Err(e) => {
+                                eprintln!("Error inserting CIDR '{}': {}", cidr, e);
+                                continue;
+                            }
+                        },
+                    };
+                    let providers_list = providers_map
+                        .entry(normalized.clone())
+                        .or_default();
+                    if !providers_list.iter().any(|p| p.name == cloud_provider.name) {
+                        providers_list.push(cloud_provider.clone());
+                    }
+                }
+
+                // Insert all domains for this provider
+                for domain in &provider.domains {
+                    let normalized = match radix.get(domain) {
+                        Some(n) => n,
+                        None => match radix.insert(&domain) {
+                            Ok(Some(n)) => n,
+                            Ok(None) => continue,
+                            Err(e) => {
+                                eprintln!("Error inserting domain '{}': {}", domain, e);
+                                continue;
+                            }
+                        },
+                    };
+                    let providers_list = providers_map
+                        .entry(normalized.clone())
+                        .or_default();
+                    if !providers_list.iter().any(|p| p.name == cloud_provider.name) {
+                        providers_list.push(cloud_provider.clone());
+                    }
+                }
             }
         }
 
@@ -334,6 +346,23 @@ mod tests {
         assert!(
             names.contains(&"Amazon".to_string()),
             "Expected Amazon in results: {:?}",
+            names
+        );
+    }
+
+    #[tokio::test]
+    async fn test_lookup_windows_blob_domain() {
+        let cloudcheck = CloudCheck::new();
+        let results = cloudcheck.lookup("asdf.blob.core.windows.net").await.unwrap();
+        let names: Vec<String> = results.iter().map(|p| p.name.clone()).collect();
+        assert!(
+            names.contains(&"GitHub".to_string()),
+            "Expected GitHub in results: {:?}",
+            names
+        );
+        assert!(
+            names.contains(&"Microsoft".to_string()),
+            "Expected Microsoft in results: {:?}",
             names
         );
     }
