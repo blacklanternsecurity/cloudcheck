@@ -198,9 +198,7 @@ impl CloudCheck {
                             }
                         },
                     };
-                    let providers_list = providers_map
-                        .entry(normalized.clone())
-                        .or_default();
+                    let providers_list = providers_map.entry(normalized.clone()).or_default();
                     if !providers_list.iter().any(|p| p.name == cloud_provider.name) {
                         providers_list.push(cloud_provider.clone());
                     }
@@ -219,9 +217,7 @@ impl CloudCheck {
                             }
                         },
                     };
-                    let providers_list = providers_map
-                        .entry(normalized.clone())
-                        .or_default();
+                    let providers_list = providers_map.entry(normalized.clone()).or_default();
                     if !providers_list.iter().any(|p| p.name == cloud_provider.name) {
                         providers_list.push(cloud_provider.clone());
                     }
@@ -354,7 +350,10 @@ mod tests {
     #[tokio::test]
     async fn test_lookup_windows_blob_domain() {
         let cloudcheck = CloudCheck::new();
-        let results = cloudcheck.lookup("asdf.blob.core.windows.net").await.unwrap();
+        let results = cloudcheck
+            .lookup("asdf.blob.core.windows.net")
+            .await
+            .unwrap();
         let names: Vec<String> = results.iter().map(|p| p.name.clone()).collect();
         assert!(
             names.contains(&"GitHub".to_string()),
