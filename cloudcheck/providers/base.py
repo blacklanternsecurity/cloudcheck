@@ -60,7 +60,6 @@ class BaseProvider(BaseModel):
 
     def __init__(self, **data):
         super().__init__(**data)
-        print(f"Initializing {self.name}")
         self._cidrs = []
         self._cache_dir = Path.home() / ".cache" / "cloudcheck"
         self._repo_url = "https://github.com/v2fly/domain-list-community.git"

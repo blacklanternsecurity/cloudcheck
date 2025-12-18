@@ -1,4 +1,5 @@
 import importlib
+from sys import stderr
 from pathlib import Path
 from typing import Dict, Type
 
@@ -36,10 +37,9 @@ def load_provider_classes() -> Dict[str, Type[BaseProvider]]:
                 ):
                     provider_name = attr.__name__
                     _provider_classes[provider_name] = attr
-                    print(f"Loaded provider class: {attr.__name__}")
 
         except Exception as e:
-            print(f"Failed to load provider from {file}: {e}")
+            print(f"Failed to load provider from {file}: {e}", file=stderr)
             raise
 
     return _provider_classes
