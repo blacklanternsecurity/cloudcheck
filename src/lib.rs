@@ -286,10 +286,8 @@ impl CloudCheck {
             "Loaded JSON data, fetched_fresh={}, building data structures",
             fetched_fresh
         );
-        let (radix, providers_map) = tokio::task::spawn_blocking(move || {
-            Self::build_data_structures(&json_data)
-        })
-        .await??;
+        let (radix, providers_map) =
+            tokio::task::spawn_blocking(move || Self::build_data_structures(&json_data)).await??;
         debug!("Built data structures: radix tree and providers map");
 
         // Update in-memory data structures
