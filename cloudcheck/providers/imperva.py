@@ -3,12 +3,15 @@ from typing import List
 
 
 class Imperva(BaseProvider):
-    v2fly_company: str = ""
     domains: List[str] = ["imperva.com"]
     tags: List[str] = ["waf"]
+    short_description: str = "Imperva"
+    long_description: str = "A cybersecurity company that provides web application firewall, DDoS protection, and data security solutions."
     # {"org_id": "IMPER-62-ARIN", "org_name": "IMPERVA INC", "country": "US", "asns": [62571]}
+    # {"org_id": "INCAP-5-ARIN", "org_name": "Incapsula Inc", "country": "US", "asns": [14960,19551]}
     org_ids: List[str] = [
         "IMPER-62-ARIN",
+        "INCAP-5-ARIN",
     ]
 
     _ips_url = "https://my.imperva.com/api/integration/v1/ips"

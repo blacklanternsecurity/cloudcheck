@@ -5,6 +5,8 @@ from typing import List
 class Fastly(BaseProvider):
     v2fly_company: str = "fastly"
     tags: List[str] = ["cdn"]
+    short_description: str = "Fastly"
+    long_description: str = "A content delivery network and edge cloud platform that provides edge computing, security, and performance services."
     # {"org_id": "SKYCA-3-ARIN", "org_name": "Fastly, Inc.", "country": "US", "asns": [895,54113,394192]}
     org_ids: List[str] = [
         "SKYCA-3-ARIN",

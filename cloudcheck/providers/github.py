@@ -6,6 +6,8 @@ from typing import List
 class GitHub(BaseProvider):
     v2fly_company: str = "github"
     tags: List[str] = ["cdn"]
+    short_description: str = "GitHub"
+    long_description: str = "A web-based platform for version control and collaboration using Git, providing hosting for software development and code repositories."
     # {"org_id": "GITHU-ARIN", "org_name": "GitHub, Inc.", "country": "US", "asns": [36459]}
     org_ids: List[str] = [
         "GITHU-ARIN",

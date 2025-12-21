@@ -16,6 +16,10 @@ const CLOUDCHECK_SIGNATURE_URL: &str = "https://raw.githubusercontent.com/blackl
 pub struct CloudProvider {
     pub name: String,
     pub tags: Vec<String>,
+    #[serde(default)]
+    pub short_description: String,
+    #[serde(default)]
+    pub long_description: String,
 }
 
 #[derive(Debug, Deserialize)]
@@ -24,6 +28,10 @@ struct ProviderData {
     tags: Vec<String>,
     cidrs: Vec<String>,
     domains: Vec<String>,
+    #[serde(default)]
+    short_description: String,
+    #[serde(default)]
+    long_description: String,
 }
 
 type ProvidersMap = HashMap<String, Vec<CloudProvider>>;
@@ -183,6 +191,8 @@ impl CloudCheck {
                 let cloud_provider = CloudProvider {
                     name: provider.name.clone(),
                     tags: provider.tags.clone(),
+                    short_description: provider.short_description.clone(),
+                    long_description: provider.long_description.clone(),
                 };
 
                 // Insert all CIDRs for this provider

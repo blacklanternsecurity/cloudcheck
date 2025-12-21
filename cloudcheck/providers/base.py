@@ -3,6 +3,7 @@ import os
 import traceback
 import subprocess
 import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 from typing import Dict, List, Union
 from pydantic import BaseModel, field_validator, computed_field
@@ -26,6 +27,8 @@ class BaseProvider(BaseModel):
     tags: List[str] = []  # Tags for the provider (e.g. "cdn", "waf", etc.)
     org_ids: List[str] = []  # ASN Organization IDs (e.g. GOGL-ARIN)
     v2fly_company: str = ""  # Company name for v2fly domain fetching
+    short_description: str = ""  # Short description of the provider
+    long_description: str = ""  # Long description of the provider
 
     # these values are dynamic and set by the update() method
     last_updated: float = time.time()
@@ -145,6 +148,20 @@ class BaseProvider(BaseModel):
 
         return errors
 
+    def _fetch_org_id(self, org_id: str):
+        """Fetch ASNs for a single org_id."""
+        print(f"Fetching cidrs for {org_id} from asndb")
+        try:
+            url = f"{self._asndb_url}/org/{org_id}"
+            print(f"Fetching {url}")
+            res = self.request(url, include_api_key=True)
+            print(f"{url} -> {res}: {res.text}")
+            j = res.json()
+            return j.get("asns", []), []
+        except Exception as e:
+            error = f"Failed to fetch cidrs for {org_id} from asndb: {e}:\n{traceback.format_exc()}"
+            return [], [error]
+
     def fetch_org_ids(
         self,
     ) -> List[Union[ipaddress.IPv4Network, ipaddress.IPv6Network]]:
@@ -153,25 +170,26 @@ class BaseProvider(BaseModel):
         cidrs = set()
         print(f"Fetching {len(self.org_ids)} org ids for {self.name}")
         asns = set()
-        for org_id in self.org_ids:
-            print(f"Fetching cidrs for {org_id} from asndb")
-            try:
-                url = f"{self._asndb_url}/org/{org_id}"
-                print(f"Fetching {url}")
-                res = self.request(url, include_api_key=True)
-                print(f"{url} -> {res}: {res.text}")
-                j = res.json()
-            except Exception as e:
-                errors.append(
-                    f"Failed to fetch cidrs for {org_id} from asndb: {e}:\n{traceback.format_exc()}"
-                )
-                continue
-            _asns = j.get("asns", [])
-            for asn in _asns:
-                asns.add(asn)
-                asn_cidrs, _errors = self.fetch_asn(asn)
+
+        # Parallelize org_id fetching
+        with ThreadPoolExecutor() as executor:
+            org_futures = {
+                executor.submit(self._fetch_org_id, org_id): org_id
+                for org_id in self.org_ids
+            }
+            for future in as_completed(org_futures):
+                _asns, _errors = future.result()
+                errors.extend(_errors)
+                asns.update(_asns)
+
+        # Parallelize ASN fetching
+        with ThreadPoolExecutor() as executor:
+            asn_futures = {executor.submit(self.fetch_asn, asn): asn for asn in asns}
+            for future in as_completed(asn_futures):
+                asn_cidrs, _errors = future.result()
                 errors.extend(_errors)
                 cidrs.update(asn_cidrs)
+
         return cidrs, asns, errors
 
     def fetch_asns(self) -> List[Union[ipaddress.IPv4Network, ipaddress.IPv6Network]]:
@@ -259,6 +277,9 @@ class BaseProvider(BaseModel):
         return repo_dir, errors
 
     def request(self, *args, **kwargs):
+        headers = kwargs.get("headers", {})
+        headers["x-rate-limit-blocking"] = "true"
+        kwargs["headers"] = headers
         return request(*args, **kwargs)
 
     def __str__(self):

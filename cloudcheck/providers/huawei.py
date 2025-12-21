@@ -5,6 +5,8 @@ from typing import List
 class Huawei(BaseProvider):
     v2fly_company: str = "huawei"
     tags: List[str] = ["cloud"]
+    short_description: str = "Huawei"
+    long_description: str = "A Chinese multinational technology corporation that designs, develops, and sells telecommunications equipment, consumer electronics, and cloud services."
     # {"org_id": "ORG-HIPL2-AP-APNIC", "org_name": "HUAWEI INTERNATIONAL PTE. LTD.", "country": "SG", "asns": [131444,136907,141180,149167,151610]}
     # {"org_id": "ORG-HT57-RIPE", "org_name": "HUAWEI TECHNOLOGIES(UK)CO.,LTD", "country": "GB", "asns": [206798]}
     # {"org_id": "ORG-HT61-RIPE", "org_name": "Huawei Tech(UAE)FZ-LLC", "country": "AE", "asns": [206204]}

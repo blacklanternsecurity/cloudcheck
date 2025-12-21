@@ -13,7 +13,7 @@ async fn main() {
     let cloudcheck = CloudCheck::new();
     match cloudcheck.lookup(target).await {
         Ok(results) => {
-            let json = serde_json::to_string_pretty(&results).unwrap();
+            let json = serde_json::to_string(&results).unwrap();
             println!("{}", json);
         }
         Err(e) => {

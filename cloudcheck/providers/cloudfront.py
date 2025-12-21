@@ -4,6 +4,8 @@ from typing import List
 
 class Cloudfront(BaseProvider):
     tags: List[str] = ["cdn"]
+    short_description: str = "Amazon CloudFront"
+    long_description: str = "A content delivery network service provided by Amazon Web Services that delivers data, videos, applications, and APIs to customers globally."
 
     _ips_url = "https://d7uri8nf7uskq.cloudfront.net/tools/list-cloudfront-ips"
 

@@ -5,6 +5,8 @@ from typing import List
 class Oracle(BaseProvider):
     v2fly_company: str = "oracle"
     tags: List[str] = ["cloud"]
+    short_description: str = "Oracle"
+    long_description: str = "A multinational technology corporation that provides database software, cloud engineering systems, and enterprise software products."
     # {"org_id": "ORACLE-4-ARIN", "org_name": "Oracle Corporation", "country": "US", "asns": [90,1630,3457,4184,4191,4192,6142,7160,10884,11049,11479,11506,11625,11887,13832,14506,14544,14919,15135,15179,18837,18916,20037,20054,22435,29976,31898,31925,33517,36282,40921,46403,46558,54253,63295,393218,393314,393676,393773,395010,395738,399966,401341]}
     # {"org_id": "ORACLE-4-Z-ARIN", "org_name": "Oracle Corporation", "country": "US", "asns": [792,793,794,1215,1216,1217,1218,1219]}
     # {"org_id": "ORG-OAI2-RIPE", "org_name": "Oracle America Inc.", "country": "US", "asns": [34135]}

@@ -5,6 +5,8 @@ from typing import List, Dict
 class Hetzner(BaseProvider):
     v2fly_company: str = "hetzner"
     tags: List[str] = ["cloud"]
+    short_description: str = "Hetzner"
+    long_description: str = "A German cloud hosting provider offering dedicated servers, cloud instances, and storage solutions."
     # {"org_id": "ORG-HOA1-RIPE", "org_name": "Hetzner Online GmbH", "country": "DE", "asns": [24940,212317,213230,215859]}
     org_ids: List[str] = [
         "ORG-HOA1-RIPE",
