@@ -120,7 +120,7 @@ When adding a new cloud provider:
     In addition to the above attributes, if you have a custom source of CIDRs or domains, you can override the `fetch_cidrs()` or `fetch_domains()` methods (which by default return an empty list) to go fetch your custom TXT/JSON file, etc.
 
 <!--PROVIDERTABLE-->
-## Cloud Providers (43)
+## Cloud Providers (41)
 
 | Name | Description | Tags | Domains | Subnets |
 |------|-------------|------|---------|----------|
@@ -129,7 +129,6 @@ When adding a new cloud provider:
 | Amazon Web Services | A comprehensive cloud computing platform provided by Amazon, offering infrastructure services, storage, and computing power. | cloud | 231 | 14090 |
 | Arvancloud | An Iranian cloud computing and content delivery network provider offering cloud infrastructure and CDN services. | cdn | 1 | 20 |
 | Backblaze | A cloud storage and backup service provider offering data backup and cloud storage solutions. | cloud | 2 | 26 |
-| CIA | - | gov | 1 | 0 |
 | CacheFly | A content delivery network provider offering global CDN services. | cdn | 0 | 23 |
 | Cisco | A multinational technology corporation that designs, manufactures, and sells networking hardware, software, and telecommunications equipment. | cloud | 121 | 629 |
 | Cloudflare | A web infrastructure and security company providing content delivery network services, DDoS mitigation, and web security solutions. | cdn | 60 | 2674 |
@@ -151,7 +150,6 @@ When adding a new cloud provider:
 | Kamatera | A cloud infrastructure provider offering virtual private servers, cloud servers, and managed cloud services. | cloud | 1 | 163 |
 | Leaseweb | A global hosting and cloud infrastructure provider offering dedicated servers, cloud hosting, and CDN services. | cloud | 0 | 1487 |
 | Microsoft | A multinational technology corporation that develops, manufactures, licenses, supports and sells computer software, consumer electronics and personal computers. Known for products like Windows, Office, Azure cloud services, and Xbox. | cloud | 689 | 2452 |
-| NSA | - | gov | 1 | 0 |
 | OVHcloud | A French cloud computing company that provides web hosting, dedicated servers, and cloud infrastructure services. | cloud | 3 | 517 |
 | Oracle | A multinational technology corporation that provides database software, cloud engineering systems, and enterprise software products. | cloud | 18 | 2329 |
 | Qrator | A DDoS protection and content delivery network service provider. | cdn | 0 | 19 |
