@@ -21506,25 +21506,6 @@
   ],
   "v2fly_company": ""
  },
- "CIA": {
-  "asns": [
-   3358
-  ],
-  "cidrs": [],
-  "domains": [
-   "cia.gov"
-  ],
-  "last_updated": 1766323984.3058949,
-  "name": "CIA",
-  "org_ids": [
-   "CIA-1-ARIN"
-  ],
-  "regexes": {},
-  "tags": [
-   "gov"
-  ],
-  "v2fly_company": ""
- },
  "Cachefly": {
   "asns": [
    30081
@@ -51268,21 +51249,6 @@
    "cloud"
   ],
   "v2fly_company": "microsoft"
- },
- "NSA": {
-  "asns": [],
-  "cidrs": [],
-  "domains": [
-   "nsa.gov"
-  ],
-  "last_updated": 1766323980.3511722,
-  "name": "NSA",
-  "org_ids": [],
-  "regexes": {},
-  "tags": [
-   "gov"
-  ],
-  "v2fly_company": ""
  },
  "OVH": {
   "asns": [
