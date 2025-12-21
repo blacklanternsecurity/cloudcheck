@@ -33,6 +33,8 @@ impl CloudCheck {
                         let dict = PyDict::new(py);
                         dict.set_item("name", provider.name)?;
                         dict.set_item("tags", provider.tags)?;
+                        dict.set_item("short_description", provider.short_description)?;
+                        dict.set_item("long_description", provider.long_description)?;
                         result.push(dict.unbind().into());
                     }
                     Ok(result)

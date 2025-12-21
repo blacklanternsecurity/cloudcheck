@@ -5,6 +5,8 @@ from typing import List
 class IBM(BaseProvider):
     v2fly_company: str = "ibm"
     tags: List[str] = ["cloud"]
+    short_description: str = "IBM"
+    long_description: str = "A multinational technology corporation that provides hardware, software, cloud computing, and consulting services."
     # {"org_id": "AWDIC-ARIN", "org_name": "Advanced Workstations Division, IBM Corporation", "country": "US", "asns": [706]}
     # {"org_id": "IAD-7-ARIN", "org_name": "IBM AS/400 Division", "country": "US", "asns": [10337]}
     # {"org_id": "IBM-1-ARIN", "org_name": "IBM", "country": "US", "asns": [763,10676,12237,15293,17390,18703,19152,19604,19898,22722,23145,23257,26543,27477,27530,29834,393850,395473]}

@@ -5,6 +5,8 @@ from typing import List
 class Arvancloud(BaseProvider):
     domains: List[str] = ["arvancloud.ir"]
     tags: List[str] = ["cdn"]
+    short_description: str = "Arvancloud"
+    long_description: str = "An Iranian cloud computing and content delivery network provider offering cloud infrastructure and CDN services."
     # {"org_id": "ORG-AGTL2-RIPE", "org_name": "ARVANCLOUD GLOBAL TECHNOLOGIES L.L.C", "country": "AE", "asns": [57568,208006,210296]}
     org_ids: List[str] = [
         "ORG-AGTL2-RIPE",

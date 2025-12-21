@@ -4,6 +4,8 @@ from typing import List
 
 class Zoho(BaseProvider):
     v2fly_company: str = "zoho"
+    short_description: str = "Zoho"
+    long_description: str = "An Indian software company that provides cloud-based business software and productivity tools including CRM, email, and office suites."
     # {"org_id": "ORG-ZCB1-RIPE", "org_name": "ZOHO Corporation B.V", "country": "NL", "asns": [205111]}
     # {"org_id": "ORG-ZCPL1-AP-APNIC", "org_name": "ZOHO Corporation Private Limited", "country": "IN", "asns": [56201]}
     # {"org_id": "ORG-ZCPL2-AP-APNIC", "org_name": "Zoho Corporation PTY LTD", "country": "AU", "asns": [139006]}

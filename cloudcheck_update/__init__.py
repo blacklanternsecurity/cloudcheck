@@ -58,5 +58,5 @@ def update():
                 existing_provider[k] = v
 
     with open(json_path, "w") as f:
-        json.dump(existing_json, f, indent=1)
+        json.dump(existing_json, f, indent=1, sort_keys=True)
     return errors

@@ -10,6 +10,8 @@
 [![Python Tests](https://github.com/blacklanternsecurity/cloudcheck/actions/workflows/python-tests.yml/badge.svg?branch=stable)](https://github.com/blacklanternsecurity/cloudcheck/actions/workflows/python-tests.yml)
 [![Pipeline Tests](https://github.com/blacklanternsecurity/cloudcheck/actions/workflows/pipeline-tests.yml/badge.svg?branch=stable)](https://github.com/blacklanternsecurity/cloudcheck/actions/workflows/pipeline-tests.yml)
 
+### UPDATE: Now supports government agencies (DoD, FBI, UK MoD, RU FSO)!
+
 ### UPDATE: Now rewritten in Rust, with [34 supported cloud providers](#supported-cloud-providers)!
 
 CloudCheck is a simple Rust tool to check whether an IP address or hostname belongs to a cloud provider. It includes:
@@ -147,3 +149,9 @@ When adding a new cloud provider:
 - Tencent ([source](https://github.com/blacklanternsecurity/cloudcheck/blob/master/cloudcheck/providers/tencent.py))
 - Wasabi ([source](https://github.com/blacklanternsecurity/cloudcheck/blob/master/cloudcheck/providers/wasabi.py))
 - Zoho ([source](https://github.com/blacklanternsecurity/cloudcheck/blob/master/cloudcheck/providers/zoho.py))
+
+## Supported government agencies
+- DoD ([source](https://github.com/blacklanternsecurity/cloudcheck/blob/master/cloudcheck/providers/dod.py))
+- FBI ([source](https://github.com/blacklanternsecurity/cloudcheck/blob/master/cloudcheck/providers/fbi.py))
+- UK MoD ([source](https://github.com/blacklanternsecurity/cloudcheck/blob/master/cloudcheck/providers/uk_mod.py))
+- RU FSO ([source](https://github.com/blacklanternsecurity/cloudcheck/blob/master/cloudcheck/providers/ru_fso.py))

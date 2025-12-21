@@ -4,6 +4,8 @@ from typing import List
 
 class Rackspace(BaseProvider):
     tags: List[str] = ["cloud"]
+    short_description: str = "Rackspace"
+    long_description: str = "A managed cloud computing company that provides hosting, cloud services, and managed infrastructure solutions."
     # {"org_id": "ORG-BEN1-RIPE", "org_name": "D-hosting die Rackspace & Connectivity GmbH", "country": "DE", "asns": [44716]}
     # {"org_id": "ORG-RA33-RIPE", "org_name": "Rackspace Ltd.", "country": "GB", "asns": [15395,39921,44009]}
     # {"org_id": "ORG-RGG2-RIPE", "org_name": "Rackspace Germany GmbH", "country": "DE", "asns": [213735,213740]}

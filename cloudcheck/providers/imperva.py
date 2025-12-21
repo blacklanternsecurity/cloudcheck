@@ -6,6 +6,8 @@ class Imperva(BaseProvider):
     v2fly_company: str = ""
     domains: List[str] = ["imperva.com"]
     tags: List[str] = ["waf"]
+    short_description: str = "Imperva"
+    long_description: str = "A cybersecurity company that provides web application firewall, DDoS protection, and data security solutions."
     # {"org_id": "IMPER-62-ARIN", "org_name": "IMPERVA INC", "country": "US", "asns": [62571]}
     org_ids: List[str] = [
         "IMPER-62-ARIN",

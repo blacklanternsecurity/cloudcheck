@@ -5,6 +5,8 @@ from typing import List
 class Cisco(BaseProvider):
     v2fly_company: str = "cisco"
     tags: List[str] = ["cloud"]
+    short_description: str = "Cisco"
+    long_description: str = "A multinational technology corporation that designs, manufactures, and sells networking hardware, software, and telecommunications equipment."
     # {"org_id": "CISCO-25-ARIN", "org_name": "Cisco Systems Inc.", "country": "US", "asns": [25949]}
     # {"org_id": "CISCO-32-ARIN", "org_name": "Cisco Systems, Inc.", "country": "US", "asns": [63096]}
     # {"org_id": "CISCOR-ARIN", "org_name": "CIS Corporation", "country": "US", "asns": [3792]}

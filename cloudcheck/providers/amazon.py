@@ -4,6 +4,8 @@ from typing import List, Dict
 
 class Amazon(BaseProvider):
     v2fly_company: str = "amazon"
+    short_description: str = "Amazon Web Services"
+    long_description: str = "A comprehensive cloud computing platform provided by Amazon, offering infrastructure services, storage, and computing power."
     org_ids: List[str] = [
         "AMAZO-139-ARIN",  # Amazon.com, Inc., US
         "AMAZO-141-ARIN",  # Amazon Technologies, Inc., US

@@ -7,6 +7,8 @@ from typing import List
 class Akamai(BaseProvider):
     v2fly_company: str = "akamai"
     tags: List[str] = ["cloud"]
+    short_description: str = "Akamai"
+    long_description: str = "A content delivery network and cloud services provider that delivers web and internet security services."
     # {"org_id": "AKAMAI-ARIN", "org_name": "Akamai Technologies, Inc.", "country": "US", "asns": [12222,16625,16702,17204,17334,18680,18717,20189,22207,22452,23454,23455,26008,30675,31984,32787,33047,35993,35994,36029,36183,393234,393560]}
     # {"org_id": "ORG-AT1-RIPE", "org_name": "Akamai International B.V.", "country": "NL", "asns": [20940,21342,21357,21399,31107,31108,31109,31110,31377,33905,34164,34850,35204,39836,43639,48163,49249,49846,200005,213120]}
     # {"org_id": "ORG-ATI1-AP-APNIC", "org_name": "Akamai Technologies, Inc.", "country": "US", "asns": [23903,24319,45757,55409,55770,63949,133103]}

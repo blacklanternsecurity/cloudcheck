@@ -6,6 +6,8 @@ class Google(BaseProvider):
     v2fly_company: str = "google"
     # domains = ["googleapis.cn", "googleapis.com", "cloud.google.com", "gcp.gvt2.com", "appspot.com", "firebaseio.com", "google"]
     tags: List[str] = ["cloud"]
+    short_description: str = "Google Cloud"
+    long_description: str = "A suite of cloud computing services provided by Google, including infrastructure, platform, and software services for businesses and developers."
     # {"org_id": "GAL-53-ARIN", "org_name": "Google Access LLC", "country": "US", "asns": [32381]}
     # {"org_id": "GF-ARIN", "org_name": "Google Fiber Inc.", "country": "US", "asns": [6432,16591,19448]}
     # {"org_id": "GL-946-ARIN", "org_name": "Google LLC", "country": "US", "asns": [33715]}

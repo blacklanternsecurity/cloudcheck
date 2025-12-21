@@ -5,6 +5,8 @@ from typing import List, Dict
 class Cloudflare(BaseProvider):
     v2fly_company: str = "cloudflare"
     tags: List[str] = ["cdn"]
+    short_description: str = "Cloudflare"
+    long_description: str = "A web infrastructure and security company providing content delivery network services, DDoS mitigation, and web security solutions."
     # {"org_id": "CLOUD14-ARIN", "org_name": "Cloudflare, Inc.", "country": "US", "asns": [13335,14789,394536,395747,400095]}
     # {"org_id": "ORG-CHKL1-AP-APNIC", "org_name": "Cloudflare Hong Kong, LLC", "country": "US", "asns": [133877]}
     # {"org_id": "ORG-CI4-AP-APNIC", "org_name": "Cloudflare, Inc.", "country": "US", "asns": [132892]}

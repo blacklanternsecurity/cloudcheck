@@ -6,6 +6,8 @@ from typing import List, Dict
 class DigitalOcean(BaseProvider):
     v2fly_company: str = "digitalocean"
     tags: List[str] = ["cloud"]
+    short_description: str = "DigitalOcean"
+    long_description: str = "A cloud infrastructure provider offering virtual private servers, managed databases, and other cloud services for developers and businesses."
     # {"org_id": "DO-13-ARIN", "org_name": "DigitalOcean, LLC", "country": "US", "asns": [14061,46652,62567,393406,394362]}
     org_ids: List[str] = [
         "DO-13-ARIN",
