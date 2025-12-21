@@ -29,7 +29,7 @@ def generate_table(providers: dict) -> str:
         # Get name with short description
         short_desc = provider.get("short_description", "")
         if short_desc:
-            name_col = f"{name} ({short_desc})"
+            name_col = short_desc
         else:
             name_col = name
 
