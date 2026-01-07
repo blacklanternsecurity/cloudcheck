@@ -79,14 +79,42 @@ class BaseProvider(BaseModel):
     def update_domains(self):
         # update dynamic domains
         errors = []
+        domains = set()
+
+        # fetch any dynamically-updated lists of domains
+        try:
+            dynamic_domains = self.fetch_domains()
+            print(f"Got {len(dynamic_domains)} dynamic domains for {self.name}")
+            domains.update(dynamic_domains)
+        except Exception as e:
+            errors.append(
+                f"Failed to fetch dynamic domains for {self.name}: {e}:\n{traceback.format_exc()}"
+            )
+
         if self.v2fly_company:
-            domains, errors = self.fetch_v2fly_domains()
-            if domains:
-                self.domains = sorted(list(set(self.domains + domains)))
+            _domains, _errors = self.fetch_v2fly_domains()
+            if _domains:
+                domains.update(_domains)
             else:
                 errors.append(
                     f"No v2fly domains were found for {self.name} (company name: {self.v2fly_company})"
                 )
+            errors.extend(_errors)
+
+        # finally, put in any manually-specified domains
+        print(f"Adding {len(self.domains)} manually-specified domains for {self.name}")
+        if self.domains:
+            domains.update(self.domains)
+
+        print(f"Total {len(domains)} domains for {self.name}")
+
+        try:
+            self.domains = self.validate_domains(domains)
+        except Exception as e:
+            errors.append(
+                f"Error validating domains for {self.name}: {e}:\n{traceback.format_exc()}"
+            )
+
         return errors
 
     def update_cidrs(self):

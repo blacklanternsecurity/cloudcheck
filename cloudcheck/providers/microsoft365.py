@@ -28,6 +28,6 @@ class Microsoft365(BaseProvider):
             if isinstance(response_json, list):
                 for item in response_json:
                     if isinstance(item, dict):
-                        for domain in item.get("domains", []):
+                        for domain in item.get("urls", []):
                             domains.add(domain.strip("*."))
         return list(domains)
