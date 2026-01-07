@@ -94,16 +94,12 @@ impl CloudCheck {
                     if !status.is_success() {
                         let error_msg = format!("HTTP error: {} {}", status.as_u16(), status);
                         log::warn!("{}", error_msg);
-                        Err(
-                            Box::new(std::io::Error::other(error_msg))
-                                as Error,
-                        )
+                        Err(Box::new(std::io::Error::other(error_msg)) as Error)
                     } else {
                         response.text().await.map_err(|e| {
                             let error_msg = format!("Failed to read response body: {}", e);
                             log::warn!("{}", error_msg);
-                            Box::new(std::io::Error::other(error_msg))
-                                as Error
+                            Box::new(std::io::Error::other(error_msg)) as Error
                         })
                     }
                 }
@@ -169,9 +165,7 @@ impl CloudCheck {
         }
 
         Err(last_error.unwrap_or_else(|| {
-            Box::new(std::io::Error::other(
-                "Failed to fetch data after retries",
-            ))
+            Box::new(std::io::Error::other("Failed to fetch data after retries"))
         }))
     }
 
