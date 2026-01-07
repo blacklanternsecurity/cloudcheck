@@ -9,6 +9,9 @@
 [![Rust Tests](https://github.com/blacklanternsecurity/cloudcheck/actions/workflows/rust-tests.yml/badge.svg?branch=stable)](https://github.com/blacklanternsecurity/cloudcheck/actions/workflows/rust-tests.yml)
 [![Python Tests](https://github.com/blacklanternsecurity/cloudcheck/actions/workflows/python-tests.yml/badge.svg?branch=stable)](https://github.com/blacklanternsecurity/cloudcheck/actions/workflows/python-tests.yml)
 [![Pipeline Tests](https://github.com/blacklanternsecurity/cloudcheck/actions/workflows/pipeline-tests.yml/badge.svg?branch=stable)](https://github.com/blacklanternsecurity/cloudcheck/actions/workflows/pipeline-tests.yml)
+[![Docker Tests](https://github.com/blacklanternsecurity/cloudcheck/actions/workflows/docker-tests.yml/badge.svg?branch=stable)](https://github.com/blacklanternsecurity/cloudcheck/actions/workflows/docker-tests.yml)
+
+### UPDATE 01-2026: Now supports REST API!
 
 ### UPDATE 12-2025: Now supports government agencies (DoD, FBI, UK MoD, RU FSO)!
 
@@ -32,24 +35,43 @@ Used by [BBOT](https://github.com/blacklanternsecurity/bbot) and [BBOT Server](h
 # installation
 cargo install cloudcheck
 
-# usage
-cloudcheck 8.8.8.8
+# lookup command
+cloudcheck lookup 8.8.8.8
 # output:
-{
-  "name": "Google",
-  "tags": [
-    "cloud"
-  ]
-}
+[
+  {
+    "name": "Google",
+    "tags": ["cloud"],
+    "short_description": "A suite of cloud computing services provided by Google",
+    "long_description": "Google Cloud Platform provides infrastructure, platform, and software services for businesses and developers"
+  }
+]
 
-cloudcheck asdf.amazon.com
+cloudcheck lookup asdf.amazon.com
 # output:
-{
-  "name": "Amazon",
-  "tags": [
-    "cloud"
-  ]
-}
+[
+  {
+    "name": "Amazon",
+    "tags": ["cloud"],
+    "short_description": "A comprehensive cloud computing platform provided by Amazon",
+    "long_description": "Amazon Web Services offers infrastructure services, storage, and computing power"
+  }
+]
+
+# serve command - start REST API server
+cloudcheck serve
+# Server listening on http://127.0.0.1:8080
+# Swagger UI available at http://127.0.0.1:8080/swagger-ui
+# OpenAPI spec available at http://127.0.0.1:8080/api-docs/openapi.json
+
+# serve with custom host and port
+cloudcheck serve --host 0.0.0.0 --port 3000
+```
+
+## REST API
+
+```bash
+curl http://127.0.0.1:8080/lookup/8.8.8.8
 ```
 
 ## Python Library Usage
@@ -180,3 +202,49 @@ When adding a new cloud provider:
 | Zoho | An Indian software company that provides cloud-based business software and productivity tools including CRM, email, and office suites. | cloud | 13 | 91 |
 | Zscaler | A cloud security company providing secure internet access, cloud security, and zero trust network access services. | cloud | 0 | 247 |
 <!--ENDPROVIDERTABLE-->
+
+## Development
+
+### Python
+
+#### Setup
+```bash
+uv sync
+uv run maturin develop --release
+```
+
+#### Running Tests
+```bash
+# python tests
+uv run pytest test_cloudcheck.py -v
+
+# docker tests
+python test_docker.py
+```
+
+#### Linting
+```bash
+# Check for linting issues
+uv run ruff check && uv run ruff format .
+```
+
+### Rust
+
+#### Running Tests
+```bash
+cargo test --verbose --all-features
+```
+
+#### Formatting
+```bash
+# Check formatting
+cargo fmt --all -- --check
+
+# Format code
+cargo fmt --all
+```
+
+#### Linting
+```bash
+cargo clippy --all-targets --all-features -- -D warnings
+```

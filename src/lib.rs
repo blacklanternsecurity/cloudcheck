@@ -2,6 +2,7 @@ use log::debug;
 use radixtarget::{RadixTarget, ScopeMode};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+use std::error::Error as StdError;
 use std::path::PathBuf;
 use std::sync::Arc;
 use std::time::{Duration, SystemTime};
@@ -12,7 +13,7 @@ mod python;
 
 const CLOUDCHECK_SIGNATURE_URL: &str = "https://raw.githubusercontent.com/blacklanternsecurity/cloudcheck/refs/heads/stable/cloud_providers_v2.json";
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, utoipa::ToSchema)]
 pub struct CloudProvider {
     pub name: String,
     pub tags: Vec<String>,
@@ -75,20 +76,103 @@ impl CloudCheck {
 
     async fn fetch_and_cache(cache_path: &PathBuf) -> Result<String, Error> {
         let url = Self::get_signature_url();
-        debug!("Fetching data from URL: {}", url);
-        let response = reqwest::get(&url).await?;
-        let json_data = response.text().await?;
-        debug!("Fetched {} bytes from network", json_data.len());
+        log::info!("Fetching data from URL: {}", url);
 
-        if let Some(parent) = cache_path.parent() {
-            debug!("Creating cache directory: {:?}", parent);
-            tokio::fs::create_dir_all(parent).await?;
+        const MAX_RETRIES: u32 = 10;
+        let mut last_error = None;
+
+        for attempt in 0..=MAX_RETRIES {
+            log::info!("Fetch attempt {}/{}", attempt + 1, MAX_RETRIES + 1);
+            let result = match reqwest::get(&url).await {
+                Ok(response) => {
+                    let status = response.status();
+                    log::info!(
+                        "HTTP response received, status: {} {}",
+                        status.as_u16(),
+                        status
+                    );
+                    if !status.is_success() {
+                        let error_msg = format!("HTTP error: {} {}", status.as_u16(), status);
+                        log::warn!("{}", error_msg);
+                        Err(
+                            Box::new(std::io::Error::other(error_msg))
+                                as Error,
+                        )
+                    } else {
+                        response.text().await.map_err(|e| {
+                            let error_msg = format!("Failed to read response body: {}", e);
+                            log::warn!("{}", error_msg);
+                            Box::new(std::io::Error::other(error_msg))
+                                as Error
+                        })
+                    }
+                }
+                Err(e) => {
+                    let error_type = if e.is_timeout() {
+                        "timeout"
+                    } else if e.is_connect() {
+                        "connection"
+                    } else if e.is_request() {
+                        "request"
+                    } else {
+                        "unknown"
+                    };
+                    let mut error_details = format!("{}", e);
+                    let mut current_source: Option<&(dyn StdError + 'static)> =
+                        StdError::source(&e);
+                    while let Some(source) = current_source {
+                        error_details = format!("{}: {}", error_details, source);
+                        current_source = source.source();
+                    }
+                    log::warn!(
+                        "HTTP request failed ({} error): {}",
+                        error_type,
+                        error_details
+                    );
+                    Err(Box::new(e) as Error)
+                }
+            };
+
+            match result {
+                Ok(json_data) => {
+                    log::info!("Fetched {} bytes from network", json_data.len());
+
+                    if let Some(parent) = cache_path.parent() {
+                        log::debug!("Creating cache directory: {:?}", parent);
+                        tokio::fs::create_dir_all(parent).await?;
+                    }
+                    log::debug!("Writing cache file: {:?}", cache_path);
+                    tokio::fs::write(cache_path, &json_data).await?;
+                    log::info!("Cache file written successfully");
+
+                    return Ok(json_data);
+                }
+                Err(e) => {
+                    last_error = Some(e);
+                    if attempt < MAX_RETRIES {
+                        log::warn!(
+                            "Failed to fetch (attempt {}/{}), retrying in 1 second: {}",
+                            attempt + 1,
+                            MAX_RETRIES + 1,
+                            last_error.as_ref().unwrap()
+                        );
+                        tokio::time::sleep(tokio::time::Duration::from_secs(1)).await;
+                    } else {
+                        log::error!(
+                            "Failed to fetch after {} attempts: {}",
+                            MAX_RETRIES + 1,
+                            last_error.as_ref().unwrap()
+                        );
+                    }
+                }
+            }
         }
-        debug!("Writing cache file: {:?}", cache_path);
-        tokio::fs::write(cache_path, &json_data).await?;
-        debug!("Cache file written successfully");
 
-        Ok(json_data)
+        Err(last_error.unwrap_or_else(|| {
+            Box::new(std::io::Error::other(
+                "Failed to fetch data after retries",
+            ))
+        }))
     }
 
     /// Gets the last fetch time, checking in-memory timestamp first.
@@ -137,11 +221,11 @@ impl CloudCheck {
         needs_refresh: bool,
     ) -> Result<(String, bool), Error> {
         if needs_refresh {
-            debug!("Refresh needed, fetching from network");
+            log::info!("Refresh needed, fetching from network");
             let data = Self::fetch_and_cache(cache_path).await?;
             Ok((data, true))
         } else {
-            debug!("No refresh needed, loading from cache: {:?}", cache_path);
+            log::info!("No refresh needed, loading from cache: {:?}", cache_path);
             match tokio::fs::read_to_string(cache_path).await {
                 Ok(data) => {
                     debug!("Successfully loaded {} bytes from cache", data.len());
@@ -159,7 +243,7 @@ impl CloudCheck {
                     Ok((data, false))
                 }
                 Err(e) => {
-                    debug!(
+                    log::warn!(
                         "Failed to read cache file ({}), falling back to network fetch",
                         e
                     );
@@ -246,10 +330,7 @@ impl CloudCheck {
         let cache_valid_duration = Duration::from_secs(24 * 60 * 60);
         let now = SystemTime::now();
         let cache_path = Self::get_cache_path()?;
-        debug!(
-            "ensure_loaded: cache_valid_duration={:?}, cache_path={:?}",
-            cache_valid_duration, cache_path
-        );
+        log::info!("ensure_loaded: checking cache at {:?}", cache_path);
 
         // Check if we need refresh (uses in-memory timestamp, falls back to file stat)
         let last_fetch_time = self.get_last_fetch_time(&cache_path).await?;
@@ -274,15 +355,15 @@ impl CloudCheck {
         {
             let radix_guard = self.radix.read().await;
             if radix_guard.is_some() && !needs_refresh {
-                debug!("Data already loaded and fresh, returning early");
+                log::info!("Data already loaded and fresh, returning early");
                 return Ok(());
             }
-            debug!("Data not loaded or needs refresh, proceeding to load");
+            log::info!("Data not loaded or needs refresh, proceeding to load");
         }
 
         // Load JSON data and build structures
         let (json_data, fetched_fresh) = self.load_json_data(&cache_path, needs_refresh).await?;
-        debug!(
+        log::info!(
             "Loaded JSON data, fetched_fresh={}, building data structures",
             fetched_fresh
         );
@@ -313,7 +394,14 @@ impl CloudCheck {
     }
 
     pub async fn lookup(&self, target: &str) -> Result<Vec<CloudProvider>, Error> {
-        self.ensure_loaded().await?;
+        log::info!("lookup called for target: {}", target);
+        match self.ensure_loaded().await {
+            Ok(()) => log::debug!("ensure_loaded succeeded"),
+            Err(e) => {
+                log::error!("ensure_loaded failed: {}", e);
+                return Err(e);
+            }
+        }
 
         let radix_guard = self.radix.read().await;
         let providers_guard = self.providers.read().await;
@@ -322,8 +410,12 @@ impl CloudCheck {
         let providers = providers_guard.as_ref().unwrap();
 
         if let Some(normalized) = radix.get(target) {
-            Ok(providers.get(&normalized).cloned().unwrap_or_default())
+            debug!("Found normalized target: {} for {}", normalized, target);
+            let result = providers.get(&normalized).cloned().unwrap_or_default();
+            debug!("Returning {} providers", result.len());
+            Ok(result)
         } else {
+            debug!("No match found for target: {}", target);
             Ok(Vec::new())
         }
     }
