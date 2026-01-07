@@ -64,16 +64,15 @@ mod tests {
     #[test]
     fn test_lookup_command_output() {
         let bin_path = std::env::var("CARGO_BIN_EXE_cloudcheck").unwrap_or_else(|_| {
-            let profile = std::env::var("PROFILE").unwrap_or_else(|_| "debug".to_string());
             let mut path = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"));
             path.push("target");
-            path.push(&profile);
+            path.push("debug");
             path.push("cloudcheck");
             path.to_string_lossy().to_string()
         });
         let mut cmd = Command::new(bin_path);
         cmd.args(["lookup", "8.8.8.8"]);
-        let output = cmd.output().unwrap();
+        let output = cmd.output().expect("Failed to execute cloudcheck command");
 
         assert!(output.status.success());
 
