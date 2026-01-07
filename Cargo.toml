@@ -26,7 +26,6 @@ default = []
 py = ["dep:pyo3", "dep:pyo3-async-runtimes"]
 
 [dev-dependencies]
-assert_cmd = "2.1"
 [[bin]]
 name = "cloudcheck"
 path = "src/main.rs"

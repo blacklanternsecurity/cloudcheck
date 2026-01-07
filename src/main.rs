@@ -59,14 +59,21 @@ async fn main() {
 
 #[cfg(test)]
 mod tests {
-    use assert_cmd::Command;
+    use std::process::Command;
 
     #[test]
     fn test_lookup_command_output() {
-        let bin_path = std::env::var("CARGO_BIN_EXE_cloudcheck")
-            .unwrap_or_else(|_| "target/debug/cloudcheck".to_string());
-        let mut cmd = Command::from_std(std::process::Command::new(bin_path));
-        let output = cmd.args(["lookup", "8.8.8.8"]).output().unwrap();
+        let bin_path = std::env::var("CARGO_BIN_EXE_cloudcheck").unwrap_or_else(|_| {
+            let profile = std::env::var("PROFILE").unwrap_or_else(|_| "debug".to_string());
+            let mut path = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+            path.push("target");
+            path.push(&profile);
+            path.push("cloudcheck");
+            path.to_string_lossy().to_string()
+        });
+        let mut cmd = Command::new(bin_path);
+        cmd.args(["lookup", "8.8.8.8"]);
+        let output = cmd.output().unwrap();
 
         assert!(output.status.success());
 
