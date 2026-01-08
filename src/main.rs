@@ -69,7 +69,7 @@ mod tests {
             path.push("debug");
             path.push("cloudcheck");
             let bin_path = path.to_string_lossy().to_string();
-            
+
             if !std::path::Path::new(&bin_path).exists() {
                 let status = Command::new("cargo")
                     .args(["build", "--bin", "cloudcheck"])
@@ -77,7 +77,7 @@ mod tests {
                     .expect("Failed to run cargo build");
                 assert!(status.success(), "Failed to build cloudcheck binary");
             }
-            
+
             bin_path
         });
         let mut cmd = Command::new(bin_path);

@@ -237,14 +237,7 @@ cargo test --verbose --all-features
 
 #### Formatting
 ```bash
-# Check formatting
-cargo fmt --all -- --check
-
-# Format code
 cargo fmt --all
-```
 
-#### Linting
-```bash
 cargo clippy --all-targets --all-features -- -D warnings
 ```
