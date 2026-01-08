@@ -5,7 +5,7 @@ from typing import List
 class Tencent(BaseProvider):
     v2fly_company: str = "tencent"
     tags: List[str] = ["cloud"]
-    short_description: str = "Tencent Cloud"
+    short_description: str = "Tencent Cloud (腾讯云)"
     long_description: str = "A Chinese cloud computing service provider and subsidiary of Tencent, offering cloud infrastructure and platform services."
     # {"org_id": "ORG-STCS1-AP-APNIC", "org_name": "Shenzhen Tencent Computer Systems Company Limited", "country": "CN", "asns": [132203,132591]}
     # {"org_id": "ORG-TCCC1-AP-APNIC", "org_name": "Tencent Cloud Computing (Beijing) Co., Ltd", "country": "CN", "asns": [133478]}

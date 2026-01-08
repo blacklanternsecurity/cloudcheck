@@ -1,0 +1,97 @@
+name: Docker Tests
+
+on:
+  push:
+    branches: [ stable ]
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  docker-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install requests
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Run Docker tests
+        run: |
+          python test_docker.py
+
+  docker-publish:
+    runs-on: ubuntu-latest
+    needs: docker-test
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/stable' }}
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v6
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: blacklanternsecurity
+        password: ${{ secrets.DOCKER_TOKEN }}
+
+    - name: Extract metadata
+      id: meta
+      uses: docker/metadata-action@v5
+      with:
+        images: blacklanternsecurity/cloudcheck
+        tags: |
+          type=ref,event=branch
+          type=ref,event=pr
+          type=sha,prefix=sha-
+          type=raw,value=latest,enable={{is_default_branch}}
+          type=raw,value=v1
+          type=raw,value=v1.0
+          type=raw,value=v1.0.0
+
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v6
+      with:
+        context: .
+        file: ./Dockerfile
+        push: true
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+
+    - name: Clean up old Docker Hub tags (up to 50 most recent tags plus 'latest')
+      run: |
+        # Install jq for JSON processing
+        sudo apt-get update && sudo apt-get install -y jq
+        
+        echo "Cleaning up blacklanternsecurity/cloudcheck tags..."
+        
+        tags_response=$(curl -s -H "Authorization: Bearer ${{ secrets.DOCKER_TOKEN }}" \
+          "https://hub.docker.com/v2/repositories/blacklanternsecurity/cloudcheck/tags/?page_size=100")
+        
+        tags_to_delete=$(echo "$tags_response" | jq -r '.results[] | select(.name != "latest") | [.last_updated, .name] | @tsv' | \
+          sort -r | tail -n +11 | cut -f2)
+        
+        for tag in $tags_to_delete; do
+          echo "Deleting blacklanternsecurity/cloudcheck tag: $tag"
+          curl -X DELETE -H "Authorization: Bearer ${{ secrets.DOCKER_TOKEN }}" \
+            "https://hub.docker.com/v2/repositories/blacklanternsecurity/cloudcheck/tags/$tag/"
+        done
+        
+        echo "Cleanup completed for blacklanternsecurity/cloudcheck. Kept 50 most recent tags plus 'latest'."

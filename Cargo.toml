@@ -1,6 +1,6 @@
 [package]
 name = "cloudcheck"
-version = "8.6.1"
+version = "8.7.0"
 edition = "2024"
 description = "CloudCheck is a simple Rust tool to check whether an IP address or hostname belongs to a cloud provider."
 license = "GPL-3.0"
@@ -16,11 +16,16 @@ pyo3-async-runtimes = { version = "0.27", features = ["tokio-runtime"], optional
 radixtarget = "4.2"
 log = "0.4"
 env_logger = "0.11"
+clap = { version = "4.5", features = ["derive"] }
+axum = "0.8"
+utoipa = { version = "5.4", features = ["axum_extras", "chrono"] }
+utoipa-swagger-ui = { version = "9.0", features = ["axum"] }
 
 [features]
 default = []
 py = ["dep:pyo3", "dep:pyo3-async-runtimes"]
 
+[dev-dependencies]
 [[bin]]
 name = "cloudcheck"
 path = "src/main.rs"
