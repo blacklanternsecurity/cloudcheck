@@ -1,0 +1,17 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-cloudcheck
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: cloudcheck
+  template:
+    metadata:
+      labels:
+        app: cloudcheck
+    spec:
+      containers:
+        - name: cloudcheck
+          image: blacklanternsecurity/cloudcheck:{{ .Chart.AppVersion }}
