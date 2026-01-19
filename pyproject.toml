@@ -4,7 +4,7 @@ build-backend = "maturin"
 
 [project]
 name = "cloudcheck"
-version = "8.7.1"
+version = "8.7.2"
 description = "Detailed database of cloud providers. Instantly look up a domain or IP address"
 readme = "README.md"
 requires-python = ">=3.9"
@@ -12,11 +12,11 @@ dependencies = []
 
 [dependency-groups]
 dev = [
+    "httpx>=0.28.1",
     "maturin>=1.10.2",
     "pydantic>=2.12.5",
     "pytest>=8.4.2",
     "pytest-asyncio>=0.24.0",
-    "requests>=2.32.5",
     "ruff>=0.14.8",
 ]
 

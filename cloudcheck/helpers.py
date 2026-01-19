@@ -1,6 +1,6 @@
 import ipaddress
 import os
-import requests
+import httpx
 from pathlib import Path
 from typing import List, Set, Union
 
@@ -201,7 +201,7 @@ browser_base_headers = {
 }
 
 
-def request(url, include_api_key=False, browser_headers=False, **kwargs):
+def request(url, include_api_key=False, browser_headers=False, timeout=60, **kwargs):
     headers = kwargs.get("headers", {})
     if browser_headers:
         headers.update(browser_base_headers)
@@ -209,7 +209,9 @@ def request(url, include_api_key=False, browser_headers=False, **kwargs):
     if include_api_key and bbot_io_api_key:
         headers["Authorization"] = f"Bearer {bbot_io_api_key}"
     kwargs["headers"] = headers
-    return requests.get(url, **kwargs)
+    kwargs["timeout"] = timeout
+    kwargs.setdefault("follow_redirects", True)
+    return httpx.get(url, **kwargs)
 
 
 def parse_v2fly_domain_file(file_path: Path) -> Set[str]:

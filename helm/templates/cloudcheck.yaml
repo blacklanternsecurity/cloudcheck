@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cloudcheck
+spec:
+  replicas: {{ .Values.replicas }}
+  selector:
+    matchLabels:
+      app: cloudcheck
+  template:
+    metadata:
+      labels:
+        app: cloudcheck
+    spec:
+      containers:
+        - name: cloudcheck
+          image: blacklanternsecurity/cloudcheck:{{ .Values.cloudcheckVersion }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cloudcheck
+spec:
+  selector:
+    app: cloudcheck
+  ports:
+    - port: {{ .Values.port }}
+      targetPort: {{ .Values.targetPort }}
