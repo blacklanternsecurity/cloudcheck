@@ -281,7 +281,7 @@ impl CloudCheck {
                             Ok(Some(n)) => n,
                             Ok(None) => continue,
                             Err(e) => {
-                                eprintln!("Error inserting CIDR '{}': {}", cidr, e);
+                                log::warn!("Error inserting CIDR '{}': {}", cidr, e);
                                 continue;
                             }
                         },
@@ -300,7 +300,7 @@ impl CloudCheck {
                             Ok(Some(n)) => n,
                             Ok(None) => continue,
                             Err(e) => {
-                                eprintln!("Error inserting domain '{}': {}", domain, e);
+                                log::warn!("Error inserting domain '{}': {}", domain, e);
                                 continue;
                             }
                         },

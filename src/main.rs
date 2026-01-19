@@ -43,14 +43,14 @@ async fn main() {
                     println!("{}", json);
                 }
                 Err(e) => {
-                    eprintln!("Error: {}", e);
+                    log::error!("Error: {}", e);
                     std::process::exit(1);
                 }
             }
         }
         Commands::Serve { host, port } => {
             if let Err(e) = api::serve(host, port).await {
-                eprintln!("Server error: {}", e);
+                log::error!("Server error: {}", e);
                 std::process::exit(1);
             }
         }
