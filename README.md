@@ -71,7 +71,7 @@ cloudcheck serve --host 0.0.0.0 --port 3000
 ## REST API
 
 ```bash
-curl http://127.0.0.1:8080/lookup/8.8.8.8
+curl http://127.0.0.1:8080/8.8.8.8
 ```
 
 ## Python Library Usage

@@ -1,4 +1,4 @@
-cloudcheckVersion: "v1.0"
+cloudcheckVersion: "v8.8.0"
 replicas: 2
 port: 80
 targetPort: 8080
