@@ -8,11 +8,9 @@ use utoipa_swagger_ui::SwaggerUi;
 
 #[derive(OpenApi)]
 #[openapi(
+    info(description = "Look up any domain or IP address to see if it belongs to a cloud provider."),
     paths(lookup),
     components(schemas(cloudcheck::CloudProvider)),
-    tags(
-        (name = "cloudcheck", description = "Cloud provider lookup API")
-    )
 )]
 struct ApiDoc;
 
@@ -22,7 +20,7 @@ async fn root() -> Redirect {
 
 #[utoipa::path(
     get,
-    path = "/lookup/{target}",
+    path = "/{target}",
     tag = "cloudcheck",
     params(
         ("target" = String, Path, description = "Domain or IP address to lookup")
@@ -55,7 +53,7 @@ pub async fn serve(
     let cloudcheck = Arc::new(CloudCheck::new());
     let app = Router::new()
         .route("/", axum::routing::get(root))
-        .route("/lookup/{target}", axum::routing::get(lookup))
+        .route("/{target}", axum::routing::get(lookup))
         .merge(SwaggerUi::new("/swagger-ui").url("/api-docs/openapi.json", ApiDoc::openapi()))
         .with_state(cloudcheck);
 
@@ -91,7 +89,7 @@ mod tests {
         let cloudcheck = Arc::new(CloudCheck::new());
         let app = Router::new()
             .route("/", axum::routing::get(root))
-            .route("/lookup/{target}", axum::routing::get(lookup))
+            .route("/{target}", axum::routing::get(lookup))
             .merge(SwaggerUi::new("/swagger-ui").url("/api-docs/openapi.json", ApiDoc::openapi()))
             .with_state(cloudcheck);
 
@@ -108,7 +106,7 @@ mod tests {
     #[tokio::test]
     async fn test_lookup_endpoint() {
         let base_url = start_test_server().await;
-        let url = format!("{}/lookup/8.8.8.8", base_url);
+        let url = format!("{}/8.8.8.8", base_url);
 
         let client = reqwest::Client::new();
         let response = client.get(&url).send().await.unwrap();

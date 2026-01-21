@@ -185,7 +185,7 @@ class BaseProvider(BaseModel):
             res = self.request(url, include_api_key=True)
             print(f"{url} -> {res}: {res.text}")
             j = res.json()
-            return j.get("asns", []), []
+            return [a["asn"] for a in j.get("asns", [])], []
         except Exception as e:
             error = f"Failed to fetch cidrs for {org_id} from asndb: {e}:\n{traceback.format_exc()}"
             return [], [error]
