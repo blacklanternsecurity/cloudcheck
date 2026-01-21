@@ -66,10 +66,10 @@ class TestDocker(unittest.TestCase):
         for i in range(5):
             try:
                 print(
-                    f"Attempt {i + 1}/60: Checking {cls.base_url}/lookup/8.8.8.8",
+                    f"Attempt {i + 1}/60: Checking {cls.base_url}/8.8.8.8",
                     file=sys.stderr,
                 )
-                response = requests.get(f"{cls.base_url}/lookup/8.8.8.8", timeout=10)
+                response = requests.get(f"{cls.base_url}/8.8.8.8", timeout=10)
                 if response.status_code == 200:
                     data = response.json()
                     # Wait until we actually get providers (cache might be loading)
@@ -122,9 +122,9 @@ class TestDocker(unittest.TestCase):
         )
 
     def test_lookup_endpoint(self):
-        """Test the /lookup/{target} endpoint."""
-        print(f"Testing {self.base_url}/lookup/8.8.8.8", file=sys.stderr)
-        response = requests.get(f"{self.base_url}/lookup/8.8.8.8", timeout=10)
+        """Test the /{target} endpoint."""
+        print(f"Testing {self.base_url}/8.8.8.8", file=sys.stderr)
+        response = requests.get(f"{self.base_url}/8.8.8.8", timeout=10)
         self.assertEqual(
             response.status_code, 200, f"Expected 200, got {response.status_code}"
         )
