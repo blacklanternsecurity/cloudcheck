@@ -8,9 +8,11 @@ use utoipa_swagger_ui::SwaggerUi;
 
 #[derive(OpenApi)]
 #[openapi(
-    info(description = "Look up any domain or IP address to see if it belongs to a cloud provider."),
+    info(
+        description = "Look up any domain or IP address to see if it belongs to a cloud provider."
+    ),
     paths(lookup),
-    components(schemas(cloudcheck::CloudProvider)),
+    components(schemas(cloudcheck::CloudProvider))
 )]
 struct ApiDoc;
 
