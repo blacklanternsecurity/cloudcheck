@@ -93,6 +93,43 @@ async def main():
 asyncio.run(main())
 ```
 
+### Error Handling
+
+```python
+import asyncio
+from cloudcheck import CloudCheck, CloudCheckError
+
+async def main():
+    cloudcheck = CloudCheck()
+    try:
+        results = await cloudcheck.lookup("8.8.8.8")
+        print(results)
+    except CloudCheckError as e:
+        print(f"Error: {e}")
+
+asyncio.run(main())
+```
+
+### Configuration
+
+```python
+import asyncio
+from cloudcheck import CloudCheck
+
+async def main():
+    # Custom configuration
+    cloudcheck = CloudCheck(
+        signature_url="https://example.com/custom.json",  # Custom signature URL
+        max_retries=5,                                     # Max retry attempts (default: 10)
+        retry_delay_seconds=2,                             # Delay between retries (default: 1)
+        force_refresh=True                                 # Force fresh fetch (default: False)
+    )
+    results = await cloudcheck.lookup("8.8.8.8")
+    print(results)
+
+asyncio.run(main())
+```
+
 ## Rust Library Usage
 
 ```toml
@@ -110,6 +147,43 @@ async fn main() {
     let cloudcheck = CloudCheck::new();
     let results = cloudcheck.lookup("8.8.8.8").await.unwrap();
     println!("{:?}", results); // [CloudProvider { name: "Google", tags: ["cloud"] }]
+}
+```
+
+### Error Handling
+
+```rust
+use cloudcheck::CloudCheck;
+
+#[tokio::main]
+async fn main() {
+    let cloudcheck = CloudCheck::new();
+    match cloudcheck.lookup("8.8.8.8").await {
+        Ok(results) => println!("{:?}", results),
+        Err(e) => eprintln!("Error: {}", e),
+    }
+}
+```
+
+### Configuration
+
+```rust
+use cloudcheck::CloudCheck;
+
+#[tokio::main]
+async fn main() {
+    // Custom configuration
+    let cloudcheck = CloudCheck::with_config(
+        Some("https://example.com/custom.json".to_string()), // Custom signature URL
+        Some(5),                                              // Max retry attempts (default: 10)
+        Some(2),                                              // Delay between retries in seconds (default: 1)
+        Some(true)                                            // Force fresh fetch (default: false)
+    );
+    
+    match cloudcheck.lookup("8.8.8.8").await {
+        Ok(results) => println!("{:?}", results),
+        Err(e) => eprintln!("Error: {}", e),
+    }
 }
 ```
 

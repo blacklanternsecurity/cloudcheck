@@ -1,10 +1,14 @@
 use crate::CloudCheck as RustCloudCheck;
+use pyo3::create_exception;
 use pyo3::prelude::*;
 use pyo3::types::PyDict;
+
+create_exception!(cloudcheck, CloudCheckError, pyo3::exceptions::PyException);
 
 #[pymodule]
 fn cloudcheck(_py: Python, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<CloudCheck>()?;
+    m.add("CloudCheckError", _py.get_type::<CloudCheckError>())?;
     Ok(())
 }
 
@@ -16,9 +20,20 @@ pub struct CloudCheck {
 #[pymethods]
 impl CloudCheck {
     #[new]
-    fn new() -> Self {
+    #[pyo3(signature = (signature_url=None, max_retries=None, retry_delay_seconds=None, force_refresh=None))]
+    fn new(
+        signature_url: Option<String>,
+        max_retries: Option<u32>,
+        retry_delay_seconds: Option<u64>,
+        force_refresh: Option<bool>,
+    ) -> Self {
         CloudCheck {
-            inner: RustCloudCheck::new(),
+            inner: RustCloudCheck::with_config(
+                signature_url,
+                max_retries,
+                retry_delay_seconds,
+                force_refresh,
+            ),
         }
     }
 
@@ -39,10 +54,7 @@ impl CloudCheck {
                     }
                     Ok(result)
                 }),
-                Err(e) => Err(PyErr::new::<pyo3::exceptions::PyRuntimeError, _>(format!(
-                    "CloudCheck error: {}",
-                    e
-                ))),
+                Err(e) => Err(PyErr::new::<CloudCheckError, _>(format!("{}", e))),
             }
         })
     }

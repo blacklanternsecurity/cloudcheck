@@ -1,3 +1,3 @@
-from .cloudcheck import CloudCheck
+from .cloudcheck import CloudCheck, CloudCheckError
 
-__all__ = ["CloudCheck"]
+__all__ = ["CloudCheck", "CloudCheckError"]
