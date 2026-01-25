@@ -43,6 +43,10 @@ pub struct CloudCheck {
     radix: Arc<RwLock<Option<RadixTarget>>>,
     providers: Arc<RwLock<Option<ProvidersMap>>>,
     last_fetch: Arc<Mutex<Option<SystemTime>>>,
+    signature_url: String,
+    max_retries: u32,
+    retry_delay_seconds: u64,
+    force_refresh: bool,
 }
 
 impl Default for CloudCheck {
@@ -53,16 +57,28 @@ impl Default for CloudCheck {
 
 impl CloudCheck {
     pub fn new() -> Self {
+        Self::with_config(None, None, None, None)
+    }
+
+    pub fn with_config(
+        signature_url: Option<String>,
+        max_retries: Option<u32>,
+        retry_delay_seconds: Option<u64>,
+        force_refresh: Option<bool>,
+    ) -> Self {
+        let url = signature_url
+            .or_else(|| std::env::var("CLOUDCHECK_SIGNATURE_URL").ok())
+            .unwrap_or_else(|| CLOUDCHECK_SIGNATURE_URL.to_string());
+
         CloudCheck {
             radix: Arc::new(RwLock::new(None)),
             providers: Arc::new(RwLock::new(None)),
             last_fetch: Arc::new(Mutex::new(None)),
+            signature_url: url,
+            max_retries: max_retries.unwrap_or(10),
+            retry_delay_seconds: retry_delay_seconds.unwrap_or(1),
+            force_refresh: force_refresh.unwrap_or(false),
         }
-    }
-
-    fn get_signature_url() -> String {
-        std::env::var("CLOUDCHECK_SIGNATURE_URL")
-            .unwrap_or_else(|_| CLOUDCHECK_SIGNATURE_URL.to_string())
     }
 
     fn get_cache_path() -> Result<PathBuf, Error> {
@@ -74,16 +90,22 @@ impl CloudCheck {
         Ok(path)
     }
 
-    async fn fetch_and_cache(cache_path: &PathBuf) -> Result<String, Error> {
-        let url = Self::get_signature_url();
-        log::info!("Fetching data from URL: {}", url);
+    async fn fetch_and_cache(&self, cache_path: &PathBuf) -> Result<String, Error> {
+        let url = &self.signature_url;
+        let max_retries = self.max_retries;
+        let retry_delay_seconds = self.retry_delay_seconds;
+        log::info!(
+            "Fetching data from URL: {} (max_retries={}, retry_delay={}s)",
+            url,
+            max_retries,
+            retry_delay_seconds
+        );
 
-        const MAX_RETRIES: u32 = 10;
         let mut last_error = None;
 
-        for attempt in 0..=MAX_RETRIES {
-            log::info!("Fetch attempt {}/{}", attempt + 1, MAX_RETRIES + 1);
-            let result = match reqwest::get(&url).await {
+        for attempt in 0..=max_retries {
+            log::info!("Fetch attempt {}/{}", attempt + 1, max_retries + 1);
+            let result = match reqwest::get(url).await {
                 Ok(response) => {
                     let status = response.status();
                     log::info!(
@@ -145,18 +167,20 @@ impl CloudCheck {
                 }
                 Err(e) => {
                     last_error = Some(e);
-                    if attempt < MAX_RETRIES {
+                    if attempt < max_retries {
                         log::warn!(
-                            "Failed to fetch (attempt {}/{}), retrying in 1 second: {}",
+                            "Failed to fetch (attempt {}/{}), retrying in {} second(s): {}",
                             attempt + 1,
-                            MAX_RETRIES + 1,
+                            max_retries + 1,
+                            retry_delay_seconds,
                             last_error.as_ref().unwrap()
                         );
-                        tokio::time::sleep(tokio::time::Duration::from_secs(1)).await;
+                        tokio::time::sleep(tokio::time::Duration::from_secs(retry_delay_seconds))
+                            .await;
                     } else {
                         log::error!(
                             "Failed to fetch after {} attempts: {}",
-                            MAX_RETRIES + 1,
+                            max_retries + 1,
                             last_error.as_ref().unwrap()
                         );
                     }
@@ -164,9 +188,16 @@ impl CloudCheck {
             }
         }
 
-        Err(last_error.unwrap_or_else(|| {
+        let final_error = last_error.unwrap_or_else(|| {
             Box::new(std::io::Error::other("Failed to fetch data after retries"))
-        }))
+        });
+
+        Err(Box::new(std::io::Error::other(format!(
+            "Failed to fetch cloud provider data from {} after {} attempts: {}",
+            url,
+            max_retries + 1,
+            final_error
+        ))) as Error)
     }
 
     /// Gets the last fetch time, checking in-memory timestamp first.
@@ -216,7 +247,7 @@ impl CloudCheck {
     ) -> Result<(String, bool), Error> {
         if needs_refresh {
             log::info!("Refresh needed, fetching from network");
-            let data = Self::fetch_and_cache(cache_path).await?;
+            let data = self.fetch_and_cache(cache_path).await?;
             Ok((data, true))
         } else {
             log::info!("No refresh needed, loading from cache: {:?}", cache_path);
@@ -242,7 +273,7 @@ impl CloudCheck {
                         e
                     );
                     // Cache file was deleted between stat and read, fetch fresh
-                    let data = Self::fetch_and_cache(cache_path).await?;
+                    let data = self.fetch_and_cache(cache_path).await?;
                     Ok((data, true))
                 }
             }
@@ -328,20 +359,25 @@ impl CloudCheck {
 
         // Check if we need refresh (uses in-memory timestamp, falls back to file stat)
         let last_fetch_time = self.get_last_fetch_time(&cache_path).await?;
-        let needs_refresh = match last_fetch_time {
-            Some(fetch_time) => {
-                let elapsed = now.duration_since(fetch_time).ok();
-                let needs = elapsed.map(|e| e >= cache_valid_duration).unwrap_or(true);
-                if let Some(e) = elapsed {
-                    debug!("Time since last fetch: {:?}, needs_refresh={}", e, needs);
-                } else {
-                    debug!("Could not calculate duration since last fetch, needs_refresh=true");
+        let needs_refresh = if self.force_refresh {
+            debug!("force_refresh is enabled, needs_refresh=true");
+            true
+        } else {
+            match last_fetch_time {
+                Some(fetch_time) => {
+                    let elapsed = now.duration_since(fetch_time).ok();
+                    let needs = elapsed.map(|e| e >= cache_valid_duration).unwrap_or(true);
+                    if let Some(e) = elapsed {
+                        debug!("Time since last fetch: {:?}, needs_refresh={}", e, needs);
+                    } else {
+                        debug!("Could not calculate duration since last fetch, needs_refresh=true");
+                    }
+                    needs
                 }
-                needs
-            }
-            None => {
-                debug!("No last_fetch_time available, needs_refresh=true");
-                true
+                None => {
+                    debug!("No last_fetch_time available, needs_refresh=true");
+                    true
+                }
             }
         };
 
