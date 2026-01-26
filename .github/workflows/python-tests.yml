@@ -89,6 +89,10 @@ jobs:
           python-version: 3.x
       - name: Build wheels
         uses: PyO3/maturin-action@v1
+        env:
+          # Fix ARM cross-compilation: define __ARM_ARCH for assembly files
+          CFLAGS_aarch64_unknown_linux_gnu: "-march=armv8-a"
+          CFLAGS_armv7_unknown_linux_gnueabihf: "-march=armv7-a -mfpu=neon"
         with:
           target: ${{ matrix.platform.target }}
           args: --release --out dist --find-interpreter
