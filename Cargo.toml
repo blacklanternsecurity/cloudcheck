@@ -1,6 +1,6 @@
 [package]
 name = "cloudcheck"
-version = "9.0.0"
+version = "9.1.0"
 edition = "2024"
 description = "CloudCheck is a simple Rust tool to check whether an IP address or hostname belongs to a cloud provider."
 license = "GPL-3.0"
@@ -9,7 +9,7 @@ license = "GPL-3.0"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 tokio = { version = "1", features = ["full"] }
-reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls-native-roots"] }
+reqwest = { version = "0.13", default-features = false, features = ["json", "rustls"] }
 pyo3 = { version = "0.27", optional = true }
 pyo3-async-runtimes = { version = "0.27", features = ["tokio-runtime"], optional = true }
 radixtarget = "4.2"
