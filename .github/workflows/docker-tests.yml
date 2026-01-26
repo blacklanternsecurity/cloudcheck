@@ -62,7 +62,7 @@ jobs:
           type=raw,value=latest,enable={{is_default_branch}}
           type=raw,value=v9
           type=raw,value=v9.1
-          type=raw,value=v9.1.1
+          type=raw,value=v9.1.2
 
     - name: Build and push Docker image
       uses: docker/build-push-action@v6
