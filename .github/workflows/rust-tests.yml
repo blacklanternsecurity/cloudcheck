@@ -51,4 +51,10 @@ jobs:
         uses: actions-rust-lang/setup-rust-toolchain@v1
       
       - name: Publish to crates.io
-        run: cargo publish --token ${{ secrets.CARGO_REGISTRY_TOKEN }}
+        run: |
+          VERSION=$(cargo metadata --format-version 1 --no-deps | jq -r '.packages[0].version')
+          if cargo search cloudcheck --limit 1 | head -1 | grep -q "$VERSION"; then
+            echo "Version $VERSION already exists on crates.io, skipping publish"
+          else
+            cargo publish --token ${{ secrets.CARGO_REGISTRY_TOKEN }}
+          fi
