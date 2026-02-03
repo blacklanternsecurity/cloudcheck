@@ -17,6 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      pull-requests: write
 
     steps:
     - name: Checkout stable branch
@@ -56,8 +57,10 @@ jobs:
           echo "has_changes=true" >> $GITHUB_OUTPUT
         fi
 
-    - name: Commit and merge changes
+    - name: Commit and create PR
       if: steps.changes.outputs.has_changes == 'true'
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         BRANCH="update/daily-$(date -u +%Y-%m-%d)"
         git config user.name "github-actions[bot]"
@@ -65,7 +68,7 @@ jobs:
         git add cloud_providers_v2.json README.md
         git commit -m "chore: daily signature update $(date -u +%Y-%m-%d)"
         git push origin "$BRANCH"
-        git checkout stable
-        git merge "$BRANCH" --no-edit -m "chore: merge daily signature update"
-        git push origin stable
-        git push origin --delete "$BRANCH"
+        gh pr create --base stable --head "$BRANCH" \
+          --title "chore: daily signature update $(date -u +%Y-%m-%d)" \
+          --body "Automated daily update of cloud provider signatures and README table."
+        gh pr merge "$BRANCH" --auto --squash --delete-branch
