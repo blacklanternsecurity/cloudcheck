@@ -40,6 +40,8 @@ jobs:
       run: uv sync
 
     - name: Update signatures
+      env:
+        BBOT_IO_API_KEY: ${{ secrets.BBOT_IO_API_KEY }}
       run: uv run python -m cloudcheck_update.cli
 
     - name: Update README table
