@@ -17,17 +17,12 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      pull-requests: write
 
     steps:
     - name: Checkout stable branch
       uses: actions/checkout@v6
       with:
         ref: stable
-
-    - name: Create temporary update branch
-      run: |
-        git checkout -b update/daily-$(date -u +%Y-%m-%d)
 
     - name: Set up Python
       uses: actions/setup-python@v6
@@ -57,20 +52,11 @@ jobs:
           echo "has_changes=true" >> $GITHUB_OUTPUT
         fi
 
-    - name: Commit and create PR
+    - name: Commit and push to stable
       if: steps.changes.outputs.has_changes == 'true'
-      env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        BRANCH="update/daily-$(date -u +%Y-%m-%d)"
         git config user.name "github-actions[bot]"
         git config user.email "github-actions[bot]@users.noreply.github.com"
         git add cloud_providers_v2.json README.md
         git commit -m "chore: daily signature update $(date -u +%Y-%m-%d)"
-        # Delete remote branch if it exists from a previous failed run
-        git push origin --delete "$BRANCH" 2>/dev/null || true
-        git push origin "$BRANCH"
-        gh pr create --base stable --head "$BRANCH" \
-          --title "chore: daily signature update $(date -u +%Y-%m-%d)" \
-          --body "Automated daily update of cloud provider signatures and README table."
-        gh pr merge "$BRANCH" --auto --squash --delete-branch
+        git push origin HEAD:stable
