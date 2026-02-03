@@ -11,11 +11,14 @@
 [![Pipeline Tests](https://github.com/blacklanternsecurity/cloudcheck/actions/workflows/pipeline-tests.yml/badge.svg?branch=stable)](https://github.com/blacklanternsecurity/cloudcheck/actions/workflows/pipeline-tests.yml)
 [![Docker Tests](https://github.com/blacklanternsecurity/cloudcheck/actions/workflows/docker-tests.yml/badge.svg?branch=stable)](https://github.com/blacklanternsecurity/cloudcheck/actions/workflows/docker-tests.yml)
 
-### UPDATE 01-2026: Now supports REST API!
+> [!TIP]
+> **UPDATE 01-2026:** Now supports REST API!
 
-### UPDATE 12-2025: Now supports government agencies (DoD, FBI, UK MoD, RU FSO)!
+> [!NOTE]
+> **UPDATE 12-2025:** Now supports government agencies (DoD, FBI, UK MoD, RU FSO)!
 
-### UPDATE 12-2025: Now rewritten in Rust!
+> [!IMPORTANT]
+> **UPDATE 12-2025:** Now rewritten in Rust!
 
 CloudCheck is a simple Rust tool to check whether an IP address or hostname belongs to a cloud provider. It includes:
 
