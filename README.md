@@ -29,7 +29,7 @@ CloudCheck is a simple Rust tool to check whether an IP address or hostname belo
 
 ## Cloud Provider Signatures
 
-The latest cloud provider signatures are available in [`cloud_providers_v2.json`](https://github.com/blacklanternsecurity/cloudcheck/blob/master/cloud_providers_v2.json), which is updated daily via [CI/CD](.github/workflows/daily-update.yml). Domains associated with each cloud provider are fetched dynamically from the [v2fly community repository](https://github.com/v2fly/domain-list-community), and CIDRs are fetched from [ASNDB](https://asndb.api.bbot.io/).
+The latest cloud provider signatures are available in [`cloud_providers_v3.json`](https://github.com/blacklanternsecurity/cloudcheck/blob/master/cloud_providers_v3.json), which is updated daily via [CI/CD](.github/workflows/daily-update.yml). Domains associated with each cloud provider are fetched dynamically from the [v2fly community repository](https://github.com/v2fly/domain-list-community), and CIDRs are fetched from [ASNDB](https://asndb.api.bbot.io/).
 
 Used by [BBOT](https://github.com/blacklanternsecurity/bbot) and [BBOT Server](https://github.com/blacklanternsecurity/bbot-server).
 

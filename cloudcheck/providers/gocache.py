@@ -5,7 +5,9 @@ from typing import List
 class Gocache(BaseProvider):
     tags: List[str] = ["cdn"]
     short_description: str = "GoCache"
-    long_description: str = "A Brazilian content delivery network provider offering CDN services."
+    long_description: str = (
+        "A Brazilian content delivery network provider offering CDN services."
+    )
 
     _ips_url = "https://gocache.com.br/ips"
 

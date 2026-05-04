@@ -43,10 +43,13 @@ class Google(BaseProvider):
     _bucket_name_regex = r"[a-z0-9][a-z0-9-_\.]{1,61}[a-z0-9]"
     _firebase_bucket_name_regex = r"[a-z0-9][a-z0-9-\.]{1,61}[a-z0-9]"
     regexes: Dict[str, List[str]] = {
-        "STORAGE_BUCKET_NAME": [_bucket_name_regex, _firebase_bucket_name_regex],
+        "STORAGE_BUCKET_NAME": [
+            r"(?P<name>" + _bucket_name_regex + r")",
+            r"(?P<name>" + _firebase_bucket_name_regex + r")",
+        ],
         "STORAGE_BUCKET_HOSTNAME": [
-            r"(" + _firebase_bucket_name_regex + r")\.(firebaseio\.com)",
-            r"(" + _bucket_name_regex + r")\.(storage\.googleapis\.com)",
+            r"(?P<name>" + _firebase_bucket_name_regex + r")\.firebaseio\.com",
+            r"(?P<name>" + _bucket_name_regex + r")\.storage\.googleapis\.com",
         ],
     }
 

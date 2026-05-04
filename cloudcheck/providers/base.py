@@ -67,7 +67,6 @@ class BaseProvider(BaseModel):
         self._cache_dir = Path.home() / ".cache" / "cloudcheck"
         self._repo_url = "https://github.com/v2fly/domain-list-community.git"
         self._asndb_url = os.getenv("ASNDB_URL", "https://asndb.api.bbot.io/v1")
-        self._bbot_io_api_key = os.getenv("BBOT_IO_API_KEY")
 
     def update(self):
         print(f"Updating {self.name}")
@@ -184,6 +183,7 @@ class BaseProvider(BaseModel):
             print(f"Fetching {url}")
             res = self.request(url, include_api_key=True)
             print(f"{url} -> {res}: {res.text}")
+            res.raise_for_status()
             j = res.json()
             return [a["asn"] for a in j.get("asns", [])], []
         except Exception as e:
@@ -242,6 +242,7 @@ class BaseProvider(BaseModel):
         try:
             res = self.request(url, include_api_key=True)
             print(f"{url} -> {res.text}")
+            res.raise_for_status()
             j = res.json()
             cidrs = j.get("subnets", [])
         except Exception as e:
