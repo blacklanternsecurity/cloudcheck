@@ -6503,7 +6503,7 @@
    "srtcdn.net",
    "tl88.net"
   ],
-  "last_updated": 1777879027.6261756,
+  "last_updated": 1777914598.1998591,
   "long_description": "A content delivery network and cloud services provider that delivers web and internet security services.",
   "name": "Akamai",
   "org_ids": [
@@ -7018,7 +7018,7 @@
    "ztna-dingtalk.com",
    "zuodao.com"
   ],
-  "last_updated": 1777879024.7895367,
+  "last_updated": 1777914595.7620425,
   "long_description": "A Chinese cloud computing company and subsidiary of Alibaba Group, providing cloud services and infrastructure.",
   "name": "Alibaba",
   "org_ids": [
@@ -21149,6 +21149,7 @@
    "69.107.12.0/25",
    "69.107.12.128/26",
    "69.107.12.192/27",
+   "69.107.12.224/28",
    "69.107.3.176/28",
    "69.107.6.112/28",
    "69.107.6.160/28",
@@ -22122,7 +22123,7 @@
    "z.cn",
    "zappos"
   ],
-  "last_updated": 1777879029.5663872,
+  "last_updated": 1777914611.753786,
   "long_description": "A comprehensive cloud computing platform provided by Amazon, offering infrastructure services, storage, and computing power.",
   "name": "Amazon",
   "org_ids": [
@@ -22144,10 +22145,12 @@
   ],
   "regexes": {
    "STORAGE_BUCKET_HOSTNAME": [
-    "([a-z0-9_][a-z0-9-\\.]{1,61}[a-z0-9])\\.(s3-?(?:[a-z0-9-]*\\.){1,2}amazonaws\\.com)"
+    "(?P<name>[a-z0-9_][a-z0-9-\\.]{1,61}[a-z0-9])\\.s3\\.amazonaws\\.com",
+    "(?P<name>[a-z0-9_][a-z0-9-\\.]{1,61}[a-z0-9])\\.s3-(?P<region>[a-z]{2}-[a-z]+-\\d+)\\.amazonaws\\.com",
+    "(?P<name>[a-z0-9_][a-z0-9-\\.]{1,61}[a-z0-9])\\.s3\\.(?P<region>[a-z]{2}-[a-z]+-\\d+)\\.amazonaws\\.com"
    ],
    "STORAGE_BUCKET_NAME": [
-    "[a-z0-9_][a-z0-9-\\.]{1,61}[a-z0-9]"
+    "(?P<name>[a-z0-9_][a-z0-9-\\.]{1,61}[a-z0-9])"
    ]
   },
   "short_description": "Amazon Web Services",
@@ -22164,30 +22167,20 @@
   ],
   "cidrs": [
    "130.185.120.0/22",
-   "178.131.120.48/28",
-   "185.143.232.0/22",
    "185.204.168.0/22",
    "185.215.232.0/22",
-   "185.215.232.0/22",
    "185.235.40.0/22",
-   "188.229.116.16/30",
    "193.24.119.0/24",
    "194.5.192.0/23",
    "194.5.206.0/23",
-   "2.144.3.128/28",
    "2a0f:94c0:200::/40",
-   "37.32.16.0/27",
-   "37.32.17.0/27",
-   "37.32.18.0/27",
-   "37.32.19.0/27",
    "37.32.3.0/24",
-   "91.216.13.0/24",
-   "94.101.182.0/27"
+   "91.216.13.0/24"
   ],
   "domains": [
    "arvancloud.ir"
   ],
-  "last_updated": 1777879026.207554,
+  "last_updated": 1777914838.146964,
   "long_description": "An Iranian cloud computing and content delivery network provider offering cloud infrastructure and CDN services.",
   "name": "Arvancloud",
   "org_ids": [
@@ -22237,7 +22230,7 @@
    "backblaze.com",
    "backblazeb2.com"
   ],
-  "last_updated": 1777879015.2522702,
+  "last_updated": 1777914596.167919,
   "long_description": "A cloud storage and backup service provider offering data backup and cloud storage solutions.",
   "name": "Backblaze",
   "org_ids": [
@@ -22394,7 +22387,7 @@
    "zybang.com",
    "zz.bdstatic.com"
   ],
-  "last_updated": 1777879022.0824556,
+  "last_updated": 1777914590.745325,
   "long_description": "A Chinese content delivery network and cloud acceleration service provided by Baidu.",
   "name": "Baidu",
   "org_ids": [
@@ -22497,7 +22490,7 @@
    "75.102.42.0/24"
   ],
   "domains": [],
-  "last_updated": 1777879016.1564236,
+  "last_updated": 1777914593.1725829,
   "long_description": "A content delivery network provider offering global CDN services.",
   "name": "Cachefly",
   "org_ids": [
@@ -22521,7 +22514,7 @@
    "211.43.147.0/24"
   ],
   "domains": [],
-  "last_updated": 1777879026.7185955,
+  "last_updated": 1777914590.6838658,
   "long_description": "A Korean content delivery network provider offering CDN and cloud services.",
   "name": "Cdnetworks",
   "org_ids": [
@@ -23357,7 +23350,7 @@
    "wifi-mx.com",
    "youtubecisco.com"
   ],
-  "last_updated": 1777879025.7994204,
+  "last_updated": 1777914591.1999056,
   "long_description": "A multinational technology corporation that designs, manufactures, and sells networking hardware, software, and telecommunications equipment.",
   "name": "Cisco",
   "org_ids": [
@@ -26333,7 +26326,7 @@
    "warp.plus",
    "workers.dev"
   ],
-  "last_updated": 1777879019.1188354,
+  "last_updated": 1777914599.1259892,
   "long_description": "A web infrastructure and security company providing content delivery network services, DDoS mitigation, and web security solutions.",
   "name": "Cloudflare",
   "org_ids": [
@@ -26346,11 +26339,11 @@
   ],
   "regexes": {
    "STORAGE_BUCKET_HOSTNAME": [
-    "([a-z0-9_][a-z0-9-\\.]{1,61}[a-z0-9])\\.(r2\\.dev)",
-    "([a-z0-9_][a-z0-9-\\.]{1,61}[a-z0-9])\\.(r2\\.cloudflarestorage\\.com)"
+    "(?P<name>[a-z0-9_][a-z0-9-\\.]{1,61}[a-z0-9])\\.r2\\.dev",
+    "(?P<name>[a-z0-9_][a-z0-9-\\.]{1,61}[a-z0-9])\\.r2\\.cloudflarestorage\\.com"
    ],
    "STORAGE_BUCKET_NAME": [
-    "[a-z0-9_][a-z0-9-\\.]{1,61}[a-z0-9]"
+    "(?P<name>[a-z0-9_][a-z0-9-\\.]{1,61}[a-z0-9])"
    ]
   },
   "short_description": "Cloudflare",
@@ -26540,7 +26533,7 @@
    "99.86.0.0/16"
   ],
   "domains": [],
-  "last_updated": 1777879026.0948095,
+  "last_updated": 1777914594.8424013,
   "long_description": "A content delivery network service provided by Amazon Web Services that delivers data, videos, applications, and APIs to customers globally.",
   "name": "Cloudfront",
   "org_ids": [],
@@ -26576,7 +26569,7 @@
    "95.129.236.0/23"
   ],
   "domains": [],
-  "last_updated": 1777879019.2429538,
+  "last_updated": 1777914607.1980486,
   "long_description": "A DDoS protection and content delivery network service provider.",
   "name": "DDoSGuard",
   "org_ids": [
@@ -26946,7 +26939,7 @@
    "www-csb.dell.com",
    "www.dell.com"
   ],
-  "last_updated": 1777879040.1868262,
+  "last_updated": 1777914598.3675482,
   "long_description": "A multinational technology company that develops, sells, repairs, and supports computers and related products and services.",
   "name": "Dell",
   "org_ids": [
@@ -27265,7 +27258,7 @@
    "do.co",
    "nginxconfig.io"
   ],
-  "last_updated": 1777879024.007864,
+  "last_updated": 1777914598.3776085,
   "long_description": "A cloud infrastructure provider offering virtual private servers, managed databases, and other cloud services for developers and businesses.",
   "name": "DigitalOcean",
   "org_ids": [
@@ -27273,10 +27266,10 @@
   ],
   "regexes": {
    "STORAGE_BUCKET_HOSTNAME": [
-    "([a-z0-9][a-z0-9-]{2,62})\\.([a-z]{3}[\\d]{1}\\.digitaloceanspaces\\.com)"
+    "(?P<name>[a-z0-9][a-z0-9-]{2,62})\\.(?P<region>[a-z]{3}\\d)\\.digitaloceanspaces\\.com"
    ],
    "STORAGE_BUCKET_NAME": [
-    "[a-z0-9][a-z0-9-]{2,62}"
+    "(?P<name>[a-z0-9][a-z0-9-]{2,62})"
    ]
   },
   "short_description": "DigitalOcean",
@@ -37393,7 +37386,7 @@
    "mil",
    "war.gov"
   ],
-  "last_updated": 1777879142.2834456,
+  "last_updated": 1777914689.6008072,
   "long_description": "A U.S. government agency responsible for coordinating and supervising all agencies and functions of the government directly related to national security and the United States Armed Forces.",
   "name": "DoD",
   "org_ids": [
@@ -37438,7 +37431,7 @@
    "fbijobs.gov",
    "ic3.gov"
   ],
-  "last_updated": 1777879023.7441072,
+  "last_updated": 1777914593.1824627,
   "long_description": "A U.S. government agency that serves as the domestic intelligence and security service, responsible for investigating federal crimes and protecting national security.",
   "name": "FBI",
   "org_ids": [
@@ -38576,7 +38569,7 @@
    "fastlylb.net",
    "zencdn.net"
   ],
-  "last_updated": 1777879017.2713568,
+  "last_updated": 1777914590.8968577,
   "long_description": "A content delivery network and edge cloud platform that provides edge computing, security, and performance services.",
   "name": "Fastly",
   "org_ids": [
@@ -38644,7 +38637,7 @@
    "222.236.220.0/23"
   ],
   "domains": [],
-  "last_updated": 1777879020.969092,
+  "last_updated": 1777914591.79073,
   "long_description": "A Korean cloud hosting and infrastructure provider.",
   "name": "Gabia",
   "org_ids": [
@@ -39017,6 +39010,7 @@
    "2a01:c9c0:c006:500::3/128",
    "2a01:c9c0:c006:500::5/128",
    "2a01:c9c0:c006:500::7/128",
+   "2a01:c9c0:c006:500::9/128",
    "2a01:c9c0:c006:600::1/128",
    "2a01:c9c0:c006:600::3/128",
    "2a01:c9c0:c006:600::5/128",
@@ -39171,9 +39165,8 @@
    "2a03:90c0:31:2801::10/125",
    "2a03:90c0:31:2801::18/127",
    "2a03:90c0:31:2801::196/127",
-   "2a03:90c0:31:2801::198/127",
    "2a03:90c0:31:2801::20/125",
-   "2a03:90c0:31:2801::200/125",
+   "2a03:90c0:31:2801::204/126",
    "2a03:90c0:31:2801::208/127",
    "2a03:90c0:31:2801::210/127",
    "2a03:90c0:31:2801::212/128",
@@ -39335,6 +39328,8 @@
    "2a03:90c0:6d1:2801::30/127",
    "2a03:90c0:6d1:2801::4/126",
    "2a03:90c0:6d1:2801::8/127",
+   "2a03:90c0:6e1:2801::4/127",
+   "2a03:90c0:6e1:2801::6/128",
    "2a03:90c0:6f0::/44",
    "2a03:90c0:6f1:2801::10/126",
    "2a03:90c0:6f1:2801::14/128",
@@ -39571,6 +39566,8 @@
    "78.111.107.0/24",
    "78.111.108.0/23",
    "78.111.110.0/24",
+   "78.111.110.4/31",
+   "78.111.110.6/32",
    "78.111.99.0/24",
    "78.138.52.0/24",
    "79.133.108.0/22",
@@ -39640,6 +39637,7 @@
    "80.15.252.43/32",
    "80.15.252.45/32",
    "80.15.252.47/32",
+   "80.15.252.49/32",
    "80.15.252.61/32",
    "80.15.252.63/32",
    "80.15.252.65/32",
@@ -39853,8 +39851,8 @@
    "92.223.118.10/31",
    "92.223.118.12/30",
    "92.223.118.16/29",
-   "92.223.118.196/30",
-   "92.223.118.200/29",
+   "92.223.118.196/31",
+   "92.223.118.204/30",
    "92.223.118.208/30",
    "92.223.118.212/32",
    "92.223.118.214/31",
@@ -40059,7 +40057,7 @@
    "95.85.93.31/32"
   ],
   "domains": [],
-  "last_updated": 1777879017.2089028,
+  "last_updated": 1777914612.7978075,
   "long_description": "A content delivery network and cloud infrastructure provider offering CDN, cloud computing, and edge services.",
   "name": "Gcore",
   "org_ids": [
@@ -44771,7 +44769,7 @@
    "repo.new",
    "thegithubshop.com"
   ],
-  "last_updated": 1777879019.175298,
+  "last_updated": 1777914592.464463,
   "long_description": "A web-based platform for version control and collaboration using Git, providing hosting for software development and code repositories.",
   "name": "GitHub",
   "org_ids": [
@@ -44814,7 +44812,7 @@
    "52.67.255.165/32"
   ],
   "domains": [],
-  "last_updated": 1777879021.8232107,
+  "last_updated": 1777914593.2283716,
   "long_description": "A Brazilian content delivery network provider offering CDN services.",
   "name": "Gocache",
   "org_ids": [],
@@ -47909,7 +47907,7 @@
    "ytimg.com",
    "zukunftswerkstatt.de"
   ],
-  "last_updated": 1777879024.0110688,
+  "last_updated": 1777914599.0281498,
   "long_description": "A suite of cloud computing services provided by Google, including infrastructure, platform, and software services for businesses and developers.",
   "name": "Google",
   "org_ids": [
@@ -47931,12 +47929,12 @@
   ],
   "regexes": {
    "STORAGE_BUCKET_HOSTNAME": [
-    "([a-z0-9][a-z0-9-\\.]{1,61}[a-z0-9])\\.(firebaseio\\.com)",
-    "([a-z0-9][a-z0-9-_\\.]{1,61}[a-z0-9])\\.(storage\\.googleapis\\.com)"
+    "(?P<name>[a-z0-9][a-z0-9-\\.]{1,61}[a-z0-9])\\.firebaseio\\.com",
+    "(?P<name>[a-z0-9][a-z0-9-_\\.]{1,61}[a-z0-9])\\.storage\\.googleapis\\.com"
    ],
    "STORAGE_BUCKET_NAME": [
-    "[a-z0-9][a-z0-9-_\\.]{1,61}[a-z0-9]",
-    "[a-z0-9][a-z0-9-\\.]{1,61}[a-z0-9]"
+    "(?P<name>[a-z0-9][a-z0-9-_\\.]{1,61}[a-z0-9])",
+    "(?P<name>[a-z0-9][a-z0-9-\\.]{1,61}[a-z0-9])"
    ]
   },
   "short_description": "Google Cloud",
@@ -48030,7 +48028,7 @@
    "hpecyber.com",
    "hpefonts.s3.amazonaws.com"
   ],
-  "last_updated": 1777879022.113417,
+  "last_updated": 1777914607.4689388,
   "long_description": "A multinational enterprise information technology company that provides servers, storage, networking, and cloud services.",
   "name": "HPE",
   "org_ids": [
@@ -48060,7 +48058,7 @@
    "herokucharge.com",
    "herokussl.com"
   ],
-  "last_updated": 1777879014.423766,
+  "last_updated": 1777914588.9199176,
   "long_description": "A cloud platform as a service that enables developers to build, run, and operate applications entirely in the cloud.",
   "name": "Heroku",
   "org_ids": [],
@@ -48217,7 +48215,7 @@
    "your-storagebox.de",
    "your-storageshare.de"
   ],
-  "last_updated": 1777879018.5009937,
+  "last_updated": 1777914594.7372396,
   "long_description": "A German cloud hosting provider offering dedicated servers, cloud instances, and storage solutions.",
   "name": "Hetzner",
   "org_ids": [
@@ -48225,10 +48223,10 @@
   ],
   "regexes": {
    "STORAGE_BUCKET_HOSTNAME": [
-    "([a-z0-9][a-z0-9-_\\.]{1,61}[a-z0-9])\\.(your-objectstorage\\.com)"
+    "(?P<name>[a-z0-9][a-z0-9-_\\.]{1,61}[a-z0-9])\\.(?P<region>[a-z]{3}\\d)\\.your-objectstorage\\.com"
    ],
    "STORAGE_BUCKET_NAME": [
-    "[a-z0-9][a-z0-9-_\\.]{1,61}[a-z0-9]"
+    "(?P<name>[a-z0-9][a-z0-9-_\\.]{1,61}[a-z0-9])"
    ]
   },
   "short_description": "Hetzner",
@@ -48303,7 +48301,7 @@
    "66.232.144.0/22"
   ],
   "domains": [],
-  "last_updated": 1777879035.8503065,
+  "last_updated": 1777914592.486226,
   "long_description": "A Korean cloud hosting and infrastructure provider.",
   "name": "Hostway",
   "org_ids": [
@@ -48936,7 +48934,7 @@
    "y43f6.cn",
    "z95rr.cn"
   ],
-  "last_updated": 1777879035.8234565,
+  "last_updated": 1777914591.9211159,
   "long_description": "A Chinese multinational technology corporation that designs, develops, and sells telecommunications equipment, consumer electronics, and cloud services.",
   "name": "Huawei",
   "org_ids": [
@@ -49406,7 +49404,7 @@
    "weather",
    "weatherchannel"
   ],
-  "last_updated": 1777879023.5054157,
+  "last_updated": 1777914593.1539373,
   "long_description": "A multinational technology corporation that provides hardware, software, cloud computing, and consulting services.",
   "name": "IBM",
   "org_ids": [
@@ -49516,7 +49514,7 @@
    "97.64.56.0/21"
   ],
   "domains": [],
-  "last_updated": 1777879040.1810884,
+  "last_updated": 1777914602.6609826,
   "long_description": "A cloud security company providing secure web gateway, CASB, and zero trust network access services.",
   "name": "Iboss",
   "org_ids": [
@@ -49893,7 +49891,7 @@
   "domains": [
    "imperva.com"
   ],
-  "last_updated": 1777879020.6367545,
+  "last_updated": 1777914591.6294458,
   "long_description": "A cybersecurity company that provides web application firewall, DDoS protection, and data security solutions.",
   "name": "Imperva",
   "org_ids": [
@@ -50089,7 +50087,7 @@
   "domains": [
    "kamatera.com"
   ],
-  "last_updated": 1777879021.1087687,
+  "last_updated": 1777914609.0540206,
   "long_description": "A cloud infrastructure provider offering virtual private servers, cloud servers, and managed cloud services.",
   "name": "Kamatera",
   "org_ids": [
@@ -50260,7 +50258,7 @@
    "63.105.192.0/20"
   ],
   "domains": [],
-  "last_updated": 1777879015.253973,
+  "last_updated": 1777914599.1606474,
   "long_description": "A Korean content delivery network and cloud infrastructure provider.",
   "name": "Kinx",
   "org_ids": [
@@ -50299,7 +50297,7 @@
    "61.100.72.0/24"
   ],
   "domains": [],
-  "last_updated": 1777879016.2886434,
+  "last_updated": 1777914593.1089768,
   "long_description": "A Korean cloud computing service provided by KT Corporation.",
   "name": "Ktcloud",
   "org_ids": [
@@ -51812,7 +51810,7 @@
    "96.9.228.0/23"
   ],
   "domains": [],
-  "last_updated": 1777879023.1017509,
+  "last_updated": 1777914594.4939258,
   "long_description": "A global hosting and cloud infrastructure provider offering dedicated servers, cloud hosting, and CDN services.",
   "name": "Leaseweb",
   "org_ids": [
@@ -52015,7 +52013,7 @@
    "61.43.236.0/24"
   ],
   "domains": [],
-  "last_updated": 1777879020.5127916,
+  "last_updated": 1777914592.5880353,
   "long_description": "A Korean telecommunications company offering CDN services.",
   "name": "Lgtelecom",
   "org_ids": [
@@ -55331,7 +55329,7 @@
    "xbx.lv",
    "yammer.com"
   ],
-  "last_updated": 1777879025.661196,
+  "last_updated": 1777914593.7086158,
   "long_description": "A multinational technology corporation that develops, manufactures, licenses, supports and sells computer software, consumer electronics and personal computers. Known for products like Windows, Office, Azure cloud services, and Xbox.",
   "name": "Microsoft",
   "org_ids": [
@@ -55343,10 +55341,10 @@
   ],
   "regexes": {
    "STORAGE_BUCKET_HOSTNAME": [
-    "([a-z0-9][a-z0-9-_\\.]{1,61}[a-z0-9])\\.(blob\\.core\\.windows\\.net)"
+    "(?P<name>[a-z0-9][a-z0-9-_\\.]{1,61}[a-z0-9])\\.blob\\.core\\.windows\\.net"
    ],
    "STORAGE_BUCKET_NAME": [
-    "[a-z0-9][a-z0-9-_\\.]{1,61}[a-z0-9]"
+    "(?P<name>[a-z0-9][a-z0-9-_\\.]{1,61}[a-z0-9])"
    ]
   },
   "short_description": "Microsoft",
@@ -55629,7 +55627,7 @@
    "yammer.com",
    "yammerusercontent.com"
   ],
-  "last_updated": 1777879025.8723342,
+  "last_updated": 1777914589.6509013,
   "long_description": "A cloud-based productivity suite provided by Microsoft, including Office applications and cloud services.",
   "name": "Microsoft365",
   "org_ids": [],
@@ -55721,7 +55719,7 @@
    "61.97.176.0/20"
   ],
   "domains": [],
-  "last_updated": 1777879015.026376,
+  "last_updated": 1777914589.110229,
   "long_description": "A Korean cloud computing platform provided by Naver Corporation.",
   "name": "Navercloud",
   "org_ids": [
@@ -55735,137 +55733,10 @@
   "v2fly_company": ""
  },
  "Nhncloud": {
-  "asns": [
-   10038,
-   45974,
-   152291
-  ],
-  "cidrs": [
-   "1.209.199.0/24",
-   "101.79.68.0/22",
-   "101.79.80.0/21",
-   "101.79.92.0/22",
-   "103.132.32.0/22",
-   "103.194.108.0/22",
-   "103.194.108.0/22",
-   "103.218.156.0/22",
-   "103.218.156.0/22",
-   "103.243.200.0/22",
-   "103.87.116.0/22",
-   "106.249.18.0/23",
-   "106.249.18.0/23",
-   "106.249.20.0/22",
-   "106.249.20.0/22",
-   "106.249.24.0/21",
-   "106.249.24.0/23",
-   "106.249.30.0/23",
-   "106.249.32.0/23",
-   "106.249.32.0/23",
-   "110.45.212.0/22",
-   "114.110.128.0/21",
-   "114.110.136.0/22",
-   "114.110.140.0/23",
-   "114.110.143.0/24",
-   "114.110.144.0/22",
-   "114.110.150.0/24",
-   "114.110.152.0/24",
-   "114.110.160.0/22",
-   "114.110.164.0/24",
-   "114.110.177.0/24",
-   "114.110.178.0/24",
-   "114.110.180.0/22",
-   "114.110.184.0/21",
-   "114.110.184.0/22",
-   "114.110.190.0/23",
-   "115.88.123.0/24",
-   "115.88.132.0/24",
-   "115.89.203.0/24",
-   "115.89.67.0/24",
-   "115.89.74.0/24",
-   "115.92.64.0/24",
-   "117.52.122.0/23",
-   "117.52.154.0/23",
-   "117.52.20.0/24",
-   "117.52.5.0/24",
-   "121.254.219.0/24",
-   "125.6.32.0/24",
-   "125.6.36.0/22",
-   "125.6.40.0/21",
-   "125.6.48.0/21",
-   "125.6.57.0/24",
-   "125.6.58.0/23",
-   "125.6.60.0/22",
-   "133.186.128.0/17",
-   "133.186.128.0/20",
-   "133.186.144.0/21",
-   "133.186.152.0/22",
-   "133.186.156.0/24",
-   "133.186.158.0/23",
-   "133.186.160.0/22",
-   "133.186.165.0/24",
-   "133.186.166.0/23",
-   "133.186.168.0/21",
-   "133.186.176.0/21",
-   "133.186.184.0/22",
-   "133.186.188.0/23",
-   "133.186.191.0/24",
-   "133.186.192.0/19",
-   "133.186.225.0/24",
-   "133.186.228.0/23",
-   "133.186.232.0/24",
-   "133.186.236.0/23",
-   "133.186.239.0/24",
-   "133.186.240.0/21",
-   "133.186.250.0/23",
-   "133.186.252.0/23",
-   "133.186.255.0/24",
-   "180.210.100.0/22",
-   "180.210.104.0/21",
-   "180.210.112.0/20",
-   "180.210.64.0/22",
-   "180.210.68.0/24",
-   "180.210.70.0/23",
-   "180.210.74.0/23",
-   "180.210.76.0/22",
-   "180.210.80.0/22",
-   "180.210.84.0/24",
-   "180.210.87.0/24",
-   "180.210.88.0/22",
-   "180.210.92.0/24",
-   "180.210.95.0/24",
-   "180.210.96.0/24",
-   "210.124.216.0/24",
-   "210.206.88.0/24",
-   "211.168.237.0/24",
-   "211.170.184.0/24",
-   "211.172.144.0/23",
-   "211.180.235.0/24",
-   "211.188.100.0/23",
-   "211.188.103.0/24",
-   "211.188.96.0/22",
-   "211.255.136.0/21",
-   "211.32.155.0/24",
-   "211.50.32.0/24",
-   "211.50.58.0/24",
-   "211.56.0.0/21",
-   "223.255.200.0/23",
-   "223.255.202.0/24",
-   "223.255.204.0/23",
-   "223.255.207.0/24",
-   "43.227.116.0/22",
-   "43.227.116.0/22",
-   "43.254.244.0/24",
-   "45.125.232.0/22",
-   "45.125.232.0/22",
-   "45.249.160.0/22",
-   "45.249.160.0/22",
-   "59.150.32.0/22",
-   "59.150.36.0/23",
-   "61.111.36.0/22",
-   "61.42.226.0/24"
-  ],
+  "asns": [],
+  "cidrs": [],
   "domains": [],
-  "last_updated": 1777879014.8128073,
+  "last_updated": 1777914596.2981927,
   "long_description": "A Korean cloud computing platform provided by NHN Corporation.",
   "name": "Nhncloud",
   "org_ids": [
@@ -56460,7 +56331,7 @@
    "ovh.com",
    "ovhcloud.com"
   ],
-  "last_updated": 1777879016.18782,
+  "last_updated": 1777914589.1278045,
   "long_description": "A French cloud computing company that provides web hosting, dedicated servers, and cloud infrastructure services.",
   "name": "OVH",
   "org_ids": [
@@ -59171,7 +59042,7 @@
    "sun.com",
    "virtualbox.org"
   ],
-  "last_updated": 1777879042.7326865,
+  "last_updated": 1777914598.5881746,
   "long_description": "A multinational technology corporation that provides database software, cloud engineering systems, and enterprise software products.",
   "name": "Oracle",
   "org_ids": [
@@ -59221,7 +59092,7 @@
    "46.174.140.0/22"
   ],
   "domains": [],
-  "last_updated": 1777879038.8142593,
+  "last_updated": 1777914594.3482249,
   "long_description": "A DDoS protection and content delivery network service provider.",
   "name": "Qrator",
   "org_ids": [
@@ -59395,7 +59266,7 @@
    "95.216.116.209/32"
   ],
   "domains": [],
-  "last_updated": 1777879026.9526305,
+  "last_updated": 1777914602.8781798,
   "long_description": "A content delivery network and edge computing platform providing CDN services.",
   "name": "Quiccloud",
   "org_ids": [
@@ -59434,7 +59305,7 @@
    "95.173.144.0/20"
   ],
   "domains": [],
-  "last_updated": 1777879035.6508183,
+  "last_updated": 1777914594.6148994,
   "long_description": "A Russian federal executive body responsible for counterintelligence, internal and border security, counterterrorism, and surveillance.",
   "name": "RUFSO",
   "org_ids": [
@@ -59689,7 +59560,7 @@
   "domains": [
    "rackspace.com"
   ],
-  "last_updated": 1777879042.3592045,
+  "last_updated": 1777914597.2074416,
   "long_description": "A managed cloud computing company that provides hosting, cloud services, and managed infrastructure solutions.",
   "name": "Rackspace",
   "org_ids": [
@@ -59811,7 +59682,7 @@
    "twinprime.com",
    "weinvoiceit.com"
   ],
-  "last_updated": 1777879015.3877552,
+  "last_updated": 1777914592.6466734,
   "long_description": "A cloud-based software company that provides customer relationship management services and enterprise cloud computing solutions.",
   "name": "Salesforce",
   "org_ids": [
@@ -59883,7 +59754,7 @@
   "domains": [
    "scaleway.com"
   ],
-  "last_updated": 1777879015.3389614,
+  "last_updated": 1777914607.3214605,
   "long_description": "A French cloud computing company that provides virtual private servers, bare metal servers, and cloud infrastructure services.",
   "name": "Scaleway",
   "org_ids": [
@@ -59927,7 +59798,7 @@
    "61.97.0.0/20"
   ],
   "domains": [],
-  "last_updated": 1777879015.2990534,
+  "last_updated": 1777914612.0742524,
   "long_description": "A Korean telecommunications company offering CDN services.",
   "name": "Skbroadband",
   "org_ids": [
@@ -59966,7 +59837,7 @@
    "5.252.32.0/22"
   ],
   "domains": [],
-  "last_updated": 1777879015.0428846,
+  "last_updated": 1777914589.0685964,
   "long_description": "A DDoS protection and web application firewall service provider.",
   "name": "Stormwall",
   "org_ids": [
@@ -60006,7 +59877,7 @@
    "72.167.12.0/22"
   ],
   "domains": [],
-  "last_updated": 1777879027.2852826,
+  "last_updated": 1777914596.0025225,
   "long_description": "A website security and web application firewall service provider.",
   "name": "Sucuri",
   "org_ids": [
@@ -60985,7 +60856,7 @@
    "zcjbgame.com",
    "zhuoyuegame.com"
   ],
-  "last_updated": 1777879025.441638,
+  "last_updated": 1777914592.6682842,
   "long_description": "A Chinese cloud computing service provider and subsidiary of Tencent, offering cloud infrastructure and platform services.",
   "name": "Tencent",
   "org_ids": [
@@ -61008,7 +60879,7 @@
   "domains": [
    "gov.uk"
   ],
-  "last_updated": 1777879023.2934222,
+  "last_updated": 1777914594.344789,
   "long_description": "A U.K. government department responsible for implementing the defence policy of the United Kingdom and managing the British Armed Forces.",
   "name": "UKMoD",
   "org_ids": [
@@ -61050,7 +60921,7 @@
   "domains": [
    "wasabi.com"
   ],
-  "last_updated": 1777879026.5727715,
+  "last_updated": 1777914602.5165482,
   "long_description": "A cloud storage provider offering hot cloud storage services with high performance and low cost.",
   "name": "Wasabi",
   "org_ids": [
@@ -61073,7 +60944,7 @@
    "103.77.224.0/24"
   ],
   "domains": [],
-  "last_updated": 1777879017.2792485,
+  "last_updated": 1777914593.3375568,
   "long_description": "A DDoS protection and content delivery network service provider.",
   "name": "X4b",
   "org_ids": [
@@ -61312,7 +61183,7 @@
    "yastatic.net",
    "yccdn.ru"
   ],
-  "last_updated": 1777879024.8638072,
+  "last_updated": 1777914590.7548518,
   "long_description": "Russian cloud computing and internet services provider, offering infrastructure, storage, and various digital services.",
   "name": "Yandex",
   "org_ids": [
@@ -61452,7 +61323,7 @@
    "zohouniversity.com",
    "zohowebstatic.com"
   ],
-  "last_updated": 1777879018.172579,
+  "last_updated": 1777914593.187144,
   "long_description": "An Indian software company that provides cloud-based business software and productivity tools including CRM, email, and office suites.",
   "name": "Zoho",
   "org_ids": [
@@ -61474,287 +61345,9 @@
  },
  "Zscaler": {
   "asns": [],
-  "cidrs": [
-   "101.2.202.0/23",
-   "101.2.204.0/23",
-   "101.2.212.0/23",
-   "101.2.222.0/23",
-   "101.2.224.0/20",
-   "101.2.242.0/23",
-   "101.2.248.0/23",
-   "101.2.252.0/22",
-   "103.215.126.0/24",
-   "104.129.192.0/21",
-   "104.129.200.0/23",
-   "104.129.204.0/22",
-   "112.137.170.0/24",
-   "116.196.192.0/24",
-   "128.177.125.0/24",
-   "136.226.0.0/22",
-   "136.226.100.0/22",
-   "136.226.104.0/21",
-   "136.226.112.0/22",
-   "136.226.116.0/23",
-   "136.226.122.0/23",
-   "136.226.124.0/22",
-   "136.226.128.0/21",
-   "136.226.138.0/23",
-   "136.226.140.0/23",
-   "136.226.162.0/23",
-   "136.226.164.0/22",
-   "136.226.168.0/22",
-   "136.226.172.0/23",
-   "136.226.186.0/23",
-   "136.226.188.0/22",
-   "136.226.192.0/23",
-   "136.226.198.0/23",
-   "136.226.200.0/21",
-   "136.226.208.0/21",
-   "136.226.216.0/23",
-   "136.226.228.0/22",
-   "136.226.232.0/21",
-   "136.226.240.0/22",
-   "136.226.244.0/23",
-   "136.226.248.0/21",
-   "136.226.48.0/20",
-   "136.226.64.0/20",
-   "136.226.80.0/21",
-   "136.226.90.0/23",
-   "137.31.12.0/23",
-   "137.31.8.0/22",
-   "137.83.154.0/24",
-   "140.210.152.0/23",
-   "147.161.128.0/20",
-   "147.161.144.0/21",
-   "147.161.152.0/22",
-   "147.161.156.0/23",
-   "147.161.160.0/21",
-   "147.161.168.0/22",
-   "147.161.172.0/23",
-   "147.161.176.0/20",
-   "147.161.192.0/21",
-   "147.161.212.0/22",
-   "147.161.216.0/22",
-   "147.161.224.0/21",
-   "147.161.232.0/22",
-   "147.161.236.0/23",
-   "147.161.244.0/22",
-   "147.161.248.0/22",
-   "147.161.254.0/23",
-   "154.113.23.0/24",
-   "159.254.176.0/21",
-   "159.254.184.0/23",
-   "159.254.192.0/21",
-   "159.254.210.0/23",
-   "159.254.212.0/22",
-   "159.254.222.0/23",
-   "159.254.224.0/20",
-   "159.254.242.0/23",
-   "159.254.244.0/22",
-   "159.254.248.0/22",
-   "159.254.252.0/23",
-   "159.254.30.0/23",
-   "159.254.32.0/20",
-   "159.254.48.0/22",
-   "159.254.56.0/23",
-   "159.254.60.0/23",
-   "159.254.64.0/23",
-   "159.254.72.0/21",
-   "159.254.88.0/23",
-   "162.128.187.0/24",
-   "165.225.0.0/23",
-   "165.225.102.0/24",
-   "165.225.104.0/24",
-   "165.225.106.0/23",
-   "165.225.108.0/22",
-   "165.225.112.0/22",
-   "165.225.116.0/23",
-   "165.225.120.0/22",
-   "165.225.124.0/23",
-   "165.225.192.0/19",
-   "165.225.2.0/24",
-   "165.225.20.0/22",
-   "165.225.226.0/23",
-   "165.225.228.0/22",
-   "165.225.232.0/22",
-   "165.225.238.0/23",
-   "165.225.240.0/22",
-   "165.225.246.0/23",
-   "165.225.248.0/23",
-   "165.225.26.0/23",
-   "165.225.32.0/23",
-   "165.225.36.0/22",
-   "165.225.48.0/24",
-   "165.225.50.0/23",
-   "165.225.56.0/21",
-   "165.225.66.0/23",
-   "165.225.72.0/22",
-   "165.225.76.0/23",
-   "165.225.8.0/21",
-   "165.225.80.0/22",
-   "165.225.92.0/22",
-   "165.225.96.0/23",
-   "167.103.0.0/20",
-   "167.103.104.0/22",
-   "167.103.118.0/23",
-   "167.103.120.0/22",
-   "167.103.126.0/23",
-   "167.103.128.0/21",
-   "167.103.136.0/22",
-   "167.103.140.0/23",
-   "167.103.156.0/23",
-   "167.103.16.0/21",
-   "167.103.160.0/22",
-   "167.103.186.0/23",
-   "167.103.188.0/23",
-   "167.103.196.0/22",
-   "167.103.200.0/21",
-   "167.103.208.0/22",
-   "167.103.214.0/23",
-   "167.103.218.0/23",
-   "167.103.222.0/23",
-   "167.103.226.0/23",
-   "167.103.230.0/23",
-   "167.103.232.0/22",
-   "167.103.24.0/22",
-   "167.103.248.0/21",
-   "167.103.28.0/23",
-   "167.103.42.0/23",
-   "167.103.44.0/22",
-   "167.103.54.0/23",
-   "167.103.56.0/21",
-   "167.103.64.0/20",
-   "167.103.80.0/22",
-   "167.103.88.0/23",
-   "167.103.96.0/21",
-   "170.85.0.0/19",
-   "170.85.112.0/22",
-   "170.85.128.0/21",
-   "170.85.136.0/22",
-   "170.85.142.0/23",
-   "170.85.144.0/21",
-   "170.85.152.0/22",
-   "170.85.182.0/23",
-   "170.85.188.0/22",
-   "170.85.200.0/21",
-   "170.85.228.0/22",
-   "170.85.232.0/22",
-   "170.85.238.0/23",
-   "170.85.240.0/22",
-   "170.85.244.0/23",
-   "170.85.54.0/23",
-   "170.85.56.0/21",
-   "170.85.64.0/20",
-   "170.85.84.0/22",
-   "170.85.88.0/21",
-   "170.85.96.0/20",
-   "175.107.132.0/23",
-   "175.107.136.0/21",
-   "175.107.144.0/20",
-   "175.107.160.0/20",
-   "175.107.176.0/22",
-   "185.46.212.0/23",
-   "194.9.112.0/22",
-   "194.9.96.0/20",
-   "198.14.68.0/23",
-   "198.14.80.0/22",
-   "198.14.88.0/22",
-   "198.14.96.0/21",
-   "205.220.0.0/21",
-   "205.220.100.0/23",
-   "205.220.104.0/21",
-   "205.220.112.0/22",
-   "205.220.116.0/23",
-   "205.220.122.0/23",
-   "205.220.124.0/22",
-   "205.220.16.0/20",
-   "205.220.32.0/21",
-   "205.220.40.0/22",
-   "205.220.46.0/23",
-   "205.220.48.0/22",
-   "205.220.57.0/24",
-   "205.220.58.0/23",
-   "205.220.60.0/22",
-   "205.220.64.0/22",
-   "205.220.68.0/24",
-   "205.220.70.0/23",
-   "205.220.72.0/21",
-   "205.220.8.0/23",
-   "205.220.80.0/23",
-   "205.220.84.0/22",
-   "205.220.94.0/23",
-   "211.144.19.0/24",
-   "220.243.154.0/23",
-   "221.122.91.0/24",
-   "2400:7aa0:1200::/39",
-   "2400:7aa0:1319::/48",
-   "2400:7aa0:131a::/48",
-   "2400:7aa0:1400::/38",
-   "2400:7aa0:1800::/37",
-   "2400:7aa0:1d13::/48",
-   "2400:7aa0:2200::/39",
-   "2400:7aa0:2400::/39",
-   "2400:7aa0:2600::/40",
-   "2400:7aa0:2900::/40",
-   "2400:7aa0:2b00::/40",
-   "2400:7aa0:2c00::/40",
-   "2400:7aa0:2e00::/40",
-   "2605:4300:1200::/39",
-   "2605:4300:1400::/40",
-   "2605:4300:1b00::/40",
-   "2605:4300:1c00::/38",
-   "2605:4300:2200::/39",
-   "2605:4300:2400::/38",
-   "2605:4300:2800::/38",
-   "2605:4300:2d00::/40",
-   "2605:4300:2e00::/39",
-   "2605:4300:3200::/40",
-   "2605:4300:3700::/40",
-   "2605:4300:3800::/40",
-   "2605:4300:3a00::/40",
-   "2605:4300:e200::/39",
-   "2605:4300:e400::/40",
-   "2605:4300:e700::/40",
-   "2a03:eec0:1200::/39",
-   "2a03:eec0:1400::/38",
-   "2a03:eec0:1800::/37",
-   "2a03:eec0:2200::/39",
-   "2a03:eec0:2500::/40",
-   "2a03:eec0:2600::/39",
-   "2a03:eec0:2800::/37",
-   "2a03:eec0:3000::/39",
-   "2a03:eec0:3210::/46",
-   "2a03:eec0:3215::/48",
-   "2a03:eec0:3216::/48",
-   "2a03:eec0:321d::/48",
-   "2a03:eec0:3222::/47",
-   "2a03:eec0:3225::/48",
-   "2a03:eec0:3227::/48",
-   "2a03:eec0:3229::/48",
-   "2a03:eec0:322b::/48",
-   "2a03:eec0:322d::/48",
-   "2a03:eec0:3300::/40",
-   "2a03:eec0:3400::/40",
-   "2a03:eec0:3800::/39",
-   "58.220.95.0/24",
-   "64.215.22.0/24",
-   "87.58.102.0/23",
-   "87.58.104.0/23",
-   "87.58.110.0/23",
-   "87.58.112.0/21",
-   "87.58.122.0/23",
-   "87.58.66.0/23",
-   "87.58.68.0/22",
-   "87.58.72.0/21",
-   "87.58.80.0/20",
-   "87.58.96.0/23",
-   "98.98.169.0/24",
-   "98.98.186.0/23",
-   "98.98.26.0/23",
-   "98.98.28.0/24"
-  ],
+  "cidrs": [],
   "domains": [],
-  "last_updated": 1777879022.3164346,
+  "last_updated": 1777914595.4731407,
   "long_description": "A cloud security company providing secure internet access, cloud security, and zero trust network access services.",
   "name": "Zscaler",
   "org_ids": [],
