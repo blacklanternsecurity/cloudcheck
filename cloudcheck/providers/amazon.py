@@ -25,10 +25,21 @@ class Amazon(BaseProvider):
     ]
     tags: List[str] = ["cloud"]
     _bucket_name_regex = r"[a-z0-9_][a-z0-9-\.]{1,61}[a-z0-9]"
+    _region_regex = r"[a-z]{2}-[a-z]+-\d+"
     regexes: Dict[str, List[str]] = {
-        "STORAGE_BUCKET_NAME": [_bucket_name_regex],
+        "STORAGE_BUCKET_NAME": [r"(?P<name>" + _bucket_name_regex + r")"],
         "STORAGE_BUCKET_HOSTNAME": [
-            r"(" + _bucket_name_regex + r")\.(s3-?(?:[a-z0-9-]*\.){1,2}amazonaws\.com)"
+            r"(?P<name>" + _bucket_name_regex + r")\.s3\.amazonaws\.com",
+            r"(?P<name>"
+            + _bucket_name_regex
+            + r")\.s3-(?P<region>"
+            + _region_regex
+            + r")\.amazonaws\.com",
+            r"(?P<name>"
+            + _bucket_name_regex
+            + r")\.s3\.(?P<region>"
+            + _region_regex
+            + r")\.amazonaws\.com",
         ],
     }
 

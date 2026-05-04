@@ -1,8 +1,11 @@
 import ipaddress
 import os
+import sys
 import httpx
 from pathlib import Path
 from typing import List, Set, Union
+
+_warned_missing_api_key = False
 
 
 def defrag_cidrs(
@@ -202,12 +205,22 @@ browser_base_headers = {
 
 
 def request(url, include_api_key=False, browser_headers=False, timeout=60, **kwargs):
+    global _warned_missing_api_key
     headers = kwargs.get("headers", {})
     if browser_headers:
         headers.update(browser_base_headers)
     bbot_io_api_key = os.getenv("BBOT_IO_API_KEY")
-    if include_api_key and bbot_io_api_key:
-        headers["Authorization"] = f"Bearer {bbot_io_api_key}"
+    if include_api_key:
+        if bbot_io_api_key:
+            headers["Authorization"] = f"Bearer {bbot_io_api_key}"
+        elif not _warned_missing_api_key:
+            _warned_missing_api_key = True
+            print(
+                "WARNING: BBOT_IO_API_KEY env var is not set; asndb requests will be "
+                "unauthenticated and may be rate-limited. Export BBOT_IO_API_KEY before "
+                "running the update.",
+                file=sys.stderr,
+            )
     kwargs["headers"] = headers
     kwargs["timeout"] = timeout
     kwargs.setdefault("follow_redirects", True)

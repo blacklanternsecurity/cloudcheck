@@ -11,7 +11,7 @@ use tokio::sync::{Mutex, RwLock};
 #[cfg(feature = "py")]
 mod python;
 
-const CLOUDCHECK_SIGNATURE_URL: &str = "https://raw.githubusercontent.com/blacklanternsecurity/cloudcheck/refs/heads/stable/cloud_providers_v2.json";
+const CLOUDCHECK_SIGNATURE_URL: &str = "https://raw.githubusercontent.com/blacklanternsecurity/cloudcheck/refs/heads/stable/cloud_providers_v3.json";
 
 #[derive(Debug, Clone, Serialize, Deserialize, utoipa::ToSchema)]
 pub struct CloudProvider {
@@ -86,7 +86,7 @@ impl CloudCheck {
         let mut path = PathBuf::from(home);
         path.push(".cache");
         path.push("cloudcheck");
-        path.push("cloud_providers_v2.json");
+        path.push("cloud_providers_v3.json");
         Ok(path)
     }
 
