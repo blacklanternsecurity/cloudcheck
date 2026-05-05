@@ -233,16 +233,16 @@ When adding a new cloud provider:
 | CacheFly | A content delivery network provider offering global CDN services. | cdn | 0 | 81 |
 | CDNetworks (씨디네트웍스) | A Korean content delivery network provider offering CDN and cloud services. | cdn | 0 | 3 |
 | Cisco | A multinational technology corporation that designs, manufactures, and sells networking hardware, software, and telecommunications equipment. | cloud | 121 | 657 |
-| Cloudflare | A web infrastructure and security company providing content delivery network services, DDoS mitigation, and web security solutions. | waf | 74 | 2857 |
+| Cloudflare | A web infrastructure and security company providing content delivery network services, DDoS mitigation, and web security solutions. | waf | 74 | 2851 |
 | Amazon CloudFront | A content delivery network service provided by Amazon Web Services that delivers data, videos, applications, and APIs to customers globally. | cdn | 0 | 176 |
 | DDoS Guard | A DDoS protection and content delivery network service provider. | cdn | 0 | 16 |
-| Dell | A multinational technology company that develops, sells, repairs, and supports computers and related products and services. | cloud | 236 | 99 |
+| Dell | A multinational technology company that develops, sells, repairs, and supports computers and related products and services. | cloud | 236 | 98 |
 | DigitalOcean | A cloud infrastructure provider offering virtual private servers, managed databases, and other cloud services for developers and businesses. | cloud | 5 | 289 |
-| Department of Defense | A U.S. government agency responsible for coordinating and supervising all agencies and functions of the government directly related to national security and the United States Armed Forces. | gov | 3 | 9090 |
+| Department of Defense | A U.S. government agency responsible for coordinating and supervising all agencies and functions of the government directly related to national security and the United States Armed Forces. | gov | 3 | 9101 |
 | Federal Bureau of Investigation | A U.S. government agency that serves as the domestic intelligence and security service, responsible for investigating federal crimes and protecting national security. | gov | 3 | 21 |
 | Fastly | A content delivery network and edge cloud platform that provides edge computing, security, and performance services. | cdn | 8 | 1107 |
 | Gabia (가비아) | A Korean cloud hosting and infrastructure provider. | cloud | 0 | 48 |
-| G-Core Labs | A content delivery network and cloud infrastructure provider offering CDN, cloud computing, and edge services. | cdn | 0 | 1392 |
+| G-Core Labs | A content delivery network and cloud infrastructure provider offering CDN, cloud computing, and edge services. | cdn | 0 | 1395 |
 | GitHub | A web-based platform for version control and collaboration using Git, providing hosting for software development and code repositories. | cdn | 33 | 4657 |
 | GoCache | A Brazilian content delivery network provider offering CDN services. | cdn | 0 | 25 |
 | Google Cloud | A suite of cloud computing services provided by Google, including infrastructure, platform, and software services for businesses and developers. | cloud | 1111 | 1924 |
@@ -251,9 +251,9 @@ When adding a new cloud provider:
 | Hetzner | A German cloud hosting provider offering dedicated servers, cloud instances, and storage solutions. | cloud | 15 | 120 |
 | Hostway (호스트웨이) | A Korean cloud hosting and infrastructure provider. | cloud | 0 | 59 |
 | Huawei | A Chinese multinational technology corporation that designs, develops, and sells telecommunications equipment, consumer electronics, and cloud services. | cloud | 340 | 265 |
-| IBM | A multinational technology corporation that provides hardware, software, cloud computing, and consulting services. | cloud | 20 | 366 |
+| IBM | A multinational technology corporation that provides hardware, software, cloud computing, and consulting services. | cloud | 20 | 364 |
 | iboss | A cloud security company providing secure web gateway, CASB, and zero trust network access services. | security | 0 | 65 |
-| Imperva | A cybersecurity company that provides web application firewall, DDoS protection, and data security solutions. | waf | 1 | 351 |
+| Imperva | A cybersecurity company that provides web application firewall, DDoS protection, and data security solutions. | waf | 1 | 352 |
 | Kamatera | A cloud infrastructure provider offering virtual private servers, cloud servers, and managed cloud services. | cloud | 1 | 165 |
 | KINX (한국인터넷인프라) | A Korean content delivery network and cloud infrastructure provider. | cdn | 0 | 147 |
 | KT Cloud (KT클라우드) | A Korean cloud computing service provided by KT Corporation. | cloud | 0 | 18 |
