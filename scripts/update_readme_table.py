@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Update README.md with a provider table generated from cloud_providers_v2.json"""
+"""Update README.md with a provider table generated from cloud_providers_v3.json"""
 
 import json
 import re
@@ -7,7 +7,7 @@ from pathlib import Path
 
 
 def load_providers(json_path: Path):
-    """Load providers from cloud_providers_v2.json"""
+    """Load providers from cloud_providers_v3.json"""
     with open(json_path, "r") as f:
         return json.load(f)
 
@@ -83,7 +83,7 @@ def update_readme(readme_path: Path, table: str):
 
 def main():
     project_root = Path(__file__).parent.parent
-    json_path = project_root / "cloud_providers_v2.json"
+    json_path = project_root / "cloud_providers_v3.json"
     readme_path = project_root / "README.md"
 
     if not json_path.exists():

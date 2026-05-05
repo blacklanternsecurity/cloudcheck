@@ -12,9 +12,14 @@ class Hetzner(BaseProvider):
         "ORG-HOA1-RIPE",
     ]
     _bucket_name_regex = r"[a-z0-9][a-z0-9-_\.]{1,61}[a-z0-9]"
+    _region_regex = r"[a-z]{3}\d"
     regexes: Dict[str, List[str]] = {
-        "STORAGE_BUCKET_NAME": [_bucket_name_regex],
+        "STORAGE_BUCKET_NAME": [r"(?P<name>" + _bucket_name_regex + r")"],
         "STORAGE_BUCKET_HOSTNAME": [
-            r"(" + _bucket_name_regex + r")\.(your-objectstorage\.com)"
+            r"(?P<name>"
+            + _bucket_name_regex
+            + r")\.(?P<region>"
+            + _region_regex
+            + r")\.your-objectstorage\.com"
         ],
     }

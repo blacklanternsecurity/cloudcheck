@@ -12,7 +12,7 @@ log = logging.getLogger("cloudcheck")
 
 
 project_root = Path(__file__).parent.parent
-json_path = project_root / "cloud_providers_v2.json"
+json_path = project_root / "cloud_providers_v3.json"
 
 
 def _update_provider(provider_class):

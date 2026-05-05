@@ -13,10 +13,15 @@ class DigitalOcean(BaseProvider):
         "DO-13-ARIN",
     ]
     _bucket_name_regex = r"[a-z0-9][a-z0-9-]{2,62}"
+    _region_regex = r"[a-z]{3}\d"
     regexes: Dict[str, List[str]] = {
-        "STORAGE_BUCKET_NAME": [_bucket_name_regex],
+        "STORAGE_BUCKET_NAME": [r"(?P<name>" + _bucket_name_regex + r")"],
         "STORAGE_BUCKET_HOSTNAME": [
-            r"(" + _bucket_name_regex + r")\.([a-z]{3}[\d]{1}\.digitaloceanspaces\.com)"
+            r"(?P<name>"
+            + _bucket_name_regex
+            + r")\.(?P<region>"
+            + _region_regex
+            + r")\.digitaloceanspaces\.com"
         ],
     }
 
