@@ -224,47 +224,47 @@ When adding a new cloud provider:
 
 | Name | Description | Tags | Domains | Subnets |
 |------|-------------|------|---------|----------|
-| Akamai | A content delivery network and cloud services provider that delivers web and internet security services. | cloud | 81 | 6375 |
+| Akamai | A content delivery network and cloud services provider that delivers web and internet security services. | cloud | 81 | 6383 |
 | Alibaba Cloud | A Chinese cloud computing company and subsidiary of Alibaba Group, providing cloud services and infrastructure. | cloud | 397 | 87 |
-| Amazon Web Services | A comprehensive cloud computing platform provided by Amazon, offering infrastructure services, storage, and computing power. | cloud | 245 | 14902 |
+| Amazon Web Services | A comprehensive cloud computing platform provided by Amazon, offering infrastructure services, storage, and computing power. | cloud | 245 | 14860 |
 | Arvancloud | An Iranian cloud computing and content delivery network provider offering cloud infrastructure and CDN services. | cdn | 1 | 20 |
 | Backblaze | A cloud storage and backup service provider offering data backup and cloud storage solutions. | cloud | 2 | 26 |
 | Baidu Cloud Acceleration (百度云加速) | A Chinese content delivery network and cloud acceleration service provided by Baidu. | cdn | 135 | 0 |
 | CacheFly | A content delivery network provider offering global CDN services. | cdn | 0 | 81 |
 | CDNetworks (씨디네트웍스) | A Korean content delivery network provider offering CDN and cloud services. | cdn | 0 | 3 |
-| Cisco | A multinational technology corporation that designs, manufactures, and sells networking hardware, software, and telecommunications equipment. | cloud | 121 | 692 |
-| Cloudflare | A web infrastructure and security company providing content delivery network services, DDoS mitigation, and web security solutions. | waf | 74 | 2879 |
+| Cisco | A multinational technology corporation that designs, manufactures, and sells networking hardware, software, and telecommunications equipment. | cloud | 121 | 664 |
+| Cloudflare | A web infrastructure and security company providing content delivery network services, DDoS mitigation, and web security solutions. | waf | 74 | 2884 |
 | Amazon CloudFront | A content delivery network service provided by Amazon Web Services that delivers data, videos, applications, and APIs to customers globally. | cdn | 0 | 177 |
 | DDoS Guard | A DDoS protection and content delivery network service provider. | cdn | 0 | 16 |
 | Dell | A multinational technology company that develops, sells, repairs, and supports computers and related products and services. | cloud | 236 | 99 |
-| DigitalOcean | A cloud infrastructure provider offering virtual private servers, managed databases, and other cloud services for developers and businesses. | cloud | 6 | 289 |
-| Department of Defense | A U.S. government agency responsible for coordinating and supervising all agencies and functions of the government directly related to national security and the United States Armed Forces. | gov | 3 | 9056 |
+| DigitalOcean | A cloud infrastructure provider offering virtual private servers, managed databases, and other cloud services for developers and businesses. | cloud | 6 | 288 |
+| Department of Defense | A U.S. government agency responsible for coordinating and supervising all agencies and functions of the government directly related to national security and the United States Armed Forces. | gov | 3 | 9040 |
 | Federal Bureau of Investigation | A U.S. government agency that serves as the domestic intelligence and security service, responsible for investigating federal crimes and protecting national security. | gov | 3 | 21 |
-| Fastly | A content delivery network and edge cloud platform that provides edge computing, security, and performance services. | cdn | 8 | 1112 |
+| Fastly | A content delivery network and edge cloud platform that provides edge computing, security, and performance services. | cdn | 8 | 1107 |
 | Gabia (가비아) | A Korean cloud hosting and infrastructure provider. | cloud | 0 | 48 |
-| G-Core Labs | A content delivery network and cloud infrastructure provider offering CDN, cloud computing, and edge services. | cdn | 0 | 1405 |
+| G-Core Labs | A content delivery network and cloud infrastructure provider offering CDN, cloud computing, and edge services. | cdn | 0 | 1401 |
 | GitHub | A web-based platform for version control and collaboration using Git, providing hosting for software development and code repositories. | cdn | 61 | 4963 |
 | GoCache | A Brazilian content delivery network provider offering CDN services. | cdn | 0 | 25 |
-| Google Cloud | A suite of cloud computing services provided by Google, including infrastructure, platform, and software services for businesses and developers. | cloud | 1111 | 1916 |
+| Google Cloud | A suite of cloud computing services provided by Google, including infrastructure, platform, and software services for businesses and developers. | cloud | 1111 | 1927 |
 | Hewlett Packard Enterprise | A multinational enterprise information technology company that provides servers, storage, networking, and cloud services. | cloud | 16 | 41 |
 | Heroku | A cloud platform as a service that enables developers to build, run, and operate applications entirely in the cloud. | cloud | 12 | 0 |
 | Hetzner | A German cloud hosting provider offering dedicated servers, cloud instances, and storage solutions. | cloud | 15 | 120 |
 | Hostway (호스트웨이) | A Korean cloud hosting and infrastructure provider. | cloud | 0 | 59 |
-| Huawei | A Chinese multinational technology corporation that designs, develops, and sells telecommunications equipment, consumer electronics, and cloud services. | cloud | 340 | 267 |
+| Huawei | A Chinese multinational technology corporation that designs, develops, and sells telecommunications equipment, consumer electronics, and cloud services. | cloud | 340 | 266 |
 | IBM | A multinational technology corporation that provides hardware, software, cloud computing, and consulting services. | cloud | 20 | 366 |
 | iboss | A cloud security company providing secure web gateway, CASB, and zero trust network access services. | security | 0 | 65 |
-| Imperva | A cybersecurity company that provides web application firewall, DDoS protection, and data security solutions. | waf | 1 | 358 |
+| Imperva | A cybersecurity company that provides web application firewall, DDoS protection, and data security solutions. | waf | 1 | 359 |
 | Kamatera | A cloud infrastructure provider offering virtual private servers, cloud servers, and managed cloud services. | cloud | 1 | 167 |
 | KINX (한국인터넷인프라) | A Korean content delivery network and cloud infrastructure provider. | cdn | 0 | 147 |
 | KT Cloud (KT클라우드) | A Korean cloud computing service provided by KT Corporation. | cloud | 0 | 18 |
 | Leaseweb | A global hosting and cloud infrastructure provider offering dedicated servers, cloud hosting, and CDN services. | cloud | 0 | 1465 |
-| LG U+ (LG유플러스) | A Korean telecommunications company offering CDN services. | cdn | 0 | 182 |
-| Microsoft | A multinational technology corporation that develops, manufactures, licenses, supports and sells computer software, consumer electronics and personal computers. Known for products like Windows, Office, Azure cloud services, and Xbox. | cloud | 718 | 2543 |
+| LG U+ (LG유플러스) | A Korean telecommunications company offering CDN services. | cdn | 0 | 180 |
+| Microsoft | A multinational technology corporation that develops, manufactures, licenses, supports and sells computer software, consumer electronics and personal computers. Known for products like Windows, Office, Azure cloud services, and Xbox. | cloud | 718 | 2544 |
 | Microsoft 365 | A cloud-based productivity suite provided by Microsoft, including Office applications and cloud services. | cloud | 186 | 82 |
 | Naver Cloud Platform (네이버 클라우드 플랫폼) | A Korean cloud computing platform provided by Naver Corporation. | cloud | 0 | 73 |
 | NHN Cloud (NHN클라우드) | A Korean cloud computing platform provided by NHN Corporation. | cloud | 0 | 0 |
-| OVHcloud | A French cloud computing company that provides web hosting, dedicated servers, and cloud infrastructure services. | cloud | 3 | 575 |
-| Oracle | A multinational technology corporation that provides database software, cloud engineering systems, and enterprise software products. | cloud | 19 | 2607 |
+| OVHcloud | A French cloud computing company that provides web hosting, dedicated servers, and cloud infrastructure services. | cloud | 3 | 571 |
+| Oracle | A multinational technology corporation that provides database software, cloud engineering systems, and enterprise software products. | cloud | 19 | 2605 |
 | Qrator | A DDoS protection and content delivery network service provider. | cdn | 0 | 23 |
 | Quic.cloud | A content delivery network and edge computing platform providing CDN services. | cdn | 0 | 152 |
 | Russian Federal Security Service | A Russian federal executive body responsible for counterintelligence, internal and border security, counterterrorism, and surveillance. | gov | 0 | 17 |
@@ -274,12 +274,12 @@ When adding a new cloud provider:
 | SK Broadband (SK브로드밴드) | A Korean telecommunications company offering CDN services. | cdn | 0 | 22 |
 | StormWall | A DDoS protection and web application firewall service provider. | cdn | 0 | 18 |
 | Sucuri | A website security and web application firewall service provider. | waf | 0 | 20 |
-| Tencent Cloud (腾讯云) | A Chinese cloud computing service provider and subsidiary of Tencent, offering cloud infrastructure and platform services. | cloud | 600 | 360 |
+| Tencent Cloud (腾讯云) | A Chinese cloud computing service provider and subsidiary of Tencent, offering cloud infrastructure and platform services. | cloud | 600 | 362 |
 | United Kingdom Ministry of Defence | A U.K. government department responsible for implementing the defence policy of the United Kingdom and managing the British Armed Forces. | gov | 1 | 0 |
 | Wasabi | A cloud storage provider offering hot cloud storage services with high performance and low cost. | cloud | 1 | 19 |
 | X4B | A DDoS protection and content delivery network service provider. | cdn | 0 | 2 |
 | Yandex Cloud | Russian cloud computing and internet services provider, offering infrastructure, storage, and various digital services. | cloud | 129 | 82 |
-| Zoho | An Indian software company that provides cloud-based business software and productivity tools including CRM, email, and office suites. | cloud | 13 | 92 |
+| Zoho | An Indian software company that provides cloud-based business software and productivity tools including CRM, email, and office suites. | cloud | 13 | 93 |
 | Zscaler | A cloud security company providing secure internet access, cloud security, and zero trust network access services. | cloud | 0 | 0 |
 <!--ENDPROVIDERTABLE-->
 
