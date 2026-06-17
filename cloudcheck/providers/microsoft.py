@@ -1,3 +1,5 @@
+import re
+
 from cloudcheck.providers.base import BaseProvider
 from typing import List, Dict
 
@@ -27,13 +29,20 @@ class Microsoft(BaseProvider):
         ],
     }
 
-    _ips_url = "https://download.microsoft.com/download/0/1/8/018E208D-54F8-44CD-AA26-CD7BC9524A8C/PublicIPs_20200824.xml"
+    _ips_confirmation_url = (
+        "https://www.microsoft.com/en-us/download/confirmation.aspx?id=56519"
+    )
 
     def fetch_cidrs(self):
-        response = self.request(self._ips_url)
+        confirmation = self.request(self._ips_confirmation_url, browser_headers=True)
+        match = re.search(
+            r'https://download\.microsoft\.com/download/[^"]+\.json', confirmation.text
+        )
+        if not match:
+            raise ValueError("Could not find Azure IP ranges download URL")
+        response = self.request(match.group(0))
         ranges = set()
-        for line in response.text.splitlines():
-            if "IpRange Subnet" in line:
-                ip_range = line.split('"')[1]
-                ranges.add(ip_range)
+        for entry in response.json().get("values", []):
+            for prefix in entry.get("properties", {}).get("addressPrefixes", []):
+                ranges.add(prefix)
         return list(ranges)

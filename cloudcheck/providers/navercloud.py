@@ -10,6 +10,7 @@ class Navercloud(BaseProvider):
     )
     # "org_id": "@aut-23576-APNIC", "org_name": null, "country": null, "asns": [23576,23982]}
     # {"asn":23576,"asn_name":"nhn-AS-KR","org_id":"@aut-23576-APNIC"}
+    asns: List[int] = [23576, 23982]
     org_ids: List[str] = [
         "@aut-23576-APNIC",
     ]

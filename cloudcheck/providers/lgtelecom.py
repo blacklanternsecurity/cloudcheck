@@ -8,6 +8,7 @@ class Lgtelecom(BaseProvider):
     long_description: str = "A Korean telecommunications company offering CDN services."
     # {"org_id": "@aut-17853-APNIC", "org_name": null, "country": null, "asns": [17853]}
     # {"asn":17853,"asn_name":"LGTELECOM-AS-KR","org_id":"@aut-17853-APNIC"}
+    asns: List[int] = [17853]
     org_ids: List[str] = [
         "@aut-17853-APNIC",
     ]

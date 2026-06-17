@@ -19,10 +19,18 @@ jobs:
       contents: write
 
     steps:
+    - name: Generate app token
+      id: app-token
+      uses: actions/create-github-app-token@v3
+      with:
+        app-id: ${{ secrets.CLOUDCHECK_APP_ID }}
+        private-key: ${{ secrets.CLOUDCHECK_APP_PRIVATE_KEY }}
+
     - name: Checkout stable branch
       uses: actions/checkout@v6
       with:
         ref: stable
+        token: ${{ steps.app-token.outputs.token }}
 
     - name: Set up Python
       uses: actions/setup-python@v6

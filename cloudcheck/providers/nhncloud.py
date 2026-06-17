@@ -10,6 +10,7 @@ class Nhncloud(BaseProvider):
     )
     # {"org_id": "@aut-10038-APNIC", "org_name": null, "country": null, "asns": [10038,45974,152291]}
     # {"asn":45974,"asn_name":"NHN-AS-KR","org_id":"@aut-10038-APNIC"}
+    asns: List[int] = [10038, 45974, 152291]
     org_ids: List[str] = [
         "@aut-10038-APNIC",
     ]

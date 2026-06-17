@@ -222,7 +222,7 @@ class BaseProvider(BaseModel):
 
     def fetch_asns(self) -> List[Union[ipaddress.IPv4Network, ipaddress.IPv6Network]]:
         """Fetch CIDRs for a given list of ASNs from ASNDB."""
-        cidrs = []
+        cidrs = set()
         errors = []
         print(f"Fetching {len(self.asns)} ASNs for {self.name}")
         for asn in self.asns:

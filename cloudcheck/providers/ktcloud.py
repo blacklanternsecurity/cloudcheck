@@ -9,6 +9,7 @@ class Ktcloud(BaseProvider):
         "A Korean cloud computing service provided by KT Corporation."
     )
     # {"asn":9947,"asn_name":"KTC-AS-KR","country":null,"org":null,"org_id":"@aut-152232-APNIC","rir":null,"subnets":["61.100.71.0/24","61.100.72.0/24"]}
+    asns: List[int] = [9947]
     org_ids: List[str] = [
         "@aut-152232-APNIC",
     ]
