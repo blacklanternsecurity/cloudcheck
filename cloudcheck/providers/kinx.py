@@ -9,6 +9,7 @@ class Kinx(BaseProvider):
         "A Korean content delivery network and cloud infrastructure provider."
     )
     # {"org_id": "@aut-9286-APNIC", "org_name": null, "country": null, "asns": [9286,9957,17604]}
+    asns: List[int] = [9286, 9957, 17604]
     org_ids: List[str] = [
         "@aut-9286-APNIC",
     ]
