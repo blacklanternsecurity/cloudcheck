@@ -1,8 +1,6 @@
 import ipaddress
 import os
 import sys
-import asyncio
-import blasthttp
 from pathlib import Path
 from typing import List, Set, Union
 
@@ -205,11 +203,16 @@ browser_base_headers = {
 }
 
 
-_client = blasthttp.BlastHTTP()
+_client = None
 
 
 def request(url, include_api_key=False, browser_headers=False, timeout=60, **kwargs):
-    global _warned_missing_api_key
+    import asyncio
+    import blasthttp
+
+    global _warned_missing_api_key, _client
+    if _client is None:
+        _client = blasthttp.BlastHTTP()
     headers = kwargs.get("headers", {})
     if browser_headers:
         headers.update(browser_base_headers)
