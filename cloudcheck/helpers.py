@@ -1,7 +1,8 @@
 import ipaddress
 import os
 import sys
-import httpx
+import asyncio
+import blasthttp
 from pathlib import Path
 from typing import List, Set, Union
 
@@ -204,6 +205,9 @@ browser_base_headers = {
 }
 
 
+_client = blasthttp.BlastHTTP()
+
+
 def request(url, include_api_key=False, browser_headers=False, timeout=60, **kwargs):
     global _warned_missing_api_key
     headers = kwargs.get("headers", {})
@@ -224,7 +228,8 @@ def request(url, include_api_key=False, browser_headers=False, timeout=60, **kwa
     kwargs["headers"] = headers
     kwargs["timeout"] = timeout
     kwargs.setdefault("follow_redirects", True)
-    return httpx.get(url, **kwargs)
+    kwargs.setdefault("verify_certs", True)
+    return asyncio.run(_client.request(url, **kwargs))
 
 
 def parse_v2fly_domain_file(file_path: Path) -> Set[str]:
