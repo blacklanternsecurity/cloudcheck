@@ -29,11 +29,15 @@ class Microsoft(BaseProvider):
         ],
     }
 
-    _ips_confirmation_url = "https://www.microsoft.com/en-us/download/confirmation.aspx?id=56519"
+    _ips_confirmation_url = (
+        "https://www.microsoft.com/en-us/download/confirmation.aspx?id=56519"
+    )
 
     def fetch_cidrs(self):
         confirmation = self.request(self._ips_confirmation_url, browser_headers=True)
-        match = re.search(r'https://download\.microsoft\.com/download/[^"]+\.json', confirmation.text)
+        match = re.search(
+            r'https://download\.microsoft\.com/download/[^"]+\.json', confirmation.text
+        )
         if not match:
             raise ValueError("Could not find Azure IP ranges download URL")
         response = self.request(match.group(0))

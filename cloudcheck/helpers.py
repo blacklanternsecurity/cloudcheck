@@ -228,11 +228,15 @@ def request(url, include_api_key=False, browser_headers=False, timeout=60, **kwa
                 "running the update.",
                 file=sys.stderr,
             )
-    kwargs["headers"] = headers
+    kwargs["headers"] = list(headers.items())
     kwargs["timeout"] = timeout
     kwargs.setdefault("follow_redirects", True)
     kwargs.setdefault("verify_certs", True)
-    return asyncio.run(_client.request(url, **kwargs))
+
+    async def _send():
+        return await _client.request(url, **kwargs)
+
+    return asyncio.run(_send())
 
 
 def parse_v2fly_domain_file(file_path: Path) -> Set[str]:
