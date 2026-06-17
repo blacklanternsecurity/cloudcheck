@@ -8,6 +8,7 @@ class Skbroadband(BaseProvider):
     long_description: str = "A Korean telecommunications company offering CDN services."
     # {"org_id": "@aut-10049-APNIC", "org_name": null, "country": null, "asns": [9705,10049]}
     # {"asn":10049,"asn_name":"SKNET-AS","country":null,"org":null,"org_id":"@aut-10049-APNIC"}
+    asns: List[int] = [9705, 10049]
     org_ids: List[str] = [
         "@aut-10049-APNIC",
     ]
