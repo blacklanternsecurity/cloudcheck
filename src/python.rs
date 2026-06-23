@@ -20,12 +20,13 @@ pub struct CloudCheck {
 #[pymethods]
 impl CloudCheck {
     #[new]
-    #[pyo3(signature = (signature_url=None, max_retries=None, retry_delay_seconds=None, force_refresh=None))]
+    #[pyo3(signature = (signature_url=None, max_retries=None, retry_delay_seconds=None, force_refresh=None, verify_ssl=None))]
     fn new(
         signature_url: Option<String>,
         max_retries: Option<u32>,
         retry_delay_seconds: Option<u64>,
         force_refresh: Option<bool>,
+        verify_ssl: Option<bool>,
     ) -> Self {
         CloudCheck {
             inner: RustCloudCheck::with_config(
@@ -33,6 +34,7 @@ impl CloudCheck {
                 max_retries,
                 retry_delay_seconds,
                 force_refresh,
+                verify_ssl,
             ),
         }
     }

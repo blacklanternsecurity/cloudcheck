@@ -47,6 +47,7 @@ pub struct CloudCheck {
     max_retries: u32,
     retry_delay_seconds: u64,
     force_refresh: bool,
+    verify_ssl: bool,
 }
 
 impl Default for CloudCheck {
@@ -57,7 +58,7 @@ impl Default for CloudCheck {
 
 impl CloudCheck {
     pub fn new() -> Self {
-        Self::with_config(None, None, None, None)
+        Self::with_config(None, None, None, None, None)
     }
 
     pub fn with_config(
@@ -65,6 +66,7 @@ impl CloudCheck {
         max_retries: Option<u32>,
         retry_delay_seconds: Option<u64>,
         force_refresh: Option<bool>,
+        verify_ssl: Option<bool>,
     ) -> Self {
         let url = signature_url
             .or_else(|| std::env::var("CLOUDCHECK_SIGNATURE_URL").ok())
@@ -78,6 +80,7 @@ impl CloudCheck {
             max_retries: max_retries.unwrap_or(10),
             retry_delay_seconds: retry_delay_seconds.unwrap_or(1),
             force_refresh: force_refresh.unwrap_or(false),
+            verify_ssl: verify_ssl.unwrap_or(true),
         }
     }
 
@@ -95,17 +98,28 @@ impl CloudCheck {
         let max_retries = self.max_retries;
         let retry_delay_seconds = self.retry_delay_seconds;
         log::info!(
-            "Fetching data from URL: {} (max_retries={}, retry_delay={}s)",
+            "Fetching data from URL: {} (max_retries={}, retry_delay={}s, verify_ssl={})",
             url,
             max_retries,
-            retry_delay_seconds
+            retry_delay_seconds,
+            self.verify_ssl
         );
+
+        if !self.verify_ssl {
+            log::warn!(
+                "SSL certificate verification is DISABLED for cloud provider signature fetch"
+            );
+        }
+        let client = reqwest::Client::builder()
+            .danger_accept_invalid_certs(!self.verify_ssl)
+            .build()
+            .map_err(|e| Box::new(e) as Error)?;
 
         let mut last_error = None;
 
         for attempt in 0..=max_retries {
             log::info!("Fetch attempt {}/{}", attempt + 1, max_retries + 1);
-            let result = match reqwest::get(url).await {
+            let result = match client.get(url).send().await {
                 Ok(response) => {
                     let status = response.status();
                     log::info!(
@@ -475,6 +489,19 @@ mod tests {
         assert!(
             names.contains(&"Amazon".to_string()),
             "Expected Amazon in results: {:?}",
+            names
+        );
+    }
+
+    #[tokio::test]
+    async fn test_lookup_with_ssl_verification_disabled() {
+        // verify_ssl=false should still succeed against a host with a valid cert
+        let cloudcheck = CloudCheck::with_config(None, None, None, Some(true), Some(false));
+        let results = cloudcheck.lookup("8.8.8.8").await.unwrap();
+        let names: Vec<String> = results.iter().map(|p| p.name.clone()).collect();
+        assert!(
+            names.contains(&"Google".to_string()),
+            "Expected Google in results: {:?}",
             names
         );
     }
