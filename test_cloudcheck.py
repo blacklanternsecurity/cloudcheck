@@ -21,6 +21,15 @@ async def test_lookup_amazon_domain():
 
 
 @pytest.mark.asyncio
+async def test_lookup_with_ssl_verification_disabled():
+    """verify_ssl=False should still succeed against a host with a valid cert"""
+    cloudcheck = CloudCheck(verify_ssl=False)
+    results = await cloudcheck.lookup("8.8.8.8")
+    names = [provider["name"] for provider in results]
+    assert "Google" in names, f"Expected Google in results: {names}"
+
+
+@pytest.mark.asyncio
 async def test_lookup_with_invalid_url():
     """Test that lookup raises RuntimeError with proper message when URL is invalid"""
     cloudcheck = CloudCheck(
