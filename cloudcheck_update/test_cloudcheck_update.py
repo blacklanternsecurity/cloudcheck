@@ -29,6 +29,28 @@ def test_v2fly_domains():
     # fetch cidrs from asndb
 
 
+def test_v2fly_domains_missing_file():
+    """fetch_v2fly_domains should return gracefully (empty domains + error)
+    instead of crashing with UnboundLocalError when the domain file
+    cannot be parsed (e.g. the v2fly repo clone fails or a company file
+    is missing/unreadable)."""
+    from unittest.mock import patch
+
+    amazon = Amazon()
+    fake_repo = Path("/tmp/fake_v2fly_repo")
+
+    with patch.object(Amazon, "_ensure_v2fly_repo_cached"), patch(
+        "cloudcheck.providers.base.parse_v2fly_domain_file",
+        side_effect=OSError("simulated unreadable domain file"),
+    ):
+        amazon._ensure_v2fly_repo_cached.return_value = (fake_repo, True)
+        domains, errors = amazon.fetch_v2fly_domains()
+
+    assert domains == []
+    assert errors and "Failed to parse" in errors[0]
+    print("Missing v2fly domain file handled gracefully")
+
+
 def test_cidr_defragmentation():
     """Test CIDR defragmentation with multiple iterations required."""
     print("Testing CIDR defragmentation...")
