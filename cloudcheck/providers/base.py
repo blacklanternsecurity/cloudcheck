@@ -258,6 +258,7 @@ class BaseProvider(BaseModel):
             return [], []
 
         errors = []
+        domains = set()
         repo_path, _success = self._ensure_v2fly_repo_cached()
         company_file = repo_path / "data" / self.v2fly_company
         try:
