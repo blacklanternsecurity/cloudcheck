@@ -14,31 +14,31 @@ concurrency:
 
 jobs:
   update:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       contents: write
 
     steps:
     - name: Generate app token
       id: app-token
-      uses: actions/create-github-app-token@v3
+      uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3
       with:
         app-id: ${{ secrets.CLOUDCHECK_APP_ID }}
         private-key: ${{ secrets.CLOUDCHECK_APP_PRIVATE_KEY }}
 
     - name: Checkout stable branch
-      uses: actions/checkout@v7
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       with:
         ref: stable
         token: ${{ steps.app-token.outputs.token }}
 
     - name: Set up Python
-      uses: actions/setup-python@v6
+      uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
       with:
         python-version: "3.12"
 
     - name: Set up uv
-      uses: astral-sh/setup-uv@v7
+      uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78 # v7
 
     - name: Install dependencies
       run: uv sync
