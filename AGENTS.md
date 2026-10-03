@@ -6,9 +6,9 @@ Checks whether an IP or hostname belongs to a cloud provider. Rust core with Pyt
 
 | Concern | This repository |
 |---|---|
-| Language | Rust, edition 2024. Python 3.10 through 3.14 bindings |
+| Language | Rust, edition in Cargo.toml. Python bindings, `requires-python` in pyproject.toml |
 | Package manager | cargo, uv |
-| Lint and format | clippy and rustfmt. ruff, pinned in pyproject.toml |
+| Lint and format | clippy and rustfmt, no rust-toolchain.toml yet. ruff, version in the `dev` group of pyproject.toml |
 | Tests | cargo test, pytest |
 
 ## Setup
