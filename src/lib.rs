@@ -294,10 +294,7 @@ impl CloudCheck {
         }
     }
 
-    /// How "broad" an entry is — lower means it covers more. CIDRs sort by
-    /// prefix length, a bare IP counts as a full-length prefix, and domains
-    /// sort by label count. IPs and domains live in separate trees, so a
-    /// domain's score never has to be meaningful against a CIDR's.
+    /// Lower covers more. IPs and domains live in separate trees, so their scores never compare.
     fn entry_breadth(entry: &str) -> u32 {
         if let Some((addr, prefix)) = entry.split_once('/')
             && addr.parse::<std::net::IpAddr>().is_ok()
@@ -315,27 +312,12 @@ impl CloudCheck {
             .count() as u32
     }
 
-    /// Parses JSON and builds the radix tree and providers map.
-    ///
-    /// Attribution has to answer "which providers' own entries contain this
-    /// target" — ancestors only, never siblings or descendants. The tree is
-    /// therefore built in `Normal` mode: `Acl` mode deliberately collapses a
-    /// nested entry into whatever already covers it, which is right for an
-    /// access list but destroys exactly the association we need. Under `Acl`,
-    /// HPE's single `hpefonts.s3.amazonaws.com` bucket ended up filed under
-    /// the key `amazonaws.com`, so every `*.amazonaws.com` host came back
-    /// tagged HPE.
-    ///
-    /// Each entry stores the full set of providers that contain it, resolved
-    /// once here rather than walked on every lookup. Entries are inserted
-    /// broadest first, so when we reach one, every entry containing it is
-    /// already present with a finished list and we can inherit it directly.
+    /// `Normal` mode, not `Acl`: `Acl` collapses nested entries into their container,
+    /// which leaked a tenant's single bucket onto every host of the container.
+    /// Broadest first, so each entry inherits its ancestor's finished provider list.
     fn build_data_structures(json_data: &str) -> Result<(RadixTarget, ProvidersMap), Error> {
         let providers_data: HashMap<String, ProviderData> = serde_json::from_str(json_data)?;
 
-        // One allocation per provider; the map stores cheap handles to these.
-        // Two providers claiming the same entry is legitimate (Microsoft and
-        // GitHub both declare GitHub's S3 buckets), so entries map to a list.
         let mut owners: HashMap<String, Vec<Arc<CloudProvider>>> = HashMap::new();
         for provider in providers_data.values() {
             let cloud_provider = Arc::new(CloudProvider {
@@ -363,8 +345,6 @@ impl CloudCheck {
         let mut providers_map: ProvidersMap = HashMap::new();
 
         for (entry, entry_owners) in sorted {
-            // Nearest already-inserted entry containing this one. Because we
-            // go broadest first, its list is complete.
             let inherited: Vec<Arc<CloudProvider>> = radix
                 .get(&entry)
                 .and_then(|ancestor| providers_map.get(&ancestor).cloned())
@@ -376,10 +356,7 @@ impl CloudCheck {
                 .cloned()
                 .collect();
 
-            // Adds no provider its container doesn't already have. Anything
-            // under it resolves to that container and gets the same answer,
-            // so keeping the node would only cost memory. This is what stops
-            // a provider's own nested subnets from inflating the tree.
+            // Same answer as its container, so the node would only cost memory.
             if novel.is_empty() {
                 continue;
             }
@@ -550,15 +527,12 @@ mod tests {
         );
     }
 
-    /// Helper: provider names returned for a target.
     async fn names_for(target: &str) -> Vec<String> {
         let cloudcheck = CloudCheck::new();
         let results = cloudcheck.lookup(target).await.unwrap();
         results.iter().map(|p| p.name.clone()).collect()
     }
 
-    /// Microsoft owns `windows.net`. GitHub owns specific storage accounts
-    /// beneath it, but not this host, so GitHub must not come back.
     #[tokio::test]
     async fn test_lookup_windows_blob_domain() {
         let names = names_for("asdf.blob.core.windows.net").await;
@@ -574,8 +548,6 @@ mod tests {
         );
     }
 
-    /// A host GitHub *does* declare returns both the tenant and the
-    /// infrastructure owner — legitimate nesting, which must survive.
     #[tokio::test]
     async fn test_lookup_github_owned_blob_host() {
         let names = names_for("copilotprodattachments.blob.core.windows.net").await;
@@ -589,8 +561,6 @@ mod tests {
         }
     }
 
-    /// Regression: tenants with a single bucket under `amazonaws.com` used to
-    /// be filed under the bare domain, so every AWS host came back as theirs.
     #[tokio::test]
     async fn test_lookup_amazonaws_no_tenant_leak() {
         let names = names_for("foo.s3.amazonaws.com").await;
@@ -609,7 +579,6 @@ mod tests {
         }
     }
 
-    /// The tenant's own bucket still returns the tenant alongside Amazon.
     #[tokio::test]
     async fn test_lookup_tenant_bucket_keeps_both() {
         let names = names_for("hpefonts.s3.amazonaws.com").await;
@@ -623,9 +592,7 @@ mod tests {
         }
     }
 
-    /// Regression: one QUIC.cloud /32 inside AWS space used to tag the whole
-    /// surrounding range as a CDN, which made bbot's portfilter drop every
-    /// non-web port across millions of addresses.
+    /// A single QUIC.cloud /32 inside AWS made bbot's portfilter treat whole AWS ranges as CDN.
     #[tokio::test]
     async fn test_lookup_aws_ip_no_cdn_leak() {
         let names = names_for("18.195.165.195").await;
@@ -641,8 +608,6 @@ mod tests {
         );
     }
 
-    /// Breadth ordering drives the build; IPs and domains are scored
-    /// independently because they live in separate trees.
     #[test]
     fn test_entry_breadth_ordering() {
         assert!(CloudCheck::entry_breadth("10.0.0.0/8") < CloudCheck::entry_breadth("10.1.2.0/24"));
