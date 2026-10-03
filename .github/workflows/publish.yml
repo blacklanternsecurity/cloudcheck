@@ -25,6 +25,10 @@ jobs:
       - name: Tag matches the declared version
         id: version
         run: |
+          if ! [[ "$GITHUB_REF_NAME" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-rc\.[0-9]+)?$ ]]; then
+            echo "::error::tag $GITHUB_REF_NAME is not vMAJOR.MINOR.PATCH or vMAJOR.MINOR.PATCH-rc.N"
+            exit 1
+          fi
           VERSION=$(cargo metadata --format-version 1 --no-deps | jq -r '.packages[0].version')
           if [ "v$VERSION" != "$GITHUB_REF_NAME" ]; then
             echo "::error::tag $GITHUB_REF_NAME does not match Cargo.toml $VERSION"
@@ -47,6 +51,7 @@ jobs:
     uses: ./.github/workflows/docker-tests.yml
 
   crates:
+    environment: release
     # every build must succeed before any registry sees the release
     needs: [version, linux, musllinux, windows, macos, sdist]
     runs-on: ubuntu-24.04
@@ -58,6 +63,7 @@ jobs:
       - run: cargo publish --token ${{ secrets.CARGO_REGISTRY_TOKEN }}
 
   docker:
+    environment: release
     needs: [version, linux, musllinux, windows, macos, sdist]
     runs-on: ubuntu-24.04
     steps:
@@ -257,6 +263,7 @@ jobs:
 
 
   pypi:
+    environment: release
     needs: [linux, musllinux, windows, macos, sdist]
     runs-on: ubuntu-24.04
     permissions:
@@ -268,8 +275,31 @@ jobs:
         with:
           subject-path: 'wheels-*/*'
       - uses: PyO3/maturin-action@e83996d129638aa358a18fbd1dfb82f0b0fb5d3b # v1.51.0
-        env:
-          MATURIN_PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
         with:
           command: upload
           args: --non-interactive wheels-*/*
+
+  release:
+    needs: [crates, docker, pypi]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: anchore/sbom-action@66cbf4bc1f1c0d2edc94016e65bc221b6bb0ad6c # v0.24.3
+        with:
+          path: .
+          format: spdx-json
+          output-file: ${{ github.event.repository.name }}-${{ github.ref_name }}.spdx.json
+          upload-artifact: false
+          upload-release-assets: false
+      - name: GitHub Release with SBOM
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          PRERELEASE=()
+          if [[ "$GITHUB_REF_NAME" == *-rc.* ]]; then PRERELEASE=(--prerelease); fi
+          gh release create "$GITHUB_REF_NAME" "${{ github.event.repository.name }}-$GITHUB_REF_NAME.spdx.json" \
+            --repo "$GITHUB_REPOSITORY" --verify-tag --generate-notes "${PRERELEASE[@]}"
