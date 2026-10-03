@@ -47,7 +47,8 @@ jobs:
     uses: ./.github/workflows/docker-tests.yml
 
   crates:
-    needs: [version, rust, python, docker-test]
+    # every build must succeed before any registry sees the release
+    needs: [version, linux, musllinux, windows, macos, sdist]
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -57,7 +58,7 @@ jobs:
       - run: cargo publish --token ${{ secrets.CARGO_REGISTRY_TOKEN }}
 
   docker:
-    needs: [version, rust, python, docker-test]
+    needs: [version, linux, musllinux, windows, macos, sdist]
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
