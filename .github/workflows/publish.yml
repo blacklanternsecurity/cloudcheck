@@ -263,7 +263,7 @@ jobs:
 
 
   pypi:
-    environment: release
+    environment: pypi
     needs: [linux, musllinux, windows, macos, sdist]
     runs-on: ubuntu-24.04
     permissions:
