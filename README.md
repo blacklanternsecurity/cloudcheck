@@ -89,10 +89,12 @@ pip install cloudcheck
 import asyncio
 from cloudcheck import CloudCheck
 
+
 async def main():
     cloudcheck = CloudCheck()
     results = await cloudcheck.lookup("8.8.8.8")
-    print(results) # [{'name': 'Google', 'tags': ['cloud']}]
+    print(results)  # [{'name': 'Google', 'tags': ['cloud']}]
+
 
 asyncio.run(main())
 ```
@@ -103,6 +105,7 @@ asyncio.run(main())
 import asyncio
 from cloudcheck import CloudCheck, CloudCheckError
 
+
 async def main():
     cloudcheck = CloudCheck()
     try:
@@ -110,6 +113,7 @@ async def main():
         print(results)
     except CloudCheckError as e:
         print(f"Error: {e}")
+
 
 asyncio.run(main())
 ```
@@ -120,16 +124,18 @@ asyncio.run(main())
 import asyncio
 from cloudcheck import CloudCheck
 
+
 async def main():
     # Custom configuration
     cloudcheck = CloudCheck(
         signature_url="https://example.com/custom.json",  # Custom signature URL
-        max_retries=5,                                     # Max retry attempts (default: 10)
-        retry_delay_seconds=2,                             # Delay between retries (default: 1)
-        force_refresh=True                                 # Force fresh fetch (default: False)
+        max_retries=5,  # Max retry attempts (default: 10)
+        retry_delay_seconds=2,  # Delay between retries (default: 1)
+        force_refresh=True,  # Force fresh fetch (default: False)
     )
     results = await cloudcheck.lookup("8.8.8.8")
     print(results)
+
 
 asyncio.run(main())
 ```
