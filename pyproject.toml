@@ -1,6 +1,6 @@
 [project]
 name = "cloudcheck"
-version = "11.2.0"
+dynamic = ["version"]
 description = "Detailed database of cloud providers. Instantly look up a domain or IP address"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -24,3 +24,6 @@ dev = [
 no-default-features = true
 features = ["py"]
 module-name = "cloudcheck"
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F"]
