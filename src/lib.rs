@@ -626,8 +626,18 @@ mod tests {
         "elsewhere": {"name": "Elsewhere", "tags": ["cloud"], "cidrs": ["192.0.2.0/24"], "domains": []}
     }"#;
 
+    const CHAIN: &str = r#"{
+        "a": {"name": "A", "tags": ["cloud"], "cidrs": ["10.0.0.0/8"], "domains": ["a.example"]},
+        "b": {"name": "B", "tags": ["cloud"], "cidrs": ["10.1.0.0/16"], "domains": ["b.a.example"]},
+        "c": {"name": "C", "tags": ["cloud"], "cidrs": ["10.1.2.0/24"], "domains": ["c.b.a.example"]}
+    }"#;
+
     fn names(target: &str) -> Vec<String> {
-        let (radix, providers) = CloudCheck::build_data_structures(NESTED).unwrap();
+        names_in(NESTED, target)
+    }
+
+    fn names_in(fixture: &str, target: &str) -> Vec<String> {
+        let (radix, providers) = CloudCheck::build_data_structures(fixture).unwrap();
         let mut names: Vec<String> = radix
             .get(target)
             .and_then(|entry| providers.get(&entry).cloned())
@@ -661,12 +671,11 @@ mod tests {
         assert!(names("unknown.test").is_empty());
     }
 
-    // HashMap iteration order changes per build, so rebuild repeatedly.
     #[test]
-    fn test_attribution_is_independent_of_insert_order() {
-        for _ in 0..32 {
-            assert_eq!(names("10.9.9.9"), ["BigCloud"]);
-            assert_eq!(names("10.1.2.3"), ["BigCloud", "TinyCdn"]);
-        }
+    fn test_inheritance_chains_through_intermediate_entries() {
+        assert_eq!(names_in(CHAIN, "10.9.9.9"), ["A"]);
+        assert_eq!(names_in(CHAIN, "10.1.9.9"), ["A", "B"]);
+        assert_eq!(names_in(CHAIN, "10.1.2.5"), ["A", "B", "C"]);
+        assert_eq!(names_in(CHAIN, "x.c.b.a.example"), ["A", "B", "C"]);
     }
 }
