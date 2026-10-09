@@ -1,0 +1,76 @@
+name: Publish
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publish-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  check:
+    uses: blacklanternsecurity/CLA/.github/workflows/release-check.yml@e532142ee9e7322888f6edc80d9a89e2f8c0d96d # feat/shared-workflows
+
+  tests:
+    needs: check
+    uses: ./.github/workflows/tests.yml
+
+  wheels:
+    needs: tests
+    uses: blacklanternsecurity/CLA/.github/workflows/maturin-wheels.yml@e532142ee9e7322888f6edc80d9a89e2f8c0d96d # feat/shared-workflows
+    with:
+      # No s390x wheel has ever been published for cloudcheck.
+      targets: '{"linux": ["x86_64", "x86", "aarch64", "armv7", "ppc64le"], "musllinux": ["x86_64", "x86", "aarch64", "armv7"], "windows": ["x64", "x86"], "macos": ["x86_64", "aarch64"]}'
+      before-script-linux: scripts/wheel-container-setup.sh
+
+  crates:
+    needs: wheels
+    uses: blacklanternsecurity/CLA/.github/workflows/crates.yml@e532142ee9e7322888f6edc80d9a89e2f8c0d96d # feat/shared-workflows
+    secrets:
+      CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+
+  # Trusted publishing only matches a top-level job, so PyPI cannot move into a reusable workflow.
+  pypi:
+    needs: wheels
+    runs-on: ubuntu-24.04
+    environment: pypi
+    permissions:
+      id-token: write
+      attestations: write
+    steps:
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          pattern: ${{ needs.wheels.outputs.artifacts }}
+          path: dist
+          merge-multiple: true
+      - uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
+        with:
+          subject-path: dist/*
+      - uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # v1.14.2
+
+  docker:
+    needs: [check, wheels]
+    uses: blacklanternsecurity/CLA/.github/workflows/docker.yml@e532142ee9e7322888f6edc80d9a89e2f8c0d96d # feat/shared-workflows
+    secrets: inherit
+    with:
+      image: ${{ github.repository }}
+      version: ${{ needs.check.outputs.version }}
+      prerelease: ${{ needs.check.outputs.prerelease }}
+      major: ${{ needs.check.outputs.major }}
+      minor: ${{ needs.check.outputs.minor }}
+
+  release:
+    needs: [check, wheels, crates, pypi, docker]
+    permissions:
+      contents: write
+    uses: blacklanternsecurity/CLA/.github/workflows/publish.yml@e532142ee9e7322888f6edc80d9a89e2f8c0d96d # feat/shared-workflows
+    with:
+      version: ${{ needs.check.outputs.version }}
+      prerelease: ${{ needs.check.outputs.prerelease }}
+      images: ${{ needs.docker.outputs.images }}
+      artifacts: ${{ needs.wheels.outputs.artifacts }}
+      assets: dist/*

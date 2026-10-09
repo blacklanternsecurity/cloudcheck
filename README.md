@@ -29,7 +29,7 @@ CloudCheck is a simple Rust tool to check whether an IP address or hostname belo
 
 ## Cloud Provider Signatures
 
-The latest cloud provider signatures are available in [`cloud_providers_v3.json`](https://github.com/blacklanternsecurity/cloudcheck/blob/master/cloud_providers_v3.json), which is updated daily via [CI/CD](.github/workflows/daily-update.yml). Domains associated with each cloud provider are fetched dynamically from the [v2fly community repository](https://github.com/v2fly/domain-list-community), and CIDRs are fetched from [ASNDB](https://asndb.api.bbot.io/).
+The latest cloud provider signatures are available in [`cloud_providers_v3.json`](https://github.com/blacklanternsecurity/cloudcheck/blob/stable/cloud_providers_v3.json), which is updated daily via [CI/CD](.github/workflows/daily-update.yml). Domains associated with each cloud provider are fetched dynamically from the [v2fly community repository](https://github.com/v2fly/domain-list-community), and CIDRs are fetched from [ASNDB](https://asndb.api.bbot.io/).
 
 Used by [BBOT](https://github.com/blacklanternsecurity/bbot) and [BBOT Server](https://github.com/blacklanternsecurity/bbot-server).
 
@@ -89,10 +89,12 @@ pip install cloudcheck
 import asyncio
 from cloudcheck import CloudCheck
 
+
 async def main():
     cloudcheck = CloudCheck()
     results = await cloudcheck.lookup("8.8.8.8")
-    print(results) # [{'name': 'Google', 'tags': ['cloud']}]
+    print(results)  # [{'name': 'Google', 'tags': ['cloud']}]
+
 
 asyncio.run(main())
 ```
@@ -103,6 +105,7 @@ asyncio.run(main())
 import asyncio
 from cloudcheck import CloudCheck, CloudCheckError
 
+
 async def main():
     cloudcheck = CloudCheck()
     try:
@@ -110,6 +113,7 @@ async def main():
         print(results)
     except CloudCheckError as e:
         print(f"Error: {e}")
+
 
 asyncio.run(main())
 ```
@@ -120,16 +124,18 @@ asyncio.run(main())
 import asyncio
 from cloudcheck import CloudCheck
 
+
 async def main():
     # Custom configuration
     cloudcheck = CloudCheck(
         signature_url="https://example.com/custom.json",  # Custom signature URL
-        max_retries=5,                                     # Max retry attempts (default: 10)
-        retry_delay_seconds=2,                             # Delay between retries (default: 1)
-        force_refresh=True                                 # Force fresh fetch (default: False)
+        max_retries=5,  # Max retry attempts (default: 10)
+        retry_delay_seconds=2,  # Delay between retries (default: 1)
+        force_refresh=True,  # Force fresh fetch (default: False)
     )
     results = await cloudcheck.lookup("8.8.8.8")
     print(results)
+
 
 asyncio.run(main())
 ```
@@ -324,3 +330,7 @@ cargo fmt --all
 
 cargo clippy --all-targets --all-features -- -D warnings
 ```
+
+## Releasing
+
+Releases are cut by pushing a `vMAJOR.MINOR.PATCH` (or `vMAJOR.MINOR.PATCH-rc.N`) tag with the org's [release.sh](https://github.com/blacklanternsecurity/CLA/blob/e532142ee9e7322888f6edc80d9a89e2f8c0d96d/scripts/release.sh), after the version bump is merged. The tag must equal the manifest version. `publish.yml` then tests, builds, publishes, and creates the GitHub release with its SBOM in the same run.
