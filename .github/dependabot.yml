@@ -1,21 +1,87 @@
-# To get started with Dependabot version updates, you'll need to specify which
-# package ecosystems to update and where the package manifests are located.
-# Please see the documentation for all configuration options:
-# https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
-
 version: 2
 updates:
-  - package-ecosystem: "uv"
+  - package-ecosystem: "cargo"
     directory: "/"
+    target-branch: "dev"
     schedule:
       interval: "weekly"
-    target-branch: "dev"
-    open-pull-requests-limit: 10
-  - package-ecosystem: github-actions
-    directory: /
     groups:
-      github-actions:
+      cargo-minor-patch:
         patterns:
-          - "*"  # Group all Actions updates into a single larger pull request
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+      cargo-major:
+        patterns:
+          - "*"
+        update-types:
+          - "major"
+  - package-ecosystem: "uv"
+    directory: "/"
+    target-branch: "dev"
     schedule:
-      interval: weekly
+      interval: "weekly"
+    groups:
+      uv-minor-patch:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+      uv-major:
+        patterns:
+          - "*"
+        update-types:
+          - "major"
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    target-branch: "dev"
+    schedule:
+      interval: "weekly"
+    groups:
+      github-actions-minor-patch:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+      github-actions-major:
+        patterns:
+          - "*"
+        update-types:
+          - "major"
+  - package-ecosystem: "docker"
+    directory: "/"
+    target-branch: "dev"
+    schedule:
+      interval: "weekly"
+    groups:
+      docker-minor-patch:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+      docker-major:
+        patterns:
+          - "*"
+        update-types:
+          - "major"
+  - package-ecosystem: "helm"
+    directory: "/helm"
+    target-branch: "dev"
+    schedule:
+      interval: "weekly"
+    groups:
+      helm-minor-patch:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+      helm-major:
+        patterns:
+          - "*"
+        update-types:
+          - "major"
