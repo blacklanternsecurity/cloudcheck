@@ -310,3 +310,27 @@ def test_step_summary(tmp_path, monkeypatch):
     assert "- first error\n" in content
     assert "Traceback line" not in content
     assert "- second error\n" in content
+
+
+def test_zscaler_skips_non_cloud_keys(monkeypatch):
+    """Zscaler's feed has a top-level "svpnIPs" list next to the cloud dicts; it must not break parsing."""
+    from cloudcheck.providers.zscaler import Zscaler
+
+    class FakeResponse:
+        status_code = 200
+
+        def json(self):
+            return {
+                "zscaler.net": {
+                    "continent : EMEA": {
+                        "city : Abu Dhabi II": [
+                            {"range": "159.254.250.0/23"},
+                            {"range": ""},
+                        ]
+                    }
+                },
+                "svpnIPs": ["165.225.240.56"],
+            }
+
+    monkeypatch.setattr(Zscaler, "request", lambda self, *a, **kw: FakeResponse())
+    assert Zscaler().fetch_cidrs() == ["159.254.250.0/23"]
