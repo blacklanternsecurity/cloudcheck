@@ -23,9 +23,10 @@ def _update_provider(provider_class):
         return (provider.name, provider, provider_errors or [])
     except Exception as e:
         print(
-            f"Failed to update provider {provider_class.name}: {e}\n{traceback.format_exc()}"
+            f"Failed to update provider {provider_class.__name__}: {e}\n{traceback.format_exc()}"
         )
-        return (None, None, [])
+        # count the crash as an error so it can't pass silently; the provider's existing data is kept
+        return (None, None, [f"Provider {provider_class.__name__} crashed: {e}"])
 
 
 def update():
@@ -47,9 +48,9 @@ def update():
             for error in provider_errors:
                 print(f"  - Error: {error}")
             print(f"  Pending ({len(pending)}): {', '.join(sorted(pending))}")
+            errors.extend(provider_errors)
             if name and provider:
                 providers[name] = provider
-                errors.extend(provider_errors)
         print("Exiting for loop...")
     print("Exited executor context")
     print(f"Finished updating {len(providers):,} providers")

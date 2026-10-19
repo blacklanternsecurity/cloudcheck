@@ -281,3 +281,32 @@ def test_cidr_defragmentation_mixed_ipv4_ipv6():
     )
 
     print("Mixed IPv4/IPv6 CIDR defragmentation test passed!")
+
+
+def test_provider_crash_counts_as_error():
+    """A provider whose update() raises must be reported as an error, not dropped silently."""
+    from cloudcheck_update import _update_provider
+
+    class CrashingProvider(Amazon):
+        def update(self):
+            raise RuntimeError("source unreachable")
+
+    name, provider, errors = _update_provider(CrashingProvider)
+    assert name is None
+    assert provider is None
+    assert len(errors) == 1
+    assert "CrashingProvider crashed: source unreachable" in errors[0]
+
+
+def test_step_summary(tmp_path, monkeypatch):
+    """Errors are written to the GitHub Actions job summary, one line each."""
+    from cloudcheck_update.cli import write_step_summary
+
+    summary = tmp_path / "summary.md"
+    monkeypatch.setenv("GITHUB_STEP_SUMMARY", str(summary))
+    write_step_summary(["first error\nTraceback line", "second error"], threshold=10)
+    content = summary.read_text()
+    assert "2 errors (threshold 10)" in content
+    assert "- first error\n" in content
+    assert "Traceback line" not in content
+    assert "- second error\n" in content
