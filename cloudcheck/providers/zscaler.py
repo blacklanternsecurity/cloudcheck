@@ -16,6 +16,9 @@ class Zscaler(BaseProvider):
             response_json = response.json()
             if isinstance(response_json, dict):
                 for domain, data in response_json.items():
+                    # skip non-cloud keys like "svpnIPs" (a flat list of IPs already covered by the ranges)
+                    if not isinstance(data, dict):
+                        continue
                     for continent, cities in data.items():
                         for city, ranges_list in cities.items():
                             for range_data in ranges_list:
