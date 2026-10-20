@@ -11,7 +11,7 @@ concurrency:
 
 jobs:
   docker-test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
       - uses: actions/checkout@v7
@@ -33,7 +33,7 @@ jobs:
           python test_docker.py
 
   docker-publish:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs: docker-test
     if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/stable' }}
 
@@ -61,8 +61,8 @@ jobs:
           type=sha,prefix=sha-
           type=raw,value=latest,enable={{is_default_branch}}
           type=raw,value=v11
-          type=raw,value=v11.1
-          type=raw,value=v11.1.0
+          type=raw,value=v11.2
+          type=raw,value=v11.2.0
 
     - name: Build and push Docker image
       uses: docker/build-push-action@v7

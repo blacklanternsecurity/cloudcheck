@@ -35,7 +35,7 @@ struct ProviderData {
     long_description: String,
 }
 
-type ProvidersMap = HashMap<String, Vec<CloudProvider>>;
+type ProvidersMap = HashMap<String, Vec<Arc<CloudProvider>>>;
 type Error = Box<dyn std::error::Error + Send + Sync>;
 
 #[derive(Clone)]
@@ -294,66 +294,84 @@ impl CloudCheck {
         }
     }
 
-    /// Parses JSON and builds the radix tree and providers map.
-    /// For each provider, inserts all CIDRs and domains into the radix tree,
-    /// normalizing them in the process. Maps normalized values to provider lists.
+    /// Lower covers more. IPs and domains live in separate trees, so their scores never compare.
+    fn entry_breadth(entry: &str) -> u32 {
+        if let Some((addr, prefix)) = entry.split_once('/')
+            && addr.parse::<std::net::IpAddr>().is_ok()
+            && let Ok(prefix_len) = prefix.parse::<u32>()
+        {
+            return prefix_len;
+        }
+        if let Ok(addr) = entry.parse::<std::net::IpAddr>() {
+            return if addr.is_ipv6() { 128 } else { 32 };
+        }
+        entry
+            .trim_matches('.')
+            .split('.')
+            .filter(|label| !label.is_empty())
+            .count() as u32
+    }
+
+    /// `Normal` mode, not `Acl`: `Acl` collapses nested entries into their container,
+    /// which leaked a tenant's single bucket onto every host of the container.
+    /// Broadest first, so each entry inherits its ancestor's finished provider list.
     fn build_data_structures(json_data: &str) -> Result<(RadixTarget, ProvidersMap), Error> {
         let providers_data: HashMap<String, ProviderData> = serde_json::from_str(json_data)?;
 
-        let mut radix = RadixTarget::new(&[], ScopeMode::Acl)?;
+        let mut owners: HashMap<String, Vec<Arc<CloudProvider>>> = HashMap::new();
+        for provider in providers_data.values() {
+            let cloud_provider = Arc::new(CloudProvider {
+                name: provider.name.clone(),
+                tags: provider.tags.clone(),
+                short_description: provider.short_description.clone(),
+                long_description: provider.long_description.clone(),
+            });
+            for entry in provider.cidrs.iter().chain(provider.domains.iter()) {
+                let entry_owners = owners.entry(entry.clone()).or_default();
+                if !entry_owners.iter().any(|p| p.name == cloud_provider.name) {
+                    entry_owners.push(Arc::clone(&cloud_provider));
+                }
+            }
+        }
+
+        let mut sorted: Vec<(String, Vec<Arc<CloudProvider>>)> = owners.into_iter().collect();
+        sorted.sort_by(|(a, _), (b, _)| {
+            Self::entry_breadth(a)
+                .cmp(&Self::entry_breadth(b))
+                .then_with(|| a.cmp(b))
+        });
+
+        let mut radix = RadixTarget::new(&[], ScopeMode::Normal)?;
         let mut providers_map: ProvidersMap = HashMap::new();
 
-        // here, we iterate twice to ensure similar domains get grouped together regardless of insert order
-        // this exists for a specific reason. a real world example is when github has a domain of
-        // blob.core.widnows.net, and azure has a domain of windows.net. if blob.core.windows.net gets inserted first,
-        // it gets blown away when windows.net is inserted.
-        // iterating twice ensures that on the second pass, a .get() for blob.core.windows.net will return the
-        // parent domain, allowing us to nest both cloud providers under the same key of windows.net.
-        for _ in 0..2 {
-            for provider in providers_data.values() {
-                let cloud_provider = CloudProvider {
-                    name: provider.name.clone(),
-                    tags: provider.tags.clone(),
-                    short_description: provider.short_description.clone(),
-                    long_description: provider.long_description.clone(),
-                };
+        for (entry, entry_owners) in sorted {
+            let inherited: Vec<Arc<CloudProvider>> = radix
+                .get(&entry)
+                .and_then(|ancestor| providers_map.get(&ancestor).cloned())
+                .unwrap_or_default();
 
-                // Insert all CIDRs for this provider
-                for cidr in &provider.cidrs {
-                    let normalized = match radix.get(cidr) {
-                        Some(n) => n,
-                        None => match radix.insert(cidr) {
-                            Ok(Some(n)) => n,
-                            Ok(None) => continue,
-                            Err(e) => {
-                                log::warn!("Error inserting CIDR '{}': {}", cidr, e);
-                                continue;
-                            }
-                        },
-                    };
-                    let providers_list = providers_map.entry(normalized.clone()).or_default();
-                    if !providers_list.iter().any(|p| p.name == cloud_provider.name) {
-                        providers_list.push(cloud_provider.clone());
-                    }
+            let novel: Vec<Arc<CloudProvider>> = entry_owners
+                .iter()
+                .filter(|p| !inherited.iter().any(|i| i.name == p.name))
+                .cloned()
+                .collect();
+
+            // Same answer as its container, so the node would only cost memory.
+            if novel.is_empty() {
+                continue;
+            }
+
+            let mut merged = inherited;
+            merged.extend(novel);
+
+            match radix.insert(&entry) {
+                Ok(Some(normalized)) => {
+                    providers_map.insert(normalized, merged);
                 }
-
-                // Insert all domains for this provider
-                for domain in &provider.domains {
-                    let normalized = match radix.get(domain) {
-                        Some(n) => n,
-                        None => match radix.insert(domain) {
-                            Ok(Some(n)) => n,
-                            Ok(None) => continue,
-                            Err(e) => {
-                                log::warn!("Error inserting domain '{}': {}", domain, e);
-                                continue;
-                            }
-                        },
-                    };
-                    let providers_list = providers_map.entry(normalized.clone()).or_default();
-                    if !providers_list.iter().any(|p| p.name == cloud_provider.name) {
-                        providers_list.push(cloud_provider.clone());
-                    }
+                Ok(None) => continue,
+                Err(e) => {
+                    log::warn!("Error inserting entry '{}': {}", entry, e);
+                    continue;
                 }
             }
         }
@@ -455,7 +473,10 @@ impl CloudCheck {
 
         if let Some(normalized) = radix.get(target) {
             debug!("Found normalized target: {} for {}", normalized, target);
-            let result = providers.get(&normalized).cloned().unwrap_or_default();
+            let result: Vec<CloudProvider> = providers
+                .get(&normalized)
+                .map(|found| found.iter().map(|p| (**p).clone()).collect())
+                .unwrap_or_default();
             debug!("Returning {} providers", result.len());
             Ok(result)
         } else {
@@ -506,23 +527,155 @@ mod tests {
         );
     }
 
+    async fn names_for(target: &str) -> Vec<String> {
+        let cloudcheck = CloudCheck::new();
+        let results = cloudcheck.lookup(target).await.unwrap();
+        results.iter().map(|p| p.name.clone()).collect()
+    }
+
     #[tokio::test]
     async fn test_lookup_windows_blob_domain() {
-        let cloudcheck = CloudCheck::new();
-        let results = cloudcheck
-            .lookup("asdf.blob.core.windows.net")
-            .await
-            .unwrap();
-        let names: Vec<String> = results.iter().map(|p| p.name.clone()).collect();
-        assert!(
-            names.contains(&"GitHub".to_string()),
-            "Expected GitHub in results: {:?}",
-            names
-        );
+        let names = names_for("asdf.blob.core.windows.net").await;
         assert!(
             names.contains(&"Microsoft".to_string()),
             "Expected Microsoft in results: {:?}",
             names
         );
+        assert!(
+            !names.contains(&"GitHub".to_string()),
+            "GitHub owns sibling hosts under windows.net, not this one: {:?}",
+            names
+        );
+    }
+
+    #[tokio::test]
+    async fn test_lookup_github_owned_blob_host() {
+        let names = names_for("copilotprodattachments.blob.core.windows.net").await;
+        for expected in ["GitHub", "Microsoft"] {
+            assert!(
+                names.contains(&expected.to_string()),
+                "Expected {} in results: {:?}",
+                expected,
+                names
+            );
+        }
+    }
+
+    #[tokio::test]
+    async fn test_lookup_amazonaws_no_tenant_leak() {
+        let names = names_for("foo.s3.amazonaws.com").await;
+        assert!(
+            names.contains(&"Amazon".to_string()),
+            "Expected Amazon in results: {:?}",
+            names
+        );
+        for leaked in ["GitHub", "HPE", "Microsoft"] {
+            assert!(
+                !names.contains(&leaked.to_string()),
+                "{} leaked onto an unrelated amazonaws.com host: {:?}",
+                leaked,
+                names
+            );
+        }
+    }
+
+    #[tokio::test]
+    async fn test_lookup_tenant_bucket_keeps_both() {
+        let names = names_for("hpefonts.s3.amazonaws.com").await;
+        for expected in ["Amazon", "HPE"] {
+            assert!(
+                names.contains(&expected.to_string()),
+                "Expected {} in results: {:?}",
+                expected,
+                names
+            );
+        }
+    }
+
+    /// A single QUIC.cloud /32 inside AWS made bbot's portfilter treat whole AWS ranges as CDN.
+    #[tokio::test]
+    async fn test_lookup_aws_ip_no_cdn_leak() {
+        let names = names_for("18.195.165.195").await;
+        assert!(
+            names.contains(&"Amazon".to_string()),
+            "Expected Amazon in results: {:?}",
+            names
+        );
+        assert!(
+            !names.contains(&"Quiccloud".to_string()),
+            "Quiccloud leaked onto an unrelated AWS address: {:?}",
+            names
+        );
+    }
+
+    #[test]
+    fn test_entry_breadth_ordering() {
+        assert!(CloudCheck::entry_breadth("10.0.0.0/8") < CloudCheck::entry_breadth("10.1.2.0/24"));
+        assert_eq!(CloudCheck::entry_breadth("1.2.3.4"), 32);
+        assert_eq!(CloudCheck::entry_breadth("::1"), 128);
+        assert!(
+            CloudCheck::entry_breadth("amazonaws.com")
+                < CloudCheck::entry_breadth("foo.s3.amazonaws.com")
+        );
+        assert_eq!(CloudCheck::entry_breadth("example.com."), 2);
+    }
+
+    const NESTED: &str = r#"{
+        "bigcloud": {"name": "BigCloud", "tags": ["cloud"], "cidrs": ["10.0.0.0/8"], "domains": ["bigcloud.example"]},
+        "tinycdn": {"name": "TinyCdn", "tags": ["cdn"], "cidrs": ["10.1.2.3/32"], "domains": ["node.bigcloud.example"]},
+        "elsewhere": {"name": "Elsewhere", "tags": ["cloud"], "cidrs": ["192.0.2.0/24"], "domains": []}
+    }"#;
+
+    const CHAIN: &str = r#"{
+        "a": {"name": "A", "tags": ["cloud"], "cidrs": ["10.0.0.0/8"], "domains": ["a.example"]},
+        "b": {"name": "B", "tags": ["cloud"], "cidrs": ["10.1.0.0/16"], "domains": ["b.a.example"]},
+        "c": {"name": "C", "tags": ["cloud"], "cidrs": ["10.1.2.0/24"], "domains": ["c.b.a.example"]}
+    }"#;
+
+    fn names(target: &str) -> Vec<String> {
+        names_in(NESTED, target)
+    }
+
+    fn names_in(fixture: &str, target: &str) -> Vec<String> {
+        let (radix, providers) = CloudCheck::build_data_structures(fixture).unwrap();
+        let mut names: Vec<String> = radix
+            .get(target)
+            .and_then(|entry| providers.get(&entry).cloned())
+            .unwrap_or_default()
+            .iter()
+            .map(|p| p.name.clone())
+            .collect();
+        names.sort();
+        names
+    }
+
+    #[test]
+    fn test_nested_provider_does_not_leak_to_container() {
+        assert_eq!(names("10.9.9.9"), ["BigCloud"]);
+        assert_eq!(names("10.1.2.4"), ["BigCloud"]);
+        assert_eq!(names("www.bigcloud.example"), ["BigCloud"]);
+        assert_eq!(names("bigcloud.example"), ["BigCloud"]);
+    }
+
+    #[test]
+    fn test_nested_provider_matches_its_own_entry_and_ancestors() {
+        assert_eq!(names("10.1.2.3"), ["BigCloud", "TinyCdn"]);
+        assert_eq!(names("node.bigcloud.example"), ["BigCloud", "TinyCdn"]);
+        assert_eq!(names("a.node.bigcloud.example"), ["BigCloud", "TinyCdn"]);
+    }
+
+    #[test]
+    fn test_unrelated_and_unknown_targets() {
+        assert_eq!(names("192.0.2.5"), ["Elsewhere"]);
+        assert!(names("203.0.113.1").is_empty());
+        assert!(names("unknown.test").is_empty());
+    }
+
+    #[test]
+    fn test_inheritance_chains_through_intermediate_entries() {
+        assert_eq!(names_in(CHAIN, "10.9.9.9"), ["A"]);
+        assert_eq!(names_in(CHAIN, "10.1.9.9"), ["A", "B"]);
+        assert_eq!(names_in(CHAIN, "10.1.2.5"), ["A", "B", "C"]);
+        assert_eq!(names_in(CHAIN, "x.c.b.a.example"), ["A", "B", "C"]);
     }
 }

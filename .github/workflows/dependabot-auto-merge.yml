@@ -1,0 +1,12 @@
+name: Dependabot auto-merge
+on: pull_request
+
+permissions: {}
+
+jobs:
+  auto-merge:
+    permissions:
+      contents: write
+      pull-requests: write
+      checks: read
+    uses: blacklanternsecurity/CLA/.github/workflows/dependabot-auto-merge.yml@ad6e7d77546f99f569e51085a0e7aad496e23b9c # 2026-10-20

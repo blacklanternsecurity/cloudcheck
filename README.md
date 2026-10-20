@@ -1,6 +1,6 @@
 # CloudCheck
 
-[![Python Version](https://img.shields.io/badge/python-3.9+-blue)](https://www.python.org)
+[![Python Version](https://img.shields.io/badge/python-3.11+-blue)](https://www.python.org)
 [![PyPI](https://img.shields.io/pypi/v/cloudcheck)](https://pypi.org/project/cloudcheck/)
 [![Rust Version](https://img.shields.io/badge/rust-1.70+-orange)](https://www.rust-lang.org)
 [![Crates.io](https://img.shields.io/crates/v/cloudcheck?color=orange)](https://crates.io/crates/cloudcheck)
@@ -29,7 +29,7 @@ CloudCheck is a simple Rust tool to check whether an IP address or hostname belo
 
 ## Cloud Provider Signatures
 
-The latest cloud provider signatures are available in [`cloud_providers_v3.json`](https://github.com/blacklanternsecurity/cloudcheck/blob/master/cloud_providers_v3.json), which is updated daily via [CI/CD](.github/workflows/daily-update.yml). Domains associated with each cloud provider are fetched dynamically from the [v2fly community repository](https://github.com/v2fly/domain-list-community), and CIDRs are fetched from [ASNDB](https://asndb.api.bbot.io/).
+The latest cloud provider signatures are available in [`cloud_providers_v3.json`](https://github.com/blacklanternsecurity/cloudcheck/blob/stable/cloud_providers_v3.json), which is updated daily via [CI/CD](.github/workflows/daily-update.yml). Domains associated with each cloud provider are fetched dynamically from the [v2fly community repository](https://github.com/v2fly/domain-list-community), and CIDRs are fetched from [ASNDB](https://asndb.api.bbot.io/).
 
 Used by [BBOT](https://github.com/blacklanternsecurity/bbot) and [BBOT Server](https://github.com/blacklanternsecurity/bbot-server).
 

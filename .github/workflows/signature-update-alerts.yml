@@ -1,0 +1,74 @@
+name: Signature Update Alerts
+
+# Opens a GitHub issue when the daily signature update fails, comments on it if it keeps failing,
+# and closes it when the update next succeeds.
+# The name below must match `name:` in daily-update.yml exactly, or alerting silently stops.
+# workflow_run only fires from this file on the default branch (stable).
+on:
+  workflow_run:
+    workflows: [Daily Signature Update]
+    types: [completed]
+
+permissions:
+  actions: read
+  issues: write
+
+concurrency:
+  group: signature-update-alerts
+  cancel-in-progress: false
+
+jobs:
+  alert:
+    runs-on: ubuntu-24.04
+    if: contains(fromJSON('["failure", "timed_out", "startup_failure", "success"]'), github.event.workflow_run.conclusion)
+    steps:
+    - name: Open, update, or close the alert issue
+      env:
+        GH_TOKEN: ${{ github.token }}
+        REPO: ${{ github.repository }}
+        CONCLUSION: ${{ github.event.workflow_run.conclusion }}
+        RUN_ID: ${{ github.event.workflow_run.id }}
+        RUN_URL: ${{ github.event.workflow_run.html_url }}
+        RUN_EVENT: ${{ github.event.workflow_run.event }}
+        HEAD_BRANCH: ${{ github.event.workflow_run.head_branch }}
+        HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+      run: |
+        TITLE="Daily signature update failing"
+        LABEL="signature-update-failure"
+
+        ISSUE=$(gh issue list --repo "$REPO" --label "$LABEL" --state open --json number,title \
+          | jq -r --arg t "$TITLE" '[.[] | select(.title == $t)][0].number // empty')
+
+        if [ "$CONCLUSION" = "success" ]; then
+          if [ -n "$ISSUE" ]; then
+            gh issue comment "$ISSUE" --repo "$REPO" --body "Recovered in $RUN_URL"
+            gh issue close "$ISSUE" --repo "$REPO"
+          fi
+          exit 0
+        fi
+
+        FAILED=$(gh api "repos/$REPO/actions/runs/$RUN_ID/jobs" --paginate \
+          --jq '.jobs[] | select(.conclusion == "failure") | "- `\(.name)`: \([.steps[]? | select(.conclusion == "failure") | .name] | join(", "))"')
+        FAILED=${FAILED:-"- (no failed job details available)"}
+
+        BODY=$(cat <<EOF
+        The daily signature update did not succeed.
+
+        - Conclusion: \`$CONCLUSION\`
+        - Run: $RUN_URL
+        - Trigger: \`$RUN_EVENT\` on \`$HEAD_BRANCH\` @ \`${HEAD_SHA:0:7}\`
+
+        Failed jobs and steps:
+        $FAILED
+
+        The run's job summary lists the provider errors.
+        EOF
+        )
+
+        if [ -n "$ISSUE" ]; then
+          gh issue comment "$ISSUE" --repo "$REPO" --body "$BODY"
+        else
+          gh label create "$LABEL" --repo "$REPO" --color B60205 \
+            --description "Daily signature update is failing" --force
+          gh issue create --repo "$REPO" --title "$TITLE" --label "$LABEL" --body "$BODY"
+        fi
