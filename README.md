@@ -1,6 +1,6 @@
 # CloudCheck
 
-[![Python Version](https://img.shields.io/badge/python-3.9+-blue)](https://www.python.org)
+[![Python Version](https://img.shields.io/badge/python-3.11+-blue)](https://www.python.org)
 [![PyPI](https://img.shields.io/pypi/v/cloudcheck)](https://pypi.org/project/cloudcheck/)
 [![Rust Version](https://img.shields.io/badge/rust-1.70+-orange)](https://www.rust-lang.org)
 [![Crates.io](https://img.shields.io/crates/v/cloudcheck?color=orange)](https://crates.io/crates/cloudcheck)
