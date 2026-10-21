@@ -47,15 +47,21 @@ jobs:
     runs-on: ubuntu-24.04
     needs: test
     if: github.event_name == 'push' && github.ref == 'refs/heads/stable'
+    # Reads the bot's key from data-update (stable only), like daily-update.yml.
+    # The tag push uses the App token, not GITHUB_TOKEN.
+    environment: data-update
     permissions:
-      contents: write
+      contents: read
     steps:
       - name: Generate app token
         id: app-token
         uses: actions/create-github-app-token@v3
         with:
-          app-id: ${{ secrets.CLOUDCHECK_APP_ID }}
+          app-id: ${{ vars.CLOUDCHECK_APP_ID }}
           private-key: ${{ secrets.CLOUDCHECK_APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: ${{ github.event.repository.name }}
+          permission-contents: write
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0

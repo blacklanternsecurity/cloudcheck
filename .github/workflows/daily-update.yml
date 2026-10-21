@@ -15,16 +15,25 @@ concurrency:
 jobs:
   update:
     runs-on: ubuntu-24.04
+    # The bot's key and BBOT_IO_API_KEY live only in this environment, which
+    # accepts the stable branch only, so no other branch, pull request or
+    # dispatched copy of this workflow can read them.
+    environment: data-update
+    # The push uses the App token below, not GITHUB_TOKEN.
     permissions:
-      contents: write
+      contents: read
 
     steps:
     - name: Generate app token
       id: app-token
       uses: actions/create-github-app-token@v3
       with:
-        app-id: ${{ secrets.CLOUDCHECK_APP_ID }}
+        app-id: ${{ vars.CLOUDCHECK_APP_ID }}
         private-key: ${{ secrets.CLOUDCHECK_APP_PRIVATE_KEY }}
+        # Only this repository, only contents write: the most the bot needs.
+        owner: ${{ github.repository_owner }}
+        repositories: ${{ github.event.repository.name }}
+        permission-contents: write
 
     - name: Checkout stable branch
       uses: actions/checkout@v7
