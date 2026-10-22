@@ -30,9 +30,9 @@ jobs:
       with:
         app-id: ${{ vars.CLOUDCHECK_APP_ID }}
         private-key: ${{ secrets.CLOUDCHECK_APP_PRIVATE_KEY }}
-        # Only this repository, only contents write: the most the bot needs.
-        owner: ${{ github.repository_owner }}
-        repositories: ${{ github.event.repository.name }}
+        # Only contents write: the most the bot needs. With no owner or
+        # repositories input, the token covers only this repository; setting
+        # owner alone would widen it to every repository in the installation.
         permission-contents: write
 
     - name: Checkout stable branch

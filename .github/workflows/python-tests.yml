@@ -47,25 +47,17 @@ jobs:
     runs-on: ubuntu-24.04
     needs: test
     if: github.event_name == 'push' && github.ref == 'refs/heads/stable'
-    # Reads the bot's key from data-update (stable only), like daily-update.yml.
-    # The tag push uses the App token, not GITHUB_TOKEN.
-    environment: data-update
+    # The tag push uses GITHUB_TOKEN, not the bot's key: the PR rule on stable
+    # applies to GITHUB_TOKEN, so this job can't push to stable.
     permissions:
-      contents: read
+      contents: write
     steps:
-      - name: Generate app token
-        id: app-token
-        uses: actions/create-github-app-token@v3
-        with:
-          app-id: ${{ vars.CLOUDCHECK_APP_ID }}
-          private-key: ${{ secrets.CLOUDCHECK_APP_PRIVATE_KEY }}
-          owner: ${{ github.repository_owner }}
-          repositories: ${{ github.event.repository.name }}
-          permission-contents: write
+      # No credentials left in .git/config, so the build steps below (third-party
+      # build code) can't push. Only the tag step gets the token.
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
-          token: ${{ steps.app-token.outputs.token }}
+          persist-credentials: false
       - name: Set up Python
         uses: actions/setup-python@v7
         with:
@@ -96,11 +88,13 @@ jobs:
         run: uv run maturin publish --skip-existing --username __token__ --password ${{ secrets.PYPI_TOKEN }}
       - name: Tag release
         if: steps.version_check.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git tag -a "${{ steps.get_version.outputs.VERSION }}" -m "Release ${{ steps.get_version.outputs.VERSION }}"
-          git push origin "refs/tags/${{ steps.get_version.outputs.VERSION }}"
+          git push "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "refs/tags/${{ steps.get_version.outputs.VERSION }}"
   linux:
     runs-on: ${{ matrix.platform.runner }}
     needs: publish
