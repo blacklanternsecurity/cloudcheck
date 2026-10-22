@@ -226,7 +226,7 @@ When adding a new cloud provider:
 |------|-------------|------|---------|----------|
 | Akamai | A content delivery network and cloud services provider that delivers web and internet security services. | cloud | 81 | 6082 |
 | Alibaba Cloud | A Chinese cloud computing company and subsidiary of Alibaba Group, providing cloud services and infrastructure. | cloud | 464 | 88 |
-| Amazon Web Services | A comprehensive cloud computing platform provided by Amazon, offering infrastructure services, storage, and computing power. | cloud | 250 | 15250 |
+| Amazon Web Services | A comprehensive cloud computing platform provided by Amazon, offering infrastructure services, storage, and computing power. | cloud | 250 | 15251 |
 | Arvancloud | An Iranian cloud computing and content delivery network provider offering cloud infrastructure and CDN services. | cdn | 1 | 25 |
 | Backblaze | A cloud storage and backup service provider offering data backup and cloud storage solutions. | cloud | 2 | 45 |
 | Baidu Cloud Acceleration (百度云加速) | A Chinese content delivery network and cloud acceleration service provided by Baidu. | cdn | 132 | 0 |
@@ -243,7 +243,7 @@ When adding a new cloud provider:
 | Federal Bureau of Investigation | A U.S. government agency that serves as the domestic intelligence and security service, responsible for investigating federal crimes and protecting national security. | gov | 3 | 23 |
 | Fastly | A content delivery network and edge cloud platform that provides edge computing, security, and performance services. | cdn | 7 | 1188 |
 | Gabia (가비아) | A Korean cloud hosting and infrastructure provider. | cloud | 0 | 59 |
-| G-Core Labs | A content delivery network and cloud infrastructure provider offering CDN, cloud computing, and edge services. | cdn | 0 | 1456 |
+| G-Core Labs | A content delivery network and cloud infrastructure provider offering CDN, cloud computing, and edge services. | cdn | 0 | 1454 |
 | GitHub | A web-based platform for version control and collaboration using Git, providing hosting for software development and code repositories. | cdn | 65 | 5412 |
 | GoCache | A Brazilian content delivery network provider offering CDN services. | cdn | 0 | 25 |
 | Google Cloud | A suite of cloud computing services provided by Google, including infrastructure, platform, and software services for businesses and developers. | cloud | 1094 | 1988 |
