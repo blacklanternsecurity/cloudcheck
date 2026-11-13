@@ -5,7 +5,6 @@ edition = "2024"
 description = "CloudCheck is a simple Rust tool to check whether an IP address or hostname belongs to a cloud provider."
 license = "AGPL-3.0"
 repository = "https://github.com/blacklanternsecurity/cloudcheck"
-homepage = "https://github.com/blacklanternsecurity/cloudcheck"
 documentation = "https://docs.rs/cloudcheck"
 
 [dependencies]
