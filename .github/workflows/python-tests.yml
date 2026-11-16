@@ -41,7 +41,7 @@ jobs:
     
     - name: Run Python tests
       run: |
-        uv run --no-default-groups --group test pytest test_cloudcheck.py -v
+        uv run --no-default-groups --group test pytest test_cloudcheck.py test_validate_signatures.py -v
 
   publish:
     runs-on: ubuntu-24.04
