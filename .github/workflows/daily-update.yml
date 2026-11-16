@@ -6,74 +6,133 @@ on:
     - cron: '0 6 * * *'
   workflow_dispatch:  # Allow manual trigger
 
-# Prevent concurrent runs from racing to commit/merge
+permissions: {}
+
+# Prevent concurrent runs from racing to commit
 # cancel-in-progress: false means new runs wait instead of canceling in-progress ones
 concurrency:
   group: daily-update
   cancel-in-progress: false
 
+# cloudcheck clients download cloud_providers_v3.json from stable at runtime, so this push is a
+# release. Publishing policy, exception D9: the bot may push to stable without a pull request.
+# The two jobs keep that bypass narrow:
+#   fetch   runs the project's code and dependencies with BBOT_IO_API_KEY. It never holds the push key.
+#   publish runs only the standard library and GitHub's API. It validates the data, mints the push
+#           token at the last step, and commits through the API so GitHub signs the commit as the App.
+# Both jobs use the data-update environment, which accepts the stable branch only.
+
 jobs:
-  update:
+  fetch:
     runs-on: ubuntu-24.04
-    # The bot's key and BBOT_IO_API_KEY live only in this environment, which
-    # accepts the stable branch only, so no other branch, pull request or
-    # dispatched copy of this workflow can read them.
+    environment: data-update
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: stable
+          persist-credentials: false
+
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.12"
+
+      - uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78 # v7.6.0
+        with:
+          enable-cache: false
+
+      - name: Install dependencies
+        run: uv sync --locked
+
+      - name: Update signatures
+        env:
+          BBOT_IO_API_KEY: ${{ secrets.BBOT_IO_API_KEY }}
+        run: uv run python -m cloudcheck_update.cli
+
+      - name: Update README table
+        run: uv run python scripts/update_readme_table.py
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: signatures
+          path: |
+            cloud_providers_v3.json
+            README.md
+          if-no-files-found: error
+          retention-days: 7
+
+  publish:
+    needs: fetch
+    runs-on: ubuntu-24.04
     environment: data-update
     # The push uses the App token below, not GITHUB_TOKEN.
     permissions:
       contents: read
-
     steps:
-    - name: Generate app token
-      id: app-token
-      uses: actions/create-github-app-token@v3
-      with:
-        app-id: ${{ vars.CLOUDCHECK_APP_ID }}
-        private-key: ${{ secrets.CLOUDCHECK_APP_PRIVATE_KEY }}
-        # Only contents write: the most the bot needs. With no owner or
-        # repositories input, the token covers only this repository; setting
-        # owner alone would widen it to every repository in the installation.
-        permission-contents: write
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: stable
+          persist-credentials: false
 
-    - name: Checkout stable branch
-      uses: actions/checkout@v7
-      with:
-        ref: stable
-        token: ${{ steps.app-token.outputs.token }}
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: signatures
+          path: candidate
 
-    - name: Set up Python
-      uses: actions/setup-python@v7
-      with:
-        python-version: "3.12"
+      # Uses stable's own copy of the validator, never one from the artifact.
+      - name: Validate
+        id: check
+        run: |
+          set -euo pipefail
+          extra=$(cd candidate && find . -type f ! -path ./cloud_providers_v3.json ! -path ./README.md)
+          if [ -n "$extra" ]; then echo "::error::unexpected files in the artifact: $extra"; exit 1; fi
+          python3 -I scripts/validate_signatures.py --old cloud_providers_v3.json --new candidate/cloud_providers_v3.json
+          # README.md may change only between the provider table markers.
+          outside() { sed '/<!--PROVIDERTABLE-->/,/<!--ENDPROVIDERTABLE-->/d' "$1"; }
+          if ! cmp -s <(outside README.md) <(outside candidate/README.md); then
+            echo "::error::README.md changed outside the provider table"; exit 1
+          fi
+          changed=""
+          for f in cloud_providers_v3.json README.md; do
+            cmp -s "$f" "candidate/$f" || changed="$changed $f"
+          done
+          echo "files=${changed# }" >> "$GITHUB_OUTPUT"
+          echo "base=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
-    - name: Set up uv
-      uses: astral-sh/setup-uv@v7
+      - name: Generate app token
+        if: steps.check.outputs.files != ''
+        id: app-token
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
+        with:
+          app-id: ${{ vars.CLOUDCHECK_APP_ID }}
+          private-key: ${{ secrets.CLOUDCHECK_APP_PRIVATE_KEY }}
+          # Only contents write: the most the bot needs. With no owner or
+          # repositories input, the token covers only this repository; setting
+          # owner alone would widen it to every repository in the installation.
+          permission-contents: write
 
-    - name: Install dependencies
-      run: uv sync
-
-    - name: Update signatures
-      env:
-        BBOT_IO_API_KEY: ${{ secrets.BBOT_IO_API_KEY }}
-      run: uv run python -m cloudcheck_update.cli
-
-    - name: Update README table
-      run: uv run python scripts/update_readme_table.py
-
-    - name: Check for changes
-      id: changes
-      run: |
-        if git diff --quiet; then
-          echo "has_changes=false" >> $GITHUB_OUTPUT
-        else
-          echo "has_changes=true" >> $GITHUB_OUTPUT
-        fi
-
-    - name: Commit and push to stable
-      if: steps.changes.outputs.has_changes == 'true'
-      run: |
-        git config user.name "github-actions[bot]"
-        git config user.email "github-actions[bot]@users.noreply.github.com"
-        git add cloud_providers_v3.json README.md
-        git commit -m "chore: daily signature update $(date -u +%Y-%m-%d)"
-        git push origin HEAD:stable
+      # A commit made through the API with the App's token is signed by GitHub and shows as verified,
+      # authored by cloudcheck-update-bot[bot]. The ref update is a fast-forward or nothing.
+      - name: Commit and push to stable
+        if: steps.check.outputs.files != ''
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          BASE: ${{ steps.check.outputs.base }}
+          FILES: ${{ steps.check.outputs.files }}
+        run: |
+          set -euo pipefail
+          api="repos/$GITHUB_REPOSITORY/git"
+          entries='[]'
+          for f in $FILES; do
+            blob=$(base64 -w0 "candidate/$f" | jq -Rs '{content: ., encoding: "base64"}' | gh api "$api/blobs" --input - --jq .sha)
+            entries=$(jq -c --arg p "$f" --arg s "$blob" '. + [{path: $p, mode: "100644", type: "blob", sha: $s}]' <<<"$entries")
+          done
+          base_tree=$(gh api "$api/commits/$BASE" --jq .tree.sha)
+          tree=$(jq -n --arg b "$base_tree" --argjson e "$entries" '{base_tree: $b, tree: $e}' | gh api "$api/trees" --input - --jq .sha)
+          message="chore: daily signature update $(date -u +%Y-%m-%d)"
+          commit=$(jq -n --arg t "$tree" --arg p "$BASE" --arg m "$message" '{message: $m, tree: $t, parents: [$p]}' | gh api "$api/commits" --input - --jq .sha)
+          if [ "$(gh api "$api/commits/$commit" --jq .verification.verified)" != true ]; then
+            echo "::error::commit $commit is not signed by GitHub; stable not updated"; exit 1
+          fi
+          gh api -X PATCH "$api/refs/heads/stable" -f sha="$commit" -F force=false --jq '"stable -> " + .object.sha'
