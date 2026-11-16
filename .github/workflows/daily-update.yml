@@ -2,8 +2,8 @@ name: Daily Signature Update
 
 on:
   schedule:
-    # Run daily at 6:00 UTC
-    - cron: '0 6 * * *'
+    # Daily at 6:23 UTC. Avoids the top of the hour, when GitHub's scheduled-run queue is busiest
+    - cron: '23 6 * * *'
   workflow_dispatch:  # Allow manual trigger
 
 # Prevent concurrent runs from racing to commit/merge
