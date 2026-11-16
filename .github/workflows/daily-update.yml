@@ -140,7 +140,8 @@ jobs:
           fi
           gh api -X PATCH "$api/refs/heads/stable" -f sha="$commit" -F force=false --jq '"stable -> " + .object.sha'
 
-      - name: Report held-back providers
+      # signature-update-alerts puts failed step names in the alert issue, so the name carries the list.
+      - name: "Held back (stable's entry kept): ${{ steps.check.outputs.held }}"
         if: steps.check.outputs.held != ''
         env:
           HELD: ${{ steps.check.outputs.held }}
