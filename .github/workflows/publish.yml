@@ -71,7 +71,8 @@ jobs:
       version: ${{ needs.check.outputs.version }}
 
   docker:
-    needs: [check, tests]
+    # After the wheels: no image is pushed for a version whose packages didn't build.
+    needs: [check, tests, wheels]
     if: needs.check.outputs.release == 'true'
     permissions:
       contents: read
@@ -81,6 +82,11 @@ jobs:
       version: ${{ needs.check.outputs.version }}
       major: ${{ needs.check.outputs.major }}
       minor: ${{ needs.check.outputs.minor }}
+    # docker.yml logs in from a release-environment job, which receives an environment secret only
+    # when the caller maps it by name (as check and release do for BLS_RELEASE_PRIVATE_KEY).
+    secrets:
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
 
   release:
     needs: [check, wheels, pypi, crates, docker]
