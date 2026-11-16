@@ -1,33 +1,36 @@
 name: Pipeline Tests
 
 on:
-  push:
-    branches: [ stable ]
   pull_request:
+  workflow_call:
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  group: pipeline-tests-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
 
 jobs:
   test:
     runs-on: ubuntu-24.04
-    
     steps:
-    - uses: actions/checkout@v7
-    
-    - name: Set up Python
-      uses: actions/setup-python@v7
-      with:
-        python-version: "3.14"
-    
-    - name: Set up uv
-      uses: astral-sh/setup-uv@v7
-    
-    - name: Install dependencies
-      run: |
-        uv sync
-    
-    - name: Run tests
-      run: |
-        uv run pytest cloudcheck_update/test_cloudcheck_update.py -v
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.14"
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78 # v7.6.0
+        with:
+          enable-cache: false
+
+      - name: Install dependencies
+        run: uv sync --locked
+
+      - name: Run tests
+        run: uv run pytest cloudcheck_update/test_cloudcheck_update.py -v

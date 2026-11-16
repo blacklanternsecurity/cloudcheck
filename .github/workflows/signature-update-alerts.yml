@@ -4,8 +4,10 @@ name: Signature Update Alerts
 # and closes it when the update next succeeds.
 # The name below must match `name:` in daily-update.yml exactly, or alerting silently stops.
 # workflow_run only fires from this file on the default branch (stable).
+# workflow_run is safe here: this job checks out no code and reads no artifact from the triggering run,
+# and the trigger is our own daily job, which runs only from stable.
 on:
-  workflow_run:
+  workflow_run: # zizmor: ignore[dangerous-triggers]
     workflows: [Daily Signature Update]
     types: [completed]
 
@@ -47,6 +49,7 @@ jobs:
           exit 0
         fi
 
+        # shellcheck disable=SC2016 # the backticks are Markdown inside a jq string
         FAILED=$(gh api "repos/$REPO/actions/runs/$RUN_ID/jobs" --paginate \
           --jq '.jobs[] | select(.conclusion == "failure") | "- `\(.name)`: \([.steps[]? | select(.conclusion == "failure") | .name] | join(", "))"')
         FAILED=${FAILED:-"- (no failed job details available)"}
