@@ -18,8 +18,10 @@ concurrency:
 # release. Publishing policy, exception D9: the bot may push to stable without a pull request.
 # The two jobs keep that bypass narrow:
 #   fetch   runs the project's code and dependencies with BBOT_IO_API_KEY. It never holds the push key.
-#   publish runs only the standard library and GitHub's API. It validates the data, mints the push
-#           token at the last step, and commits through the API so GitHub signs the commit as the App.
+#   publish runs only the standard library and GitHub's API. It validates the data, keeps stable's entry
+#           for any provider that fails its checks, rebuilds the README table from the result, mints the
+#           push token at the last step, and commits through the API so GitHub signs it as the App.
+#           A held-back provider fails the run after the push, so the alert issue names it.
 # Both jobs use the data-update environment, which accepts the stable branch only.
 
 jobs:
@@ -50,15 +52,10 @@ jobs:
           BBOT_IO_API_KEY: ${{ secrets.BBOT_IO_API_KEY }}
         run: uv run python -m cloudcheck_update.cli
 
-      - name: Update README table
-        run: uv run python scripts/update_readme_table.py
-
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: signatures
-          path: |
-            cloud_providers_v3.json
-            README.md
+          path: cloud_providers_v3.json
           if-no-files-found: error
           retention-days: 7
 
@@ -80,25 +77,31 @@ jobs:
           name: signatures
           path: candidate
 
-      # Uses stable's own copy of the validator, never one from the artifact.
-      - name: Validate
+      # Uses stable's own copies of the validator and the README script, never ones from the artifact.
+      - name: Validate and build the update
         id: check
         run: |
           set -euo pipefail
-          extra=$(cd candidate && find . -type f ! -path ./cloud_providers_v3.json ! -path ./README.md)
+          extra=$(cd candidate && find . -type f ! -path ./cloud_providers_v3.json)
           if [ -n "$extra" ]; then echo "::error::unexpected files in the artifact: $extra"; exit 1; fi
-          python3 -I scripts/validate_signatures.py --old cloud_providers_v3.json --new candidate/cloud_providers_v3.json
+          rc=0
+          python3 -I scripts/validate_signatures.py --old cloud_providers_v3.json --new candidate/cloud_providers_v3.json \
+            --out "$RUNNER_TEMP/merged.json" --held "$RUNNER_TEMP/held.txt" || rc=$?
+          if [ "$rc" != 0 ] && [ "$rc" != 2 ]; then echo "::error::whole-file check failed; nothing published"; exit 1; fi
+          cp "$RUNNER_TEMP/merged.json" cloud_providers_v3.json
+          python3 -I scripts/update_readme_table.py
           # README.md may change only between the provider table markers.
           outside() { sed '/<!--PROVIDERTABLE-->/,/<!--ENDPROVIDERTABLE-->/d' "$1"; }
-          if ! cmp -s <(outside README.md) <(outside candidate/README.md); then
+          if ! cmp -s <(git show HEAD:README.md | outside /dev/stdin) <(outside README.md); then
             echo "::error::README.md changed outside the provider table"; exit 1
           fi
-          changed=""
-          for f in cloud_providers_v3.json README.md; do
-            cmp -s "$f" "candidate/$f" || changed="$changed $f"
-          done
-          echo "files=${changed# }" >> "$GITHUB_OUTPUT"
-          echo "base=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          changed=$(git diff --name-only | tr '\n' ' ')
+          for f in $changed; do case "$f" in cloud_providers_v3.json|README.md) ;; *) echo "::error::unexpected change: $f"; exit 1;; esac; done
+          {
+            echo "files=${changed% }"
+            echo "held=$(paste -sd, "$RUNNER_TEMP/held.txt")"
+            echo "base=$(git rev-parse HEAD)"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Generate app token
         if: steps.check.outputs.files != ''
@@ -125,7 +128,7 @@ jobs:
           api="repos/$GITHUB_REPOSITORY/git"
           entries='[]'
           for f in $FILES; do
-            blob=$(base64 -w0 "candidate/$f" | jq -Rs '{content: ., encoding: "base64"}' | gh api "$api/blobs" --input - --jq .sha)
+            blob=$(base64 -w0 "$f" | jq -Rs '{content: ., encoding: "base64"}' | gh api "$api/blobs" --input - --jq .sha)
             entries=$(jq -c --arg p "$f" --arg s "$blob" '. + [{path: $p, mode: "100644", type: "blob", sha: $s}]' <<<"$entries")
           done
           base_tree=$(gh api "$api/commits/$BASE" --jq .tree.sha)
@@ -136,3 +139,11 @@ jobs:
             echo "::error::commit $commit is not signed by GitHub; stable not updated"; exit 1
           fi
           gh api -X PATCH "$api/refs/heads/stable" -f sha="$commit" -F force=false --jq '"stable -> " + .object.sha'
+
+      - name: Report held-back providers
+        if: steps.check.outputs.held != ''
+        env:
+          HELD: ${{ steps.check.outputs.held }}
+        run: |
+          echo "::error::providers held back (stable's entry kept): $HELD"
+          exit 1
