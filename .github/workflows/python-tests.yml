@@ -44,4 +44,4 @@ jobs:
         run: uv run --no-default-groups --group test maturin develop --release --group test
 
       - name: Run Python tests
-        run: uv run --no-default-groups --group test pytest test_cloudcheck.py -v
+        run: uv run --no-default-groups --group test pytest test_cloudcheck.py test_validate_signatures.py -v
