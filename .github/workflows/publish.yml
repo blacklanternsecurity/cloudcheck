@@ -38,6 +38,11 @@ jobs:
     permissions:
       contents: read
     uses: blacklanternsecurity/release-workflows/.github/workflows/maturin-wheels.yml@3fe35ff9c43f61c98bd8c93182686b6be97d2759 # v1.3.0
+    with:
+      # No s390x wheel has ever been published for cloudcheck.
+      targets: '{"linux": ["x86_64", "x86", "aarch64", "armv7", "ppc64le"], "musllinux": ["x86_64", "x86", "aarch64", "armv7"], "windows": ["x64", "x86"], "macos": ["x86_64", "aarch64"]}'
+      # Vendored OpenSSL needs perl and make in the build containers.
+      before-script-linux: scripts/wheel-container-setup.sh
 
   pypi:
     needs: wheels
