@@ -41,6 +41,8 @@ jobs:
     with:
       # No s390x wheel has ever been published for cloudcheck.
       targets: '{"linux": ["x86_64", "x86", "aarch64", "armv7", "ppc64le"], "musllinux": ["x86_64", "x86", "aarch64", "armv7"], "windows": ["x64", "x86"], "macos": ["x86_64", "aarch64"]}'
+      # Keep the manylinux_2_17 floor 11.2.0 shipped; the shared default is 2_28.
+      manylinux: auto
       # Vendored OpenSSL needs perl and make in the build containers.
       before-script-linux: scripts/wheel-container-setup.sh
 
