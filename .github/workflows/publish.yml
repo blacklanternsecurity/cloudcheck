@@ -1,0 +1,111 @@
+name: Publish
+
+on:
+  push:
+    branches: [stable]
+
+permissions: {}
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  # The daily signature push (policy exception D9) also lands here: release-check finds the
+  # version's tag already exists and publishes nothing. Commits that didn't arrive through a merged
+  # pull request may touch only the data file and the README table, or the release fails.
+  check:
+    permissions:
+      contents: read
+      actions: read
+      pull-requests: read
+    uses: blacklanternsecurity/release-workflows/.github/workflows/release-check.yml@3fe35ff9c43f61c98bd8c93182686b6be97d2759 # v1.3.0
+    with:
+      image: blacklanternsecurity/cloudcheck
+      direct-push-paths: cloud_providers_v3.json README.md
+    secrets:
+      BLS_RELEASE_PRIVATE_KEY: ${{ secrets.BLS_RELEASE_PRIVATE_KEY }}
+
+  tests:
+    needs: check
+    if: needs.check.outputs.release == 'true'
+    permissions:
+      contents: read
+    uses: ./.github/workflows/tests.yml # zizmor: ignore[self-repository]
+
+  wheels:
+    needs: tests
+    permissions:
+      contents: read
+    uses: blacklanternsecurity/release-workflows/.github/workflows/maturin-wheels.yml@3fe35ff9c43f61c98bd8c93182686b6be97d2759 # v1.3.0
+    with:
+      # No s390x wheel has ever been published for cloudcheck.
+      targets: '{"linux": ["x86_64", "x86", "aarch64", "armv7", "ppc64le"], "musllinux": ["x86_64", "x86", "aarch64", "armv7"], "windows": ["x64", "x86"], "macos": ["x86_64", "aarch64"]}'
+      # Keep the manylinux_2_17 floor 11.2.0 shipped; the shared default is 2_28.
+      manylinux: auto
+      # Vendored OpenSSL needs perl and make in the build containers.
+      before-script-linux: scripts/wheel-container-setup.sh
+
+  pypi:
+    needs: wheels
+    runs-on: ubuntu-24.04
+    environment: release
+    permissions:
+      contents: read
+      id-token: write
+      attestations: write
+    steps:
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          pattern: ${{ needs.wheels.outputs.artifacts }}
+          path: dist
+          merge-multiple: true
+      - uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
+        with:
+          subject-path: dist/*
+      - uses: pypa/gh-action-pypi-publish@7245906fb61fa33a13554f9d5fb856fe61758086 # v1.14.3
+        with:
+          skip-existing: true
+
+  crates:
+    needs: [check, pypi]
+    if: needs.check.outputs.release == 'true'
+    permissions:
+      contents: read
+      id-token: write
+    uses: blacklanternsecurity/release-workflows/.github/workflows/crates.yml@3fe35ff9c43f61c98bd8c93182686b6be97d2759 # v1.3.0
+    with:
+      version: ${{ needs.check.outputs.version }}
+
+  docker:
+    # After the wheels: no image is pushed for a version whose packages didn't build.
+    needs: [check, tests, wheels]
+    if: needs.check.outputs.release == 'true'
+    permissions:
+      contents: read
+    uses: blacklanternsecurity/release-workflows/.github/workflows/docker.yml@3fe35ff9c43f61c98bd8c93182686b6be97d2759 # v1.3.0
+    with:
+      image: blacklanternsecurity/cloudcheck
+      version: ${{ needs.check.outputs.version }}
+      major: ${{ needs.check.outputs.major }}
+      minor: ${{ needs.check.outputs.minor }}
+    # docker.yml logs in from a release-environment job, which receives an environment secret only
+    # when the caller maps it by name (as check and release do for BLS_RELEASE_PRIVATE_KEY).
+    secrets:
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
+
+  release:
+    needs: [check, wheels, pypi, crates, docker]
+    if: needs.check.outputs.release == 'true'
+    permissions:
+      contents: read
+    uses: blacklanternsecurity/release-workflows/.github/workflows/publish.yml@3fe35ff9c43f61c98bd8c93182686b6be97d2759 # v1.3.0
+    with:
+      tag: ${{ needs.check.outputs.tag }}
+      version: ${{ needs.check.outputs.version }}
+      artifacts: ${{ needs.wheels.outputs.artifacts }}
+      assets: dist/*
+      images: ${{ needs.docker.outputs.images }}
+    secrets:
+      BLS_RELEASE_PRIVATE_KEY: ${{ secrets.BLS_RELEASE_PRIVATE_KEY }}

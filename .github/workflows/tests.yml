@@ -1,0 +1,18 @@
+name: Tests
+
+# Every test suite in one call, so publish.yml runs exactly what pull requests run.
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  rust:
+    uses: ./.github/workflows/rust-tests.yml # zizmor: ignore[self-repository]
+  python:
+    uses: ./.github/workflows/python-tests.yml # zizmor: ignore[self-repository]
+  pipeline:
+    uses: ./.github/workflows/pipeline-tests.yml # zizmor: ignore[self-repository]
+  docker:
+    uses: ./.github/workflows/docker-tests.yml # zizmor: ignore[self-repository]
