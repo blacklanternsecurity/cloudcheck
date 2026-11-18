@@ -65,6 +65,10 @@ def provider_problems(name, data, old):
         if not isinstance(tag, str) or not tag.strip():
             problems.append(f"tags: {tag!r} is not a non-empty string")
     for cidr in data.get("cidrs") if isinstance(data.get("cidrs"), list) else []:
+        # ip_network() also takes an int, which the Rust client's Vec<String> can't load.
+        if not isinstance(cidr, str):
+            problems.append(f"cidrs: bad CIDR {cidr!r}")
+            continue
         try:
             ipaddress.ip_network(cidr, strict=False)
         except (TypeError, ValueError):

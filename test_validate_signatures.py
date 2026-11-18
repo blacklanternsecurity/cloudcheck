@@ -66,6 +66,7 @@ def test_collapse_keeps_stable_entry_and_others_update(tmp_path):
     "field, value",
     [
         ("cidrs", cidrs(2, 39) + ["300.1.1.0/24"]),
+        ("cidrs", cidrs(2, 39) + [5]),
         ("tags", ["cloud", ""]),
         ("tags", ["cloud", 7]),
         ("domains", ["Not A Domain"]),
