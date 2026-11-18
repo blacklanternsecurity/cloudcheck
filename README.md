@@ -225,8 +225,8 @@ When adding a new cloud provider:
 | Name | Description | Tags | Domains | Subnets |
 |------|-------------|------|---------|----------|
 | Akamai | A content delivery network and cloud services provider that delivers web and internet security services. | cloud | 81 | 6170 |
-| Alibaba Cloud | A Chinese cloud computing company and subsidiary of Alibaba Group, providing cloud services and infrastructure. | cloud | 467 | 89 |
-| Amazon Web Services | A comprehensive cloud computing platform provided by Amazon, offering infrastructure services, storage, and computing power. | cloud | 250 | 15445 |
+| Alibaba Cloud | A Chinese cloud computing company and subsidiary of Alibaba Group, providing cloud services and infrastructure. | cloud | 468 | 89 |
+| Amazon Web Services | A comprehensive cloud computing platform provided by Amazon, offering infrastructure services, storage, and computing power. | cloud | 250 | 15444 |
 | Arvancloud | An Iranian cloud computing and content delivery network provider offering cloud infrastructure and CDN services. | cdn | 1 | 25 |
 | Backblaze | A cloud storage and backup service provider offering data backup and cloud storage solutions. | cloud | 2 | 45 |
 | Baidu Cloud Acceleration (百度云加速) | A Chinese content delivery network and cloud acceleration service provided by Baidu. | cdn | 132 | 0 |
@@ -243,7 +243,7 @@ When adding a new cloud provider:
 | Federal Bureau of Investigation | A U.S. government agency that serves as the domestic intelligence and security service, responsible for investigating federal crimes and protecting national security. | gov | 3 | 24 |
 | Fastly | A content delivery network and edge cloud platform that provides edge computing, security, and performance services. | cdn | 7 | 1194 |
 | Gabia (가비아) | A Korean cloud hosting and infrastructure provider. | cloud | 0 | 59 |
-| G-Core Labs | A content delivery network and cloud infrastructure provider offering CDN, cloud computing, and edge services. | cdn | 0 | 1421 |
+| G-Core Labs | A content delivery network and cloud infrastructure provider offering CDN, cloud computing, and edge services. | cdn | 0 | 1419 |
 | GitHub | A web-based platform for version control and collaboration using Git, providing hosting for software development and code repositories. | cdn | 66 | 6739 |
 | GoCache | A Brazilian content delivery network provider offering CDN services. | cdn | 0 | 25 |
 | Google Cloud | A suite of cloud computing services provided by Google, including infrastructure, platform, and software services for businesses and developers. | cloud | 1097 | 2031 |
@@ -275,7 +275,7 @@ When adding a new cloud provider:
 | SK Broadband (SK브로드밴드) | A Korean telecommunications company offering CDN services. | cdn | 0 | 18 |
 | StormWall | A DDoS protection and web application firewall service provider. | cdn | 0 | 18 |
 | Sucuri | A website security and web application firewall service provider. | waf | 0 | 19 |
-| Tencent Cloud (腾讯云) | A Chinese cloud computing service provider and subsidiary of Tencent, offering cloud infrastructure and platform services. | cloud | 705 | 416 |
+| Tencent Cloud (腾讯云) | A Chinese cloud computing service provider and subsidiary of Tencent, offering cloud infrastructure and platform services. | cloud | 706 | 416 |
 | United Kingdom Ministry of Defence | A U.K. government department responsible for implementing the defence policy of the United Kingdom and managing the British Armed Forces. | gov | 1 | 0 |
 | UpCloud | A Finnish cloud infrastructure provider offering high-performance cloud servers. | cloud | 0 | 52 |
 | Vultr | A global cloud hosting provider offering SSD-based cloud compute, bare metal, and managed Kubernetes. | cloud | 0 | 1311 |

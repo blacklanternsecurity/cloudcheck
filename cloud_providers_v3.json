@@ -6307,7 +6307,7 @@
    "srtcdn.net",
    "tl88.net"
   ],
-  "last_updated": 1794982872.8059213,
+  "last_updated": 1795024245.6080952,
   "long_description": "A content delivery network and cloud services provider that delivers web and internet security services.",
   "name": "Akamai",
   "org_ids": [
@@ -6770,6 +6770,7 @@
    "oss-cn-shenzhen.aliyuncs.com",
    "oss-cn-wulanchabu.aliyuncs.com",
    "oss-cn-zhangjiakou.aliyuncs.com",
+   "oss-enet.aliyuncs.com",
    "oss-eu-central-1.aliyuncs.com",
    "oss-eu-west-1.aliyuncs.com",
    "oss-me-east-1.aliyuncs.com",
@@ -6886,7 +6887,7 @@
    "ztna-dingtalk.com",
    "zuodao.com"
   ],
-  "last_updated": 1794982872.8725314,
+  "last_updated": 1795024243.7826078,
   "long_description": "A Chinese cloud computing company and subsidiary of Alibaba Group, providing cloud services and infrastructure.",
   "name": "Alibaba",
   "org_ids": [
@@ -6949,7 +6950,6 @@
    "1.178.8.0/21",
    "1.178.81.0/24",
    "1.178.86.0/23",
-   "1.178.86.0/24",
    "1.178.88.0/21",
    "1.179.100.0/22",
    "1.179.100.0/22",
@@ -22626,7 +22626,7 @@
    "z.cn",
    "zappos"
   ],
-  "last_updated": 1794982887.8879101,
+  "last_updated": 1795024253.8136446,
   "long_description": "A comprehensive cloud computing platform provided by Amazon, offering infrastructure services, storage, and computing power.",
   "name": "Amazon",
   "org_ids": [
@@ -22698,7 +22698,7 @@
   "domains": [
    "arvancloud.ir"
   ],
-  "last_updated": 1794982860.4258199,
+  "last_updated": 1795024244.80954,
   "long_description": "An Iranian cloud computing and content delivery network provider offering cloud infrastructure and CDN services.",
   "name": "Arvancloud",
   "org_ids": [
@@ -22767,7 +22767,7 @@
    "backblaze.com",
    "backblazeb2.com"
   ],
-  "last_updated": 1794982858.318559,
+  "last_updated": 1795024242.2516978,
   "long_description": "A cloud storage and backup service provider offering data backup and cloud storage solutions.",
   "name": "Backblaze",
   "org_ids": [
@@ -22921,7 +22921,7 @@
    "yoojia.com",
    "zz.bdstatic.com"
   ],
-  "last_updated": 1794982866.9322562,
+  "last_updated": 1795024244.11814,
   "long_description": "A Chinese content delivery network and cloud acceleration service provided by Baidu.",
   "name": "Baidu",
   "org_ids": [
@@ -22970,7 +22970,7 @@
    "91.200.176.0/24"
   ],
   "domains": [],
-  "last_updated": 1794982858.37091,
+  "last_updated": 1795024242.348437,
   "long_description": "A global content delivery network and edge platform.",
   "name": "Bunnycdn",
   "org_ids": [
@@ -23070,7 +23070,7 @@
    "75.102.42.0/24"
   ],
   "domains": [],
-  "last_updated": 1794982871.9628718,
+  "last_updated": 1795024244.9686878,
   "long_description": "A content delivery network provider offering global CDN services.",
   "name": "Cachefly",
   "org_ids": [
@@ -23094,7 +23094,7 @@
    "211.43.147.0/24"
   ],
   "domains": [],
-  "last_updated": 1794982857.7483745,
+  "last_updated": 1795024242.651703,
   "long_description": "A Korean content delivery network provider offering CDN and cloud services.",
   "name": "Cdnetworks",
   "org_ids": [
@@ -23966,7 +23966,7 @@
    "wifi-mx.com",
    "youtubecisco.com"
   ],
-  "last_updated": 1794982858.7982113,
+  "last_updated": 1795024243.1452684,
   "long_description": "A multinational technology corporation that designs, manufactures, and sells networking hardware, software, and telecommunications equipment.",
   "name": "Cisco",
   "org_ids": [
@@ -27113,7 +27113,7 @@
    "warp.plus",
    "workers.dev"
   ],
-  "last_updated": 1794982857.582137,
+  "last_updated": 1795024245.807105,
   "long_description": "A web infrastructure and security company providing content delivery network services, DDoS mitigation, and web security solutions.",
   "name": "Cloudflare",
   "org_ids": [
@@ -27328,7 +27328,7 @@
    "99.86.0.0/16"
   ],
   "domains": [],
-  "last_updated": 1794982859.1174378,
+  "last_updated": 1795024244.6094878,
   "long_description": "A content delivery network service provided by Amazon Web Services that delivers data, videos, applications, and APIs to customers globally.",
   "name": "Cloudfront",
   "org_ids": [],
@@ -27366,7 +27366,7 @@
    "95.129.238.0/24"
   ],
   "domains": [],
-  "last_updated": 1794982856.1851559,
+  "last_updated": 1795024243.0430775,
   "long_description": "A DDoS protection and content delivery network service provider.",
   "name": "DDoSGuard",
   "org_ids": [
@@ -27739,7 +27739,7 @@
    "studiodell.com",
    "vce.com"
   ],
-  "last_updated": 1794982858.9985633,
+  "last_updated": 1795024243.343245,
   "long_description": "A multinational technology company that develops, sells, repairs, and supports computers and related products and services.",
   "name": "Dell",
   "org_ids": [
@@ -28084,7 +28084,7 @@
    "nginxconfig.io",
    "ondigitalocean.com"
   ],
-  "last_updated": 1794982875.301676,
+  "last_updated": 1795024243.4576948,
   "long_description": "A cloud infrastructure provider offering virtual private servers, managed databases, and other cloud services for developers and businesses.",
   "name": "DigitalOcean",
   "org_ids": [
@@ -37949,7 +37949,7 @@
    "mil",
    "war.gov"
   ],
-  "last_updated": 1794982962.9475276,
+  "last_updated": 1795024336.062916,
   "long_description": "A U.S. government agency responsible for coordinating and supervising all agencies and functions of the government directly related to national security and the United States Armed Forces.",
   "name": "DoD",
   "org_ids": [
@@ -37997,7 +37997,7 @@
    "fbijobs.gov",
    "ic3.gov"
   ],
-  "last_updated": 1794982857.1528225,
+  "last_updated": 1795024243.498519,
   "long_description": "A U.S. government agency that serves as the domestic intelligence and security service, responsible for investigating federal crimes and protecting national security.",
   "name": "FBI",
   "org_ids": [
@@ -39221,7 +39221,7 @@
    "fastlylabs.com",
    "fastlylb.net"
   ],
-  "last_updated": 1794982857.13162,
+  "last_updated": 1795024249.0327682,
   "long_description": "A content delivery network and edge cloud platform that provides edge computing, security, and performance services.",
   "name": "Fastly",
   "org_ids": [
@@ -39300,7 +39300,7 @@
    "222.236.220.0/23"
   ],
   "domains": [],
-  "last_updated": 1794982858.1706371,
+  "last_updated": 1795024243.8677888,
   "long_description": "A Korean cloud hosting and infrastructure provider.",
   "name": "Gabia",
   "org_ids": [
@@ -39523,7 +39523,6 @@
    "195.234.62.0/23",
    "195.234.82.0/23",
    "196.216.216.90/32",
-   "196.97.8.18/32",
    "197.148.108.106/32",
    "197.160.157.1/32",
    "197.188.22.102/32",
@@ -40090,7 +40089,6 @@
    "2c0f:f578:0:c::106/128",
    "2c0f:f7c0:3800:10::be2/128",
    "2c0f:f828:2::114/128",
-   "2c0f:fe38:7:50::2/128",
    "31.13.213.0/24",
    "31.184.206.0/23",
    "31.184.207.10/31",
@@ -40109,7 +40107,7 @@
    "37.17.119.212/32",
    "37.202.196.0/24",
    "37.239.145.2/32",
-   "37.239.145.4/31",
+   "37.239.145.5/32",
    "37.61.224.0/24",
    "37.61.229.0/24",
    "37.61.231.0/24",
@@ -40508,7 +40506,7 @@
    "92.223.107.150/31",
    "92.223.107.152/32",
    "92.223.107.154/31",
-   "92.223.107.156/32",
+   "92.223.107.156/30",
    "92.223.107.166/31",
    "92.223.107.36/32",
    "92.223.107.38/31",
@@ -40744,7 +40742,7 @@
    "96.62.73.0/24"
   ],
   "domains": [],
-  "last_updated": 1794982859.920966,
+  "last_updated": 1795024245.5100045,
   "long_description": "A content delivery network and cloud infrastructure provider offering CDN, cloud computing, and edge services.",
   "name": "Gcore",
   "org_ids": [
@@ -47614,7 +47612,7 @@
    "52.67.255.165/32"
   ],
   "domains": [],
-  "last_updated": 1794982856.5681925,
+  "last_updated": 1795024243.790758,
   "long_description": "A Brazilian content delivery network provider offering CDN services.",
   "name": "Gocache",
   "org_ids": [],
@@ -50804,7 +50802,7 @@
    "ytimg.com",
    "zukunftswerkstatt.de"
   ],
-  "last_updated": 1794982858.7559583,
+  "last_updated": 1795024243.0624347,
   "long_description": "A suite of cloud computing services provided by Google, including infrastructure, platform, and software services for businesses and developers.",
   "name": "Google",
   "org_ids": [
@@ -50927,7 +50925,7 @@
    "hpecyber.com",
    "hpefonts.s3.amazonaws.com"
   ],
-  "last_updated": 1794982879.9622953,
+  "last_updated": 1795024242.2322311,
   "long_description": "A multinational enterprise information technology company that provides servers, storage, networking, and cloud services.",
   "name": "HPE",
   "org_ids": [
@@ -50957,7 +50955,7 @@
    "herokucharge.com",
    "herokussl.com"
   ],
-  "last_updated": 1794982857.159899,
+  "last_updated": 1795024249.033136,
   "long_description": "A cloud platform as a service that enables developers to build, run, and operate applications entirely in the cloud.",
   "name": "Heroku",
   "org_ids": [],
@@ -51118,7 +51116,7 @@
    "your-storagebox.de",
    "your-storageshare.de"
   ],
-  "last_updated": 1794982857.716466,
+  "last_updated": 1795024252.092039,
   "long_description": "A German cloud hosting provider offering dedicated servers, cloud instances, and storage solutions.",
   "name": "Hetzner",
   "org_ids": [
@@ -51204,7 +51202,7 @@
    "66.232.144.0/22"
   ],
   "domains": [],
-  "last_updated": 1794982857.445894,
+  "last_updated": 1795024242.792036,
   "long_description": "A Korean cloud hosting and infrastructure provider.",
   "name": "Hostway",
   "org_ids": [
@@ -51854,7 +51852,7 @@
    "y43f6.cn",
    "z95rr.cn"
   ],
-  "last_updated": 1794982859.350574,
+  "last_updated": 1795024244.446152,
   "long_description": "A Chinese multinational technology corporation that designs, develops, and sells telecommunications equipment, consumer electronics, and cloud services.",
   "name": "Huawei",
   "org_ids": [
@@ -52362,7 +52360,7 @@
    "weather",
    "weatherchannel"
   ],
-  "last_updated": 1794982858.9241693,
+  "last_updated": 1795024244.7327456,
   "long_description": "A multinational technology corporation that provides hardware, software, cloud computing, and consulting services.",
   "name": "IBM",
   "org_ids": [
@@ -52479,7 +52477,7 @@
    "97.64.56.0/21"
   ],
   "domains": [],
-  "last_updated": 1794982881.2556977,
+  "last_updated": 1795024241.9795182,
   "long_description": "A cloud security company providing secure web gateway, CASB, and zero trust network access services.",
   "name": "Iboss",
   "org_ids": [
@@ -52896,7 +52894,7 @@
   "domains": [
    "imperva.com"
   ],
-  "last_updated": 1794982858.1606703,
+  "last_updated": 1795024242.3177955,
   "long_description": "A cybersecurity company that provides web application firewall, DDoS protection, and data security solutions.",
   "name": "Imperva",
   "org_ids": [
@@ -53127,7 +53125,7 @@
   "domains": [
    "kamatera.com"
   ],
-  "last_updated": 1794982866.9872699,
+  "last_updated": 1795024242.3264863,
   "long_description": "A cloud infrastructure provider offering virtual private servers, cloud servers, and managed cloud services.",
   "name": "Kamatera",
   "org_ids": [
@@ -53288,7 +53286,7 @@
    "63.105.192.0/20"
   ],
   "domains": [],
-  "last_updated": 1794982858.9366295,
+  "last_updated": 1795024244.582907,
   "long_description": "A Korean content delivery network and cloud infrastructure provider.",
   "name": "Kinx",
   "org_ids": [
@@ -53327,7 +53325,7 @@
    "61.100.72.0/24"
   ],
   "domains": [],
-  "last_updated": 1794982859.1441574,
+  "last_updated": 1795024244.584715,
   "long_description": "A Korean cloud computing service provided by KT Corporation.",
   "name": "Ktcloud",
   "org_ids": [
@@ -54905,7 +54903,7 @@
    "96.9.228.0/23"
   ],
   "domains": [],
-  "last_updated": 1794982857.1111512,
+  "last_updated": 1795024242.6568253,
   "long_description": "A global hosting and cloud infrastructure provider offering dedicated servers, cloud hosting, and CDN services.",
   "name": "Leaseweb",
   "org_ids": [
@@ -55144,7 +55142,7 @@
    "61.43.236.0/24"
   ],
   "domains": [],
-  "last_updated": 1794982859.1307878,
+  "last_updated": 1795024243.5369792,
   "long_description": "A Korean telecommunications company offering CDN services.",
   "name": "Lgtelecom",
   "org_ids": [
@@ -103951,7 +103949,7 @@
    "xbx.lv",
    "yammer.com"
   ],
-  "last_updated": 1794982879.9573607,
+  "last_updated": 1795024266.5476716,
   "long_description": "A multinational technology corporation that develops, manufactures, licenses, supports and sells computer software, consumer electronics and personal computers. Known for products like Windows, Office, Azure cloud services, and Xbox.",
   "name": "Microsoft",
   "org_ids": [
@@ -104237,7 +104235,7 @@
    "yammer.com",
    "yammerusercontent.com"
   ],
-  "last_updated": 1794982858.94334,
+  "last_updated": 1795024243.5391915,
   "long_description": "A cloud-based productivity suite provided by Microsoft, including Office applications and cloud services.",
   "name": "Microsoft365",
   "org_ids": [],
@@ -104327,7 +104325,7 @@
    "61.97.176.0/20"
   ],
   "domains": [],
-  "last_updated": 1794982858.3626606,
+  "last_updated": 1795024242.8052404,
   "long_description": "A Korean cloud computing platform provided by Naver Corporation.",
   "name": "Navercloud",
   "org_ids": [
@@ -104476,7 +104474,7 @@
    "61.42.226.0/24"
   ],
   "domains": [],
-  "last_updated": 1794982859.3764558,
+  "last_updated": 1795024245.3025546,
   "long_description": "A Korean cloud computing platform provided by NHN Corporation.",
   "name": "Nhncloud",
   "org_ids": [
@@ -105230,7 +105228,7 @@
    "ovh.com",
    "ovhcloud.com"
   ],
-  "last_updated": 1794982863.542766,
+  "last_updated": 1795024244.1168203,
   "long_description": "A French cloud computing company that provides web hosting, dedicated servers, and cloud infrastructure services.",
   "name": "OVH",
   "org_ids": [
@@ -108276,7 +108274,7 @@
    "sun.com",
    "virtualbox.org"
   ],
-  "last_updated": 1794982859.7918024,
+  "last_updated": 1795024257.9953294,
   "long_description": "A multinational technology corporation that provides database software, cloud engineering systems, and enterprise software products.",
   "name": "Oracle",
   "org_ids": [
@@ -108326,7 +108324,7 @@
    "83.147.21.0/24"
   ],
   "domains": [],
-  "last_updated": 1794982858.5457468,
+  "last_updated": 1795024244.7411299,
   "long_description": "A DDoS protection and content delivery network service provider.",
   "name": "Qrator",
   "org_ids": [
@@ -108499,7 +108497,7 @@
    "95.216.116.209/32"
   ],
   "domains": [],
-  "last_updated": 1794982859.5091288,
+  "last_updated": 1795024242.7098787,
   "long_description": "A content delivery network and edge computing platform providing CDN services.",
   "name": "Quiccloud",
   "org_ids": [
@@ -108538,7 +108536,7 @@
    "95.173.144.0/20"
   ],
   "domains": [],
-  "last_updated": 1794982856.250953,
+  "last_updated": 1795024241.9749389,
   "long_description": "A Russian federal executive body responsible for counterintelligence, internal and border security, counterterrorism, and surveillance.",
   "name": "RUFSO",
   "org_ids": [
@@ -108795,7 +108793,7 @@
   "domains": [
    "rackspace.com"
   ],
-  "last_updated": 1794982858.0083897,
+  "last_updated": 1795024257.3959882,
   "long_description": "A managed cloud computing company that provides hosting, cloud services, and managed infrastructure solutions.",
   "name": "Rackspace",
   "org_ids": [
@@ -108915,7 +108913,7 @@
    "twinprime.com",
    "weinvoiceit.com"
   ],
-  "last_updated": 1794982871.7016292,
+  "last_updated": 1795024243.788634,
   "long_description": "A cloud-based software company that provides customer relationship management services and enterprise cloud computing solutions.",
   "name": "Salesforce",
   "org_ids": [
@@ -108991,7 +108989,7 @@
   "domains": [
    "scaleway.com"
   ],
-  "last_updated": 1794982856.1783843,
+  "last_updated": 1795024244.0661669,
   "long_description": "A French cloud computing company that provides virtual private servers, bare metal servers, and cloud infrastructure services.",
   "name": "Scaleway",
   "org_ids": [
@@ -109031,7 +109029,7 @@
    "61.97.0.0/20"
   ],
   "domains": [],
-  "last_updated": 1794982856.916845,
+  "last_updated": 1795024252.000259,
   "long_description": "A Korean telecommunications company offering CDN services.",
   "name": "Skbroadband",
   "org_ids": [
@@ -109070,7 +109068,7 @@
    "5.252.32.0/22"
   ],
   "domains": [],
-  "last_updated": 1794982857.7524815,
+  "last_updated": 1795024243.0240161,
   "long_description": "A DDoS protection and web application firewall service provider.",
   "name": "Stormwall",
   "org_ids": [
@@ -109109,7 +109107,7 @@
    "72.167.12.0/22"
   ],
   "domains": [],
-  "last_updated": 1794982857.6297889,
+  "last_updated": 1795024242.6583264,
   "long_description": "A website security and web application firewall service provider.",
   "name": "Sucuri",
   "org_ids": [
@@ -110101,6 +110099,7 @@
    "tencent.design",
    "tencent.net",
    "tencent.net.cn",
+   "tencentads.com",
    "tencentapps.com",
    "tencentbyod.com",
    "tencentcdb.cn",
@@ -110254,7 +110253,7 @@
    "zcjbgame.com",
    "zhuoyuegame.com"
   ],
-  "last_updated": 1794982856.63706,
+  "last_updated": 1795024244.4221284,
   "long_description": "A Chinese cloud computing service provider and subsidiary of Tencent, offering cloud infrastructure and platform services.",
   "name": "Tencent",
   "org_ids": [
@@ -110277,7 +110276,7 @@
   "domains": [
    "gov.uk"
   ],
-  "last_updated": 1794982875.0133498,
+  "last_updated": 1795024241.8810208,
   "long_description": "A U.K. government department responsible for implementing the defence policy of the United Kingdom and managing the British Armed Forces.",
   "name": "UKMoD",
   "org_ids": [
@@ -110350,7 +110349,7 @@
    "95.111.192.0/19"
   ],
   "domains": [],
-  "last_updated": 1794982857.5816145,
+  "last_updated": 1795024251.9533644,
   "long_description": "A Finnish cloud infrastructure provider offering high-performance cloud servers.",
   "name": "Upcloud",
   "org_ids": [
@@ -111686,7 +111685,7 @@
    "96.62.115.0/24"
   ],
   "domains": [],
-  "last_updated": 1794982857.415165,
+  "last_updated": 1795024250.8096735,
   "long_description": "A global cloud hosting provider offering SSD-based cloud compute, bare metal, and managed Kubernetes.",
   "name": "Vultr",
   "org_ids": [
@@ -111728,7 +111727,7 @@
   "domains": [
    "wasabi.com"
   ],
-  "last_updated": 1794982880.2650588,
+  "last_updated": 1795024243.794065,
   "long_description": "A cloud storage provider offering hot cloud storage services with high performance and low cost.",
   "name": "Wasabi",
   "org_ids": [
@@ -111752,7 +111751,7 @@
    "103.77.224.0/24"
   ],
   "domains": [],
-  "last_updated": 1794982876.1759434,
+  "last_updated": 1795024241.9718986,
   "long_description": "A DDoS protection and content delivery network service provider.",
   "name": "X4b",
   "org_ids": [
@@ -112045,7 +112044,7 @@
    "ydb.tech",
    "yndx.net"
   ],
-  "last_updated": 1794982880.2576902,
+  "last_updated": 1795024242.105426,
   "long_description": "Russian cloud computing and internet services provider, offering infrastructure, storage, and various digital services.",
   "name": "Yandex",
   "org_ids": [
@@ -112193,7 +112192,7 @@
    "zohouniversity.com",
    "zohowebstatic.com"
   ],
-  "last_updated": 1794982880.263886,
+  "last_updated": 1795024242.259505,
   "long_description": "An Indian software company that provides cloud-based business software and productivity tools including CRM, email, and office suites.",
   "name": "Zoho",
   "org_ids": [
@@ -112522,7 +112521,7 @@
    "98.98.28.0/24"
   ],
   "domains": [],
-  "last_updated": 1794982859.789712,
+  "last_updated": 1795024243.1588314,
   "long_description": "A cloud security company providing secure internet access, cloud security, and zero trust network access services.",
   "name": "Zscaler",
   "org_ids": [],
