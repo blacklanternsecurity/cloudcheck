@@ -18,6 +18,8 @@ concurrency:
 # release. Publishing policy, exception D9: the bot may push to stable without a pull request.
 # The two jobs keep that bypass narrow:
 #   fetch   runs the project's code and dependencies with BBOT_IO_API_KEY. It never holds the push key.
+#           Its read-only job token goes to api.github.com/meta only (GitHub provider), so that call is
+#           not on the 60/hour per-IP unauthenticated limit shared runners exhaust.
 #   publish runs only the standard library and GitHub's API. It validates the data, keeps stable's entry
 #           for any provider that fails its checks, rebuilds the README table from the result, mints the
 #           push token at the last step, and commits through the API so GitHub signs it as the App.
@@ -50,6 +52,7 @@ jobs:
       - name: Update signatures
         env:
           BBOT_IO_API_KEY: ${{ secrets.BBOT_IO_API_KEY }}
+          GITHUB_TOKEN: ${{ github.token }}
         run: uv run python -m cloudcheck_update.cli
 
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
