@@ -4,6 +4,7 @@ Test script for cloudcheck functionality.
 
 import sys
 import ipaddress
+import pytest
 from pathlib import Path
 
 # Add the current directory to Python path
@@ -334,3 +335,100 @@ def test_zscaler_skips_non_cloud_keys(monkeypatch):
 
     monkeypatch.setattr(Zscaler, "request", lambda self, *a, **kw: FakeResponse())
     assert Zscaler().fetch_cidrs() == ["159.254.250.0/23"]
+
+
+class _FakeGitHubResponse:
+    def __init__(self, status_code=200, body=None, headers=None):
+        self.status_code = status_code
+        self._body = body if body is not None else {}
+        self.headers = headers or {}
+
+    def json(self):
+        return self._body
+
+
+_META = {
+    "verifiable_password_authentication": False,
+    "hooks": ["192.30.252.0/22"],
+    "web": ["140.82.112.0/20", "not-a-cidr"],
+}
+
+
+def _record_requests(monkeypatch, responses):
+    """Patch the request every provider uses; return the list of (url, headers) it was called with."""
+    from cloudcheck.providers import base
+
+    calls = []
+
+    def fake_request(url, **kwargs):
+        calls.append((url, dict(kwargs.get("headers", {}))))
+        return responses.pop(0)
+
+    monkeypatch.setattr(base, "request", fake_request)
+    return calls
+
+
+def test_github_meta_parses_ranges(monkeypatch):
+    from cloudcheck.providers.github import GitHub
+
+    monkeypatch.setenv("GITHUB_TOKEN", "job-token")
+    calls = _record_requests(monkeypatch, [_FakeGitHubResponse(body=_META)])
+    assert sorted(GitHub().fetch_cidrs()) == ["140.82.112.0/20", "192.30.252.0/22"]
+    assert calls[0][1]["authorization"] == "Bearer job-token"
+
+
+def test_github_meta_rate_limited_raises(monkeypatch):
+    """A 403 rate-limit body is valid JSON with no lists; it must fail, not return zero ranges."""
+    from cloudcheck.providers.github import GitHub
+
+    monkeypatch.delenv("GITHUB_TOKEN", raising=False)
+    limited = _FakeGitHubResponse(
+        403,
+        {
+            "message": "API rate limit exceeded",
+            "documentation_url": "https://docs.github.com",
+        },
+        {"x-ratelimit-remaining": "0", "x-ratelimit-reset": "1795037603"},
+    )
+    calls = _record_requests(monkeypatch, [limited])
+    with pytest.raises(RuntimeError, match=r"HTTP 403 \(x-ratelimit-remaining=0"):
+        GitHub().fetch_cidrs()
+    assert "authorization" not in calls[0][1]
+
+
+def test_github_meta_empty_200_raises(monkeypatch):
+    from cloudcheck.providers.github import GitHub
+
+    monkeypatch.delenv("GITHUB_TOKEN", raising=False)
+    _record_requests(monkeypatch, [_FakeGitHubResponse(body={"message": "ok"})])
+    with pytest.raises(RuntimeError, match="no IP ranges"):
+        GitHub().fetch_cidrs()
+
+
+def test_github_meta_rejected_token_retries_unauthenticated(monkeypatch):
+    from cloudcheck.providers.github import GitHub
+
+    monkeypatch.setenv("GITHUB_TOKEN", "stale")
+    calls = _record_requests(
+        monkeypatch, [_FakeGitHubResponse(401), _FakeGitHubResponse(body=_META)]
+    )
+    assert len(GitHub().fetch_cidrs()) == 2
+    assert calls[0][1]["authorization"] == "Bearer stale"
+    assert "authorization" not in calls[1][1]
+
+
+def test_github_token_sent_only_to_github(monkeypatch):
+    """GITHUB_TOKEN reaches api.github.com and no other provider's host."""
+    from cloudcheck.providers.github import GitHub
+    from cloudcheck.providers.zscaler import Zscaler
+
+    monkeypatch.setenv("GITHUB_TOKEN", "job-token")
+    calls = _record_requests(
+        monkeypatch, [_FakeGitHubResponse(body=_META), _FakeGitHubResponse(body={})]
+    )
+    GitHub().fetch_cidrs()
+    Zscaler().fetch_cidrs()
+    assert [u for u, h in calls if "job-token" in str(h.values())] == [
+        "https://api.github.com/meta"
+    ]
+    assert len(calls) == 2
