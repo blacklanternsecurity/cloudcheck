@@ -117,3 +117,67 @@ def test_all_storage_bucket_regexes_compile():
                     f"{provider_cls.__name__} {category} pattern {pattern!r} "
                     f"is missing the 'name' named group"
                 )
+
+
+class _MetaResponse:
+    def __init__(self, status, body):
+        self.status = status
+        self.is_success = 200 <= status < 300
+        self._body = body
+        self.text = str(body)
+
+    def json(self):
+        return self._body
+
+
+@pytest.fixture
+def github_meta(monkeypatch):
+    from cloudcheck.providers.github import GitHub
+
+    calls = []
+
+    def serve(status, body):
+        def request(self, url, **kwargs):
+            calls.append(kwargs)
+            return _MetaResponse(status, body)
+
+        monkeypatch.setattr(GitHub, "request", request)
+        return GitHub(), calls
+
+    return serve
+
+
+def test_github_meta_sends_the_token_and_returns_ranges(github_meta, monkeypatch):
+    monkeypatch.setenv("GITHUB_TOKEN", "t0ken")
+    github, calls = github_meta(
+        200,
+        {
+            "web": ["192.30.252.0/22", "2a0a:a440::/29"],
+            "domains": {"website": ["github.com"]},
+        },
+    )
+    assert sorted(github.fetch_cidrs()) == ["192.30.252.0/22", "2a0a:a440::/29"]
+    assert calls[0]["headers"] == {"Authorization": "Bearer t0ken"}
+    assert calls[0]["follow_redirects"] is False
+
+
+def test_github_meta_without_a_token_sends_no_authorization(github_meta, monkeypatch):
+    monkeypatch.delenv("GITHUB_TOKEN", raising=False)
+    github, calls = github_meta(200, {"web": ["192.30.252.0/22"]})
+    github.fetch_cidrs()
+    assert calls[0]["headers"] == {}
+
+
+@pytest.mark.parametrize(
+    "status,body,error",
+    [
+        (403, {"message": "API rate limit exceeded for 203.0.113.7."}, "HTTP 403"),
+        (200, {"message": "something else"}, "no IP ranges"),
+    ],
+)
+def test_github_meta_failure_raises_instead_of_returning_nothing(
+    github_meta, status, body, error
+):
+    github, _ = github_meta(status, body)
+    with pytest.raises(RuntimeError, match=error):
+        github.fetch_cidrs()
